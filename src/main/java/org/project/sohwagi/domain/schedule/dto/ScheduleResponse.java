@@ -1,9 +1,13 @@
 package org.project.sohwagi.domain.schedule.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.project.sohwagi.domain.schedule.entity.Schedule;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public class ScheduleResponse {
 
 	private Long scheduleId;
