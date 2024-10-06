@@ -1,10 +1,12 @@
 package org.project.sohwagi.domain.schedule.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.domain.schedule.dto.ScheduleRequest;
 import org.project.sohwagi.domain.schedule.dto.ScheduleResponse;
+import org.project.sohwagi.domain.schedule.dto.ScheduleTextRequest;
 import org.project.sohwagi.domain.schedule.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,8 @@ public class ScheduleController {
 	private final ScheduleService scheduleService;
 
 	@PostMapping
-	public ResponseEntity<String> createSchedule(@RequestBody ScheduleRequest request) {
+	public ResponseEntity<String> createSchedule(@RequestBody ScheduleTextRequest request)
+		throws JsonProcessingException {
 		Long scheduleId = scheduleService.createSchedule(request);
 
 		return ResponseEntity.created(URI.create("/api/v1/schedules/" + scheduleId)).build();

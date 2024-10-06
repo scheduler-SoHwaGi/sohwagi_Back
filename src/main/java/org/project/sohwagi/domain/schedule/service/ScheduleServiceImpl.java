@@ -1,10 +1,13 @@
 package org.project.sohwagi.domain.schedule.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.domain.gpt.service.GPTService;
 import org.project.sohwagi.domain.schedule.dto.ScheduleRequest;
 import org.project.sohwagi.domain.schedule.dto.ScheduleResponse;
+import org.project.sohwagi.domain.schedule.dto.ScheduleTextRequest;
 import org.project.sohwagi.domain.schedule.entity.Schedule;
 import org.project.sohwagi.domain.schedule.repository.ScheduleJpaRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
+
+	private final GPTService gptService;
 
 	private final ScheduleJpaRepository scheduleJpaRepository;
 
@@ -38,8 +43,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	@Override
 	@Transactional
-	public Long createSchedule(ScheduleRequest request) {
-		Schedule schedule = new Schedule(request);
+	public Long createSchedule(ScheduleTextRequest request) throws JsonProcessingException {
+		ScheduleRequest scheduleRequest = gptService.gptCall(request.getText());
+		Schedule schedule = new Schedule(scheduleRequest);
 		Schedule savedSchedule = scheduleJpaRepository.save(schedule);
 
 		return savedSchedule.getId();
