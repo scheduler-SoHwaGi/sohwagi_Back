@@ -30,7 +30,7 @@ public class GPTServiceImpl implements GPTService{
 			+ "prompt 문장을 일정으로 등록하려는데 JSON 형태로 일정 제목, 일정 날짜로 분류해줘. 해당 값이 없으면 null 표시해줘."
 			+ "아래 양식 꼭 지켜줘. 현재 날짜는 "
 			+ LocalDateTime.now()
-			+ "이야. title, date 는 String 타입이고 date 예시는 2024년 9월 25일 오후 3시 00분이야.";
+			+ "이야. title, date 는 String 타입이고 date 예시: 10월 7일 (월)";
 
 	// RestTemplate 객체를 주입받음
 	private final RestTemplate restTemplate;
