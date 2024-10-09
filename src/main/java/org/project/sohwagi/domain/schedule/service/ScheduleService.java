@@ -8,9 +8,9 @@ import org.project.sohwagi.domain.schedule.dto.ScheduleTextRequest;
 
 public interface ScheduleService {
 
-	List<ScheduleResponse> getSchedules();
+	List<ScheduleResponse> getSchedules(Long userId);
 
-	void deleteSchedule(Long scheduleId);
+	void deleteSchedule(Long scheduleId, Long userId);
 
-	Long createSchedule(ScheduleTextRequest request) throws JsonProcessingException;
+	Long createSchedule(ScheduleTextRequest request, Long userId) throws JsonProcessingException;
 }

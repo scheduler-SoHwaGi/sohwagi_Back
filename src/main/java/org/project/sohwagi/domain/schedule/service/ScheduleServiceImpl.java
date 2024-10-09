@@ -23,8 +23,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ScheduleResponse> getSchedules() {
-		List<Schedule> schedules = scheduleJpaRepository.findAll();
+	public List<ScheduleResponse> getSchedules(Long userId) {
+		List<Schedule> schedules = scheduleJpaRepository.findAllByUserId(userId);
 		List<ScheduleResponse> scheduleResponses = new ArrayList<>();
 
 		for (Schedule schedule : schedules) {
@@ -36,16 +36,21 @@ public class ScheduleServiceImpl implements ScheduleService {
 
 	@Override
 	@Transactional
-	public void deleteSchedule(Long scheduleId) {
+	public void deleteSchedule(Long scheduleId, Long userId) {
 		Schedule schedule = findSchedule(scheduleId);
+
+		if(!schedule.getUserId().equals(userId)) {
+			throw new RuntimeException("일정 작성자만 삭제할 수 있습니다.");
+		}
+
 		scheduleJpaRepository.delete(schedule);
 	}
 
 	@Override
 	@Transactional
-	public Long createSchedule(ScheduleTextRequest request) throws JsonProcessingException {
+	public Long createSchedule(ScheduleTextRequest request, Long userId) throws JsonProcessingException {
 		ScheduleRequest scheduleRequest = gptService.gptCall(request.getText());
-		Schedule schedule = new Schedule(scheduleRequest);
+		Schedule schedule = new Schedule(scheduleRequest, userId);
 		Schedule savedSchedule = scheduleJpaRepository.save(schedule);
 
 		return savedSchedule.getId();

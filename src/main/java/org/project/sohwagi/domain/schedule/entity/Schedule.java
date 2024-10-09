@@ -23,8 +23,12 @@ public class Schedule {
 	@Column
 	private String date;
 
-	public Schedule (ScheduleRequest request) {
+	@Column
+	private Long userId;
+
+	public Schedule (ScheduleRequest request, Long userId) {
 		this.title = request.getTitle();
 		this.date = request.getDate();
+		this.userId = userId;
 	}
 }
