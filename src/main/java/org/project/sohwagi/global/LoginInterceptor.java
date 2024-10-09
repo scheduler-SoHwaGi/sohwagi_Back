@@ -30,6 +30,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 				User user = userService.findUserByFcmToken(fcmToken)
 					.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 				request.setAttribute("userId", user.getId());
+				log.info("User Id: " + user.getId());
 				return true;
 			} else {
 				throw new IllegalArgumentException("등록되지 않은 fcm token 입니다.");
