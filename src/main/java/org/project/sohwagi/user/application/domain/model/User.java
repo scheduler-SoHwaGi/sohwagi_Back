@@ -30,4 +30,8 @@ public class User {
 		this.nickName = nickName;
 	}
 
+	public void updateFcmToken(String fcmToken) {
+		this.fcmToken = fcmToken;
+	}
+
 }

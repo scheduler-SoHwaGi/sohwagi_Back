@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.user.application.domain.model.User;
 import org.project.sohwagi.user.application.port.in.command.CreateUserByNickNameCommand;
+import org.project.sohwagi.user.application.port.in.command.SaveFcmTokenCommand;
 import org.project.sohwagi.user.application.port.in.usecase.CreateUserUseCase;
+import org.project.sohwagi.user.application.port.in.usecase.SaveFcmTokenUseCase;
 import org.project.sohwagi.user.application.port.out.LoadUserPort;
 import org.project.sohwagi.user.application.port.out.SaveUserPort;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Service
 @RequiredArgsConstructor
-public class UserService implements CreateUserUseCase {
+public class UserService implements CreateUserUseCase, SaveFcmTokenUseCase {
 	private final LoadUserPort loadUserPort;
 	private final SaveUserPort saveUserPort;
 
@@ -30,5 +32,13 @@ public class UserService implements CreateUserUseCase {
 				.build();
 			saveUserPort.saveUser(user);
 		}
+	}
+
+	@Override
+	@Transactional
+	public void saveFcmToken(SaveFcmTokenCommand command) {
+		User savedUser = loadUserPort.loadUserById(command.userId());
+
+		savedUser.updateFcmToken(command.fcmToken());
 	}
 }

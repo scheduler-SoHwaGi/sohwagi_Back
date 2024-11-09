@@ -20,6 +20,12 @@ public class UserPersistenceAdapter implements SaveUserPort, LoadUserPort {
 	}
 
 	@Override
+	public User loadUserById(Long userId) {
+		return userJpaRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+	}
+
+	@Override
 	public User saveUser(User user) {
 		return userJpaRepository.save(user);
 	}

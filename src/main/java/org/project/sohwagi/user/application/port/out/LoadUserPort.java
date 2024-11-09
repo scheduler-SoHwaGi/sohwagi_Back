@@ -7,4 +7,6 @@ public interface LoadUserPort {
 
 	Optional<User> loadUserByNickName(String nickName);
 
+	User loadUserById(Long userId);
+
 }
