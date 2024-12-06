@@ -24,7 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		throws IOException {
 		log.info("Request URI: " + request.getRequestURI());
 
-		String nickName = request.getHeader("NickName");
+		String nickName = request.getHeader("Nickname");
 		log.info("User NickName: " + nickName);
 
 		try {
