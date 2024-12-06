@@ -19,7 +19,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		log.info("인터셉터 등록");
 		registry.addInterceptor(loginInterceptor)
 			.addPathPatterns("/**")
-			.excludePathPatterns("/api/v1/users/log-in/nicknames");
+			.excludePathPatterns("/api/v1/users/log-in/nicknames")
+				.excludePathPatterns("OPTIONS/**");
 	}
 
 	@Override
@@ -27,7 +28,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 				.allowedOriginPatterns("*")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-				.allowedHeaders("x-nickname", "Content-Type", "Authorization")
-				.allowCredentials(true);
+				.allowedHeaders("Nickname", "Content-Type", "Authorization");
 	}
 }
