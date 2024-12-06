@@ -9,6 +9,7 @@ import org.project.sohwagi.user.application.domain.model.User;
 import org.project.sohwagi.user.application.domain.service.UserService;
 import org.project.sohwagi.user.application.port.out.LoadUserPort;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j
@@ -26,6 +27,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
 		String nickName = request.getHeader("Nickname");
 		log.info(nickName);
+
+		if((CorsUtils.isPreFlightRequest(request))) {
+			return true;
+		}
 
 		try {
 			if (nickName != null) {
