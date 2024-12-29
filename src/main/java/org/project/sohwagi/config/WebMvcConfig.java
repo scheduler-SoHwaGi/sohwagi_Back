@@ -22,13 +22,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
 			.excludePathPatterns("/api/v1/users/log-in/nicknames")
 				.excludePathPatterns("OPTIONS/**");
 	}
-
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-				.allowedOrigins("http://localhost:3000")
-				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-				.allowedHeaders("Nickname", "Content-Type", "Authorization")
-				.allowCredentials(true);
-	}
 }
