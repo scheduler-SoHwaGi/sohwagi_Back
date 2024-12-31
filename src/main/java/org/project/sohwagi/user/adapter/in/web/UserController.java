@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.user.adapter.in.web.request.UserFcmTokenRequest;
 import org.project.sohwagi.user.adapter.in.web.request.UserNickNameRequest;
 import org.project.sohwagi.user.application.port.in.command.SaveFcmTokenCommand;
-import org.project.sohwagi.user.application.port.in.command.CreateUserByNickNameCommand;
+import org.project.sohwagi.user.application.port.in.command.CreateUserByUserNameCommand;
 import org.project.sohwagi.user.application.port.in.usecase.CreateUserUseCase;
 import org.project.sohwagi.user.application.port.in.usecase.SaveFcmTokenUseCase;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +20,9 @@ public class UserController {
 
 	@PostMapping("/log-in/nicknames")
 	public ResponseEntity<String> login(@RequestBody UserNickNameRequest request) {
-		CreateUserByNickNameCommand command = CreateUserByNickNameCommand
+		CreateUserByUserNameCommand command = CreateUserByUserNameCommand
 			.builder()
-			.nickName(request.getNickName())
+			.userName(request.getNickName())
 			.build();
 
 		createUserUseCase.createUserByNickName(command);

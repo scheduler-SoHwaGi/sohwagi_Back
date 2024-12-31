@@ -8,6 +8,8 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByFcmToken(String fcmToken);
 
-	Optional<User> findByNickName(String nickName);
+	Optional<User> findByUserName(String userName);
+
+	Optional<User> findByOauthProviderAndOauthSubject(String provider, String subject);
 
 }

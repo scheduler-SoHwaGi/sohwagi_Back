@@ -15,14 +15,18 @@ public class UserPersistenceAdapter implements SaveUserPort, LoadUserPort {
 	private final UserJpaRepository userJpaRepository;
 
 	@Override
-	public Optional<User> loadUserByNickName(String nickName) {
-		return userJpaRepository.findByNickName(nickName);
+	public Optional<User> loadUserByUserName(String userName) {
+		return userJpaRepository.findByUserName(userName);
 	}
 
 	@Override
 	public User loadUserById(Long userId) {
 		return userJpaRepository.findById(userId)
 			.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+	}
+
+	public Optional<User> loadUserByOAuthProviderAndOAuthSubject(String provider, String subject) {
+		return userJpaRepository.findByOauthProviderAndOauthSubject(provider, subject);
 	}
 
 	@Override

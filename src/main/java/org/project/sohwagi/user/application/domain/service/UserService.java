@@ -4,7 +4,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.user.application.domain.model.User;
-import org.project.sohwagi.user.application.port.in.command.CreateUserByNickNameCommand;
+import org.project.sohwagi.user.application.port.in.command.CreateUserByUserNameCommand;
 import org.project.sohwagi.user.application.port.in.command.SaveFcmTokenCommand;
 import org.project.sohwagi.user.application.port.in.usecase.CreateUserUseCase;
 import org.project.sohwagi.user.application.port.in.usecase.SaveFcmTokenUseCase;
@@ -22,13 +22,13 @@ public class UserService implements CreateUserUseCase, SaveFcmTokenUseCase {
 
 	@Override
 	@Transactional
-	public void createUserByNickName(CreateUserByNickNameCommand command) {
-		Optional<User> savedUser = loadUserPort.loadUserByNickName(command.nickName());
+	public void createUserByNickName(CreateUserByUserNameCommand command) {
+		Optional<User> savedUser = loadUserPort.loadUserByUserName(command.userName());
 
 		if(savedUser.isEmpty()) {
 			User user = User
 				.builder()
-				.nickName(command.nickName())
+				.userName(command.userName())
 				.build();
 			saveUserPort.saveUser(user);
 		}

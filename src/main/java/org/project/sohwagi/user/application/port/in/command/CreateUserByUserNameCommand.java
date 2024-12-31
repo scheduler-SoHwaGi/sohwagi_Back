@@ -5,15 +5,15 @@ import static org.project.sohwagi.common.validation.Validation.validate;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
-public record CreateUserByNickNameCommand(
-	@NotNull(message = "nickName is required")
-	String nickName
+public record CreateUserByUserNameCommand(
+	@NotNull(message = "userName is required")
+	String userName
 ) {
 	@Builder
-	public CreateUserByNickNameCommand(
-		String nickName
+	public CreateUserByUserNameCommand(
+		String userName
 	) {
-		this.nickName = nickName;
+		this.userName = userName;
 		validate(this);
 	}
 

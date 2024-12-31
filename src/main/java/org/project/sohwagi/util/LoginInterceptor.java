@@ -34,7 +34,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
 		try {
 			if (nickName != null) {
-				User user = loadUserPort.loadUserByNickName(nickName)
+				User user = loadUserPort.loadUserByUserName(nickName)
 					.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 				request.setAttribute("userId", user.getId());
 				log.info("User Id: " + user.getId());

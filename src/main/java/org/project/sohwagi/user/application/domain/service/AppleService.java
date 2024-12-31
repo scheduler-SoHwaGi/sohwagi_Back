@@ -2,11 +2,14 @@ package org.project.sohwagi.user.application.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.UseCase;
-import org.project.sohwagi.user.adapter.in.web.response.LoginResult;
 import org.project.sohwagi.user.adapter.in.web.response.AppleOAuthInfo;
+import org.project.sohwagi.user.adapter.in.web.response.LoginResult;
+import org.project.sohwagi.user.application.domain.model.User;
 import org.project.sohwagi.user.application.port.in.command.AppleLoginCommand;
 import org.project.sohwagi.user.application.port.in.usecase.AppleLoginUseCase;
 import org.project.sohwagi.user.application.port.out.ApplePort;
+import org.project.sohwagi.user.application.port.out.LoadUserPort;
+import org.project.sohwagi.user.application.port.out.SaveUserPort;
 import org.springframework.stereotype.Service;
 
 @UseCase
@@ -15,11 +18,44 @@ import org.springframework.stereotype.Service;
 public class AppleService implements AppleLoginUseCase {
 
   private final ApplePort applePort;
+  private final LoadUserPort loadUserPort;
+  private final SaveUserPort saveUserPort;
 
   @Override
   public LoginResult appleLogin(AppleLoginCommand command) {
     AppleOAuthInfo appleOAuthInfo = applePort.getAppleOAuthInfo(command.authorizationCode());
 
+    User user = getOrCreateUser(command.userName(), appleOAuthInfo.email(), "apple",
+        appleOAuthInfo.subject());
+
     return null;
+  }
+
+  private User getOrCreateUser(String userName, String email, String oauthProvider,
+      String subject) {
+    return loadUserPort.loadUserByOAuthProviderAndOAuthSubject(oauthProvider, subject)
+        .orElseGet(() -> {
+          User newUser = User
+              .builder()
+              .userName(reverseUsername(userName))
+              .email(email)
+              .oauthSubject(subject)
+              .oauthProvider(oauthProvider)
+              .build();
+          return saveUserPort.saveUser(newUser);
+        });
+  }
+
+  private String reverseUsername(String username) {
+    if (username == null || username.isBlank()) {
+      throw new IllegalArgumentException("Input cannot be null or blank");
+    }
+
+    String[] parts = username.split(" ");
+    if (parts.length != 2) {
+      throw new IllegalArgumentException("Input must be in the format 'FirstName LastName'");
+    }
+
+    return parts[1] + parts[0];
   }
 }
