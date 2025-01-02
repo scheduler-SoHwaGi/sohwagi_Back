@@ -30,7 +30,7 @@ public class OAuthController {
 
     LoginResult loginResult = appleLoginUseCase.appleLogin(command);
 
-    return null;
+    return ResponseEntity.ok(loginResult);
   }
 
 }
