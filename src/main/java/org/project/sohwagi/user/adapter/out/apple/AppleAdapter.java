@@ -35,22 +35,22 @@ public class AppleAdapter implements ApplePort {
 
   private final RestTemplate restTemplate;
 
-  @Value("${apple.signin.client-id}")
+  @Value("${apple.signin.client.id}")
   private String clientId;
 
-  @Value("${apple.signin.team-id}")
+  @Value("${apple.signin.team.id}")
   private String teamId;
 
-  @Value("${apple.signin.key-id}")
+  @Value("${apple.signin.key.id}")
   private String keyId;
 
   @Value("${apple.signin.audience}")
   private String audience;
 
-  @Value("${apple.signin.private-key}")
+  @Value("${apple.signin.private.key}")
   private String privateKey;
 
-  @Value("${apple.signin.grant-type}")
+  @Value("${apple.signin.grant.type}")
   private String grantType;
 
   @Override

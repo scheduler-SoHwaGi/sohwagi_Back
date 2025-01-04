@@ -20,8 +20,7 @@ public class OAuthController {
   private final AppleLoginUseCase appleLoginUseCase;
 
   @PostMapping("/apple")
-  public ResponseEntity<?> appleLogin(@RequestBody AppleLoginRequest request,
-      HttpServletResponse response) {
+  public ResponseEntity<?> appleLogin(@RequestBody AppleLoginRequest request) {
 
     AppleLoginCommand command = AppleLoginCommand
         .builder()

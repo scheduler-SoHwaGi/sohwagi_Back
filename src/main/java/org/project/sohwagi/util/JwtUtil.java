@@ -12,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import org.project.sohwagi.common.TokenValidationResult;
@@ -22,7 +23,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class JwtUtil {
 
-  public static final String AUTHORIZATION_HEADER = "Authorization";
+  public static final String AUTHORIZATION_HEADER = "X-ACCESS_TOKEN";
   public static final String BEARER_PREFIX = "Bearer ";
   private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
@@ -35,7 +36,7 @@ public class JwtUtil {
   @Value("${jwt.access.secret.key}") // Base64 Encode 한 SecretKey
   private String accessSecretKey;
 
-  @Value("${jwt.refresh.secret.key")
+  @Value("${jwt.refresh.secret.key}")
   private String refreshSecretKey;
 
   private Key accessKey;
@@ -48,6 +49,7 @@ public class JwtUtil {
 
     byte[] refreshKeyBytes = Base64.getDecoder().decode(refreshSecretKey);
     refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes); // Refresh Token용 Key 초기화
+
   }
 
   public String createAccessToken(Long userId) {

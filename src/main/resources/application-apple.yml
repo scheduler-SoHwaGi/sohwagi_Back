@@ -1,8 +1,0 @@
-apple:
-  signin:
-    client-id: ${CLIENT_ID}
-    team-id: ${TEAM_ID}
-    key-id: ${KEY_ID}
-    audience: https://appleid.apple.com
-    private-key: ${PRIVATEKEY_CONTENT}
-    grant-type: authorization_code
