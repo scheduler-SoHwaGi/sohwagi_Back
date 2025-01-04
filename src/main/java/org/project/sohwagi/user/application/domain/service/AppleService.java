@@ -39,6 +39,7 @@ public class AppleService implements AppleLoginUseCase {
     Token token = Token
         .builder()
         .refreshToken(refreshToken)
+        .isExpired(false)
         .user(user)
         .build();
 

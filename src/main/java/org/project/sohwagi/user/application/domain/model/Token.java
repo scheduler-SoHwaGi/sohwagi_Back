@@ -29,8 +29,15 @@ public class Token {
   @Column
   private String refreshToken;
 
+  @Column
+  private boolean isExpired;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
+
+  public void expireToken() {
+    this.isExpired = true;
+  }
 
 }

@@ -1,4 +1,4 @@
-package org.project.sohwagi.user.adapter.out.apple;
+package org.project.sohwagi.user.adapter.out;
 
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
