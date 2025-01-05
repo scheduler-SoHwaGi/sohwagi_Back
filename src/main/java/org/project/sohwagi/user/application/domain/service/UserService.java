@@ -42,13 +42,12 @@ public class UserService implements CreateUserUseCase, SaveFcmTokenUseCase, Logo
 	@Override
 	@Transactional
 	public void saveFcmToken(SaveFcmTokenCommand command) {
-		User savedUser = loadUserPort.loadUserById(command.userId());
-
-		savedUser.updateFcmToken(command.fcmToken());
+		command.user().updateFcmToken(command.fcmToken());
 	}
 
 
 	@Override
+	@Transactional
 	public void logout(LogoutCommand command) {
 		Token token = logoutPort.loadToken(command.refreshToken());
 

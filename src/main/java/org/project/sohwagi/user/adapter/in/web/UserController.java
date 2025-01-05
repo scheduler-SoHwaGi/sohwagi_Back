@@ -1,8 +1,10 @@
 package org.project.sohwagi.user.adapter.in.web;
 
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.user.adapter.in.web.request.UserFcmTokenRequest;
 import org.project.sohwagi.user.adapter.in.web.request.UserNickNameRequest;
+import org.project.sohwagi.user.application.domain.model.User;
 import org.project.sohwagi.user.application.port.in.command.LogoutCommand;
 import org.project.sohwagi.user.application.port.in.command.SaveFcmTokenCommand;
 import org.project.sohwagi.user.application.port.in.command.CreateUserByUserNameCommand;
@@ -32,13 +34,13 @@ public class UserController {
 
 		return ResponseEntity.ok().build();
 	}
-	@PatchMapping("/fcmTokens")
+	@PostMapping("/fcmTokens")
 	public ResponseEntity<String> login(@RequestBody UserFcmTokenRequest request,
-		@RequestAttribute("userId") Long userId) {
+		@UserInfo User user) {
 		SaveFcmTokenCommand command = SaveFcmTokenCommand
 			.builder()
 			.fcmToken(request.getFcmToken())
-			.userId(userId)
+			.user(user)
 			.build();
 
 		saveFcmTokenUseCase.saveFcmToken(command);

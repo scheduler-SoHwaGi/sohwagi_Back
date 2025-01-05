@@ -2,19 +2,20 @@ package org.project.sohwagi.user.application.port.in.command;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import org.project.sohwagi.user.application.domain.model.User;
 
 public record SaveFcmTokenCommand(
-	@NotNull(message = "nickName is required")
+	@NotNull(message = "fcmToken is required")
 	String fcmToken,
-	@NotNull(message = "nickName is required")
-	Long userId
+	@NotNull(message = "user is required")
+	User user
 ) {
 	@Builder
 	public SaveFcmTokenCommand(
 		String fcmToken,
-		Long userId
+		User user
 	) {
 		this.fcmToken = fcmToken;
-		this.userId = userId;
+		this.user = user;
 	}
 }
