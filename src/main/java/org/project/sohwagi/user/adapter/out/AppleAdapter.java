@@ -21,6 +21,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.project.sohwagi.common.OutboundAdapter;
 import org.project.sohwagi.user.adapter.in.web.response.AppleOAuthInfo;
 import org.project.sohwagi.user.adapter.in.web.response.AppleSocialToken;
+import org.project.sohwagi.user.application.domain.model.User;
 import org.project.sohwagi.user.application.port.out.ApplePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -76,7 +78,34 @@ public class AppleAdapter implements ApplePort {
     DecodedJWT decodedJWT = JWT.decode(Objects.requireNonNull(response.getBody()).idToken());
 
     return new AppleOAuthInfo(decodedJWT.getClaim("sub").asString(),
-        decodedJWT.getClaim("email").asString());
+        decodedJWT.getClaim("email").asString(), response.getBody().refreshToken());
+  }
+
+  @Override
+  public void revoke(User user) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    HttpEntity<String> request = new HttpEntity<>(
+        "client_id=" + clientId +
+            "&client_secret=" + generateClientSecret() +
+            "&token=" + user.getRefreshToken(),
+        headers
+    );
+
+    try {
+      ResponseEntity<Void> response = restTemplate.exchange(
+          audience + "/auth/revoke",
+          HttpMethod.POST,
+          request,
+          Void.class
+      );
+      log.info("Revoke successful");
+    } catch (HttpClientErrorException e) {
+      log.error("Revoke failed: {}", e.getMessage());
+      throw new RuntimeException("Failed to revoke token", e);
+    }
+
   }
 
   private String generateClientSecret() {

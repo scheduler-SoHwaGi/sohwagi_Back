@@ -7,6 +7,7 @@ import org.project.sohwagi.user.adapter.in.web.response.LoginResult;
 import org.project.sohwagi.user.application.domain.model.Token;
 import org.project.sohwagi.user.application.domain.model.User;
 import org.project.sohwagi.user.application.port.in.command.AppleLoginCommand;
+import org.project.sohwagi.user.application.port.in.command.UserCommand;
 import org.project.sohwagi.user.application.port.in.usecase.AppleLoginUseCase;
 import org.project.sohwagi.user.application.port.out.ApplePort;
 import org.project.sohwagi.user.application.port.out.LoadUserPort;
@@ -14,6 +15,7 @@ import org.project.sohwagi.user.application.port.out.SaveRefreshTokenPort;
 import org.project.sohwagi.user.application.port.out.SaveUserPort;
 import org.project.sohwagi.util.JwtUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @Service
@@ -27,11 +29,12 @@ public class AppleService implements AppleLoginUseCase {
   private final JwtUtil jwtUtil;
 
   @Override
+  @Transactional
   public LoginResult appleLogin(AppleLoginCommand command) {
     AppleOAuthInfo appleOAuthInfo = applePort.getAppleOAuthInfo(command.authorizationCode());
 
     User user = getOrCreateUser(command.userName(), appleOAuthInfo.email(), "apple",
-        appleOAuthInfo.subject());
+        appleOAuthInfo.subject(), appleOAuthInfo.refreshToken());
 
     String accessToken = jwtUtil.createAccessToken(user.getId());
     String refreshToken = jwtUtil.createRefreshToken(user.getId());
@@ -52,8 +55,14 @@ public class AppleService implements AppleLoginUseCase {
         .build();
   }
 
-  private User getOrCreateUser(String userName, String email, String oauthProvider,
-      String subject) {
+  @Override
+  public void appleRevoke(UserCommand userCommand) {
+    applePort.revoke(userCommand.user());
+  }
+
+  @Transactional
+  public User getOrCreateUser(String userName, String email, String oauthProvider,
+      String subject, String appleRefreshToken) {
     return loadUserPort.loadUserByOAuthProviderAndOAuthSubject(oauthProvider, subject)
         .orElseGet(() -> {
           User newUser = User
@@ -62,6 +71,7 @@ public class AppleService implements AppleLoginUseCase {
               .email(email)
               .oauthSubject(subject)
               .oauthProvider(oauthProvider)
+              .refreshToken(appleRefreshToken)
               .build();
           return saveUserPort.saveUser(newUser);
         });

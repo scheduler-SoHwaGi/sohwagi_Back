@@ -11,7 +11,11 @@ public record AppleOAuthInfo(
     String subject,
 
     @JsonProperty("email")
-    String email
+    String email,
+
+    @JsonProperty("refreshToken")
+    String refreshToken
+
 ) {
 
 }

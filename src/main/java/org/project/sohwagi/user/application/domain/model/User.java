@@ -10,6 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
@@ -17,6 +22,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
+@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedFilter", condition = "deleted = :isDeleted")
 public class User {
 
   @Id
@@ -37,6 +45,13 @@ public class User {
 
   @Column
   private String email;
+
+  @Column
+  @Builder.Default
+  private boolean deleted = false;
+
+  @Column
+  private String refreshToken;
 
   public void updateFcmToken(String fcmToken) {
     this.fcmToken = fcmToken;
