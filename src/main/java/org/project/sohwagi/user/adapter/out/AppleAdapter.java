@@ -15,6 +15,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.project.sohwagi.common.OutboundAdapter;
@@ -29,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @OutboundAdapter
 @RequiredArgsConstructor
 public class AppleAdapter implements ApplePort {
@@ -55,6 +57,8 @@ public class AppleAdapter implements ApplePort {
 
   @Override
   public AppleOAuthInfo getAppleOAuthInfo(String authorizationCode) {
+    log.info(authorizationCode);
+
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.valueOf(APPLICATION_FORM_URLENCODED_VALUE));
     HttpEntity<String> request = new HttpEntity<>("client_id=" + clientId +
@@ -71,10 +75,8 @@ public class AppleAdapter implements ApplePort {
 
     DecodedJWT decodedJWT = JWT.decode(Objects.requireNonNull(response.getBody()).idToken());
 
-    AppleOAuthInfo appleOAuthInfo = new AppleOAuthInfo(decodedJWT.getClaim("sub").asString(),
+    return new AppleOAuthInfo(decodedJWT.getClaim("sub").asString(),
         decodedJWT.getClaim("email").asString());
-
-    return null;
   }
 
   private String generateClientSecret() {
@@ -96,7 +98,7 @@ public class AppleAdapter implements ApplePort {
     JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
 
     try {
-      byte[] privateKeyBytes = Base64.getDecoder().decode(privateKey);
+      byte[] privateKeyBytes = Base64.getDecoder().decode(privateKey.replaceAll("\\s", ""));
       PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKeyBytes);
       return converter.getPrivateKey(privateKeyInfo);
     } catch (Exception e) {

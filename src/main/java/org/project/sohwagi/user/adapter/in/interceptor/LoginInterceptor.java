@@ -28,6 +28,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
 		Object handler) {
+		log.info(request.getRequestURI());
 		String accessToken = request.getHeader("X-ACCESS-TOKEN");
 		String refreshToken = request.getHeader("X-REFRESH-TOKEN");
 
@@ -37,6 +38,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
 		TokenValidationResult accessTokenResult = jwtUtil.validateToken(accessToken, true);
 		if (accessTokenResult == TokenValidationResult.VALID) {
+			log.info("ok");
 			request.setAttribute("isAccessToken", true);
 			return true;
 		}

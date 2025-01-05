@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class JwtUtil {
 
-  public static final String AUTHORIZATION_HEADER = "X-ACCESS_TOKEN";
+  public static final String AUTHORIZATION_HEADER = "X-ACCESS-TOKEN";
   public static final String BEARER_PREFIX = "Bearer ";
   private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
@@ -101,6 +101,8 @@ public class JwtUtil {
   public TokenValidationResult validateToken(String token, boolean isAccessToken) {
     try {
       Key key = isAccessToken ? accessKey : refreshKey;
+
+      token = substringToken(token);
 
       Jwts.parserBuilder()
           .setSigningKey(key)

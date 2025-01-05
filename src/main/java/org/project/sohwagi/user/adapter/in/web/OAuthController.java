@@ -25,6 +25,7 @@ public class OAuthController {
     AppleLoginCommand command = AppleLoginCommand
         .builder()
         .authorizationCode(request.authorizationCode())
+        .userName(request.userName())
         .build();
 
     LoginResult loginResult = appleLoginUseCase.appleLogin(command);

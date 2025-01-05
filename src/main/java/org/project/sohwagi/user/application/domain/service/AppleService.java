@@ -58,7 +58,7 @@ public class AppleService implements AppleLoginUseCase {
         .orElseGet(() -> {
           User newUser = User
               .builder()
-              .userName(reverseUsername(userName))
+              .userName(userName)
               .email(email)
               .oauthSubject(subject)
               .oauthProvider(oauthProvider)
@@ -67,16 +67,4 @@ public class AppleService implements AppleLoginUseCase {
         });
   }
 
-  private String reverseUsername(String username) {
-    if (username == null || username.isBlank()) {
-      throw new IllegalArgumentException("Input cannot be null or blank");
-    }
-
-    String[] parts = username.split(" ");
-    if (parts.length != 2) {
-      throw new IllegalArgumentException("Input must be in the format 'FirstName LastName'");
-    }
-
-    return parts[1] + parts[0];
-  }
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 public class UserController {
 
 	private final CreateUserUseCase createUserUseCase;
@@ -48,7 +48,7 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
-	@PutMapping("/logout")
+	@PatchMapping("/logout")
 	public ResponseEntity<String> logout(@RequestHeader("X-REFRESH-TOKEN") String refreshToken){
 		LogoutCommand logoutCommand = LogoutCommand
 				.builder().refreshToken(refreshToken).build();
