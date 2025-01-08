@@ -1,5 +1,6 @@
 package org.project.sohwagi.schedule.adapter.out.persistence;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.PersistenceAdapter;
@@ -29,7 +30,7 @@ public class SchedulePersistenceAdapter implements SaveSchedulePort, LoadSchedul
 	@Override
 	public Schedule loadScheduleById(Long scheduleId) {
 		return scheduleJpaRepository.findById(scheduleId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 스케줄은 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException("해당 스케줄은 존재하지 않습니다."));
 	}
 
 	@Override
