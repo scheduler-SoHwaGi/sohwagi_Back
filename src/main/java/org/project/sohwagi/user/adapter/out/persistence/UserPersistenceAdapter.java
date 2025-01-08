@@ -1,5 +1,6 @@
 package org.project.sohwagi.user.adapter.out.persistence;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.PersistenceAdapter;
@@ -23,7 +24,7 @@ public class UserPersistenceAdapter implements SaveUserPort, LoadUserPort, Delet
 	@Override
 	public User loadUserById(Long userId) {
 		return userJpaRepository.findById(userId)
-			.orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
 	}
 
 	public Optional<User> loadUserByOAuthProviderAndOAuthSubject(String provider, String subject) {

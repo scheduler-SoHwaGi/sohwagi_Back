@@ -22,9 +22,7 @@ import org.hibernate.annotations.Where;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
-@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedFilter", condition = "deleted = :isDeleted")
+@SQLDelete(sql = "UPDATE user SET isDeleted = true WHERE id = ?")
 public class User {
 
   @Id
@@ -46,9 +44,9 @@ public class User {
   @Column
   private String email;
 
-  @Column
+  @Column(name = "isDeleted", nullable = false)
   @Builder.Default
-  private boolean deleted = false;
+  private boolean isDeleted = false;
 
   @Column
   private String refreshToken;

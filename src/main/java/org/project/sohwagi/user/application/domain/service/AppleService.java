@@ -60,8 +60,7 @@ public class AppleService implements AppleLoginUseCase {
     applePort.revoke(userCommand.user());
   }
 
-  @Transactional
-  public User getOrCreateUser(String userName, String email, String oauthProvider,
+   private User getOrCreateUser(String userName, String email, String oauthProvider,
       String subject, String appleRefreshToken) {
     return loadUserPort.loadUserByOAuthProviderAndOAuthSubject(oauthProvider, subject)
         .orElseGet(() -> {

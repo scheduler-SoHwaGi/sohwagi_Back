@@ -1,5 +1,7 @@
 package org.project.sohwagi.user.adapter.out.persistence;
 
+import jakarta.persistence.EntityNotFoundException;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.PersistenceAdapter;
 import org.project.sohwagi.user.adapter.out.persistence.repository.TokenJpaRepository;
@@ -28,7 +30,7 @@ public class TokenPersistenceAdapter implements CheckRefreshTokenPort, SaveRefre
   @Override
   public Token loadToken(String refreshToken) {
     return tokenJpaRepository.findByRefreshToken(refreshToken)
-        .orElseThrow(() -> new RuntimeException("no token"));
+        .orElseThrow(() -> new EntityNotFoundException("리프레쉬 토큰이 존재하지 않습니다."));
   }
 
   @Override

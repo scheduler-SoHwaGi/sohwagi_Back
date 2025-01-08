@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.project.sohwagi.common.OutboundAdapter;
+import org.project.sohwagi.common.exception.OAuthRequestException;
 import org.project.sohwagi.user.adapter.in.web.response.AppleOAuthInfo;
 import org.project.sohwagi.user.adapter.in.web.response.AppleSocialToken;
 import org.project.sohwagi.user.application.domain.model.User;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -59,7 +61,6 @@ public class AppleAdapter implements ApplePort {
 
   @Override
   public AppleOAuthInfo getAppleOAuthInfo(String authorizationCode) {
-    log.info(authorizationCode);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.valueOf(APPLICATION_FORM_URLENCODED_VALUE));
@@ -68,17 +69,25 @@ public class AppleAdapter implements ApplePort {
         "&grant_type=" + grantType +
         "&code=" + authorizationCode, headers);
 
-    ResponseEntity<AppleSocialToken> response = restTemplate.exchange(
-        audience + "/auth/token",
-        HttpMethod.POST,
-        request,
-        AppleSocialToken.class
-    );
+    ResponseEntity<AppleSocialToken> response;
+    try {
+      response = restTemplate.exchange(
+          audience + "/auth/token",
+          HttpMethod.POST,
+          request,
+          AppleSocialToken.class
+      );
 
-    DecodedJWT decodedJWT = JWT.decode(Objects.requireNonNull(response.getBody()).idToken());
+      DecodedJWT decodedJWT = JWT.decode(Objects.requireNonNull(response.getBody()).idToken());
 
-    return new AppleOAuthInfo(decodedJWT.getClaim("sub").asString(),
-        decodedJWT.getClaim("email").asString(), response.getBody().refreshToken());
+      return new AppleOAuthInfo(decodedJWT.getClaim("sub").asString(),
+          decodedJWT.getClaim("email").asString(), response.getBody().refreshToken());
+
+    } catch (HttpClientErrorException e) {
+      log.error("Revoke failed: {}", e.getMessage());
+      throw new OAuthRequestException((HttpStatus) e.getStatusCode(),
+          e.getMessage());
+    }
   }
 
   @Override
@@ -103,7 +112,7 @@ public class AppleAdapter implements ApplePort {
       log.info("Revoke successful");
     } catch (HttpClientErrorException e) {
       log.error("Revoke failed: {}", e.getMessage());
-      throw new RuntimeException("Failed to revoke token", e);
+      throw new OAuthRequestException((HttpStatus) e.getStatusCode(), e.getMessage());
     }
 
   }
