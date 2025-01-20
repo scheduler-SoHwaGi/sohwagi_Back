@@ -3,8 +3,8 @@ package org.project.sohwagi.user.application.domain.service;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.UseCase;
-import org.project.sohwagi.user.application.domain.model.Token;
-import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.TokenEntity;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 import org.project.sohwagi.user.application.port.in.command.CreateUserByUserNameCommand;
 import org.project.sohwagi.user.application.port.in.command.DeleteUserCommand;
 import org.project.sohwagi.user.application.port.in.command.LogoutCommand;
@@ -33,42 +33,42 @@ public class UserService implements CreateUserUseCase, SaveFcmTokenUseCase, Logo
 	@Override
 	@Transactional
 	public void createUserByNickName(CreateUserByUserNameCommand command) {
-		Optional<User> savedUser = loadUserPort.loadUserByUserName(command.userName());
+		Optional<UserEntity> savedUser = loadUserPort.loadUserByUserName(command.userName());
 
 		if(savedUser.isEmpty()) {
-			User user = User
+			UserEntity userEntity = UserEntity
 				.builder()
 				.userName(command.userName())
 				.build();
-			saveUserPort.saveUser(user);
+			saveUserPort.saveUser(userEntity);
 		}
 	}
 
 	@Override
 	@Transactional
 	public void saveFcmToken(SaveFcmTokenCommand command) {
-		command.user().updateFcmToken(command.fcmToken());
+		command.userEntity().updateFcmToken(command.fcmToken());
 	}
 
 
 	@Override
 	@Transactional
 	public void logout(LogoutCommand command) {
-		Token token = logoutPort.loadToken(command.refreshToken());
+		TokenEntity tokenEntity = logoutPort.loadToken(command.refreshToken());
 
-		token.expireToken();
+		tokenEntity.expireToken();
 
-		logoutPort.update(token);
+		logoutPort.update(tokenEntity);
 	}
 
 	@Override
 	@Transactional
 	public void deleteUser(DeleteUserCommand command) {
-		Token token = logoutPort.loadToken(command.refreshToken());
+		TokenEntity tokenEntity = logoutPort.loadToken(command.refreshToken());
 
-		token.expireToken();
+		tokenEntity.expireToken();
 
-		deleteUserPort.deleteUser(command.user());
-		logoutPort.update(token);
+		deleteUserPort.deleteUser(command.userEntity());
+		logoutPort.update(tokenEntity);
 	}
 }

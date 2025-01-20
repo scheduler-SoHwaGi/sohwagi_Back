@@ -1,9 +1,9 @@
 package org.project.sohwagi.user.application.port.out;
 
-import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 
 public interface DeleteUserPort {
 
-  void deleteUser(User user);
+  void deleteUser(UserEntity userEntity);
 
 }

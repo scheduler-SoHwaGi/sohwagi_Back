@@ -3,9 +3,8 @@ package org.project.sohwagi.user.adapter.in.web;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.user.adapter.in.web.request.AppleLoginRequest;
-import org.project.sohwagi.user.adapter.in.web.request.AppleRevokeRequest;
 import org.project.sohwagi.user.adapter.in.web.response.LoginResult;
-import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 import org.project.sohwagi.user.application.port.in.command.AppleLoginCommand;
 import org.project.sohwagi.user.application.port.in.command.DeleteUserCommand;
 import org.project.sohwagi.user.application.port.in.command.UserCommand;
@@ -43,15 +42,15 @@ public class OAuthController {
 
   @DeleteMapping("/apple/revoke")
   public ResponseEntity<String> deleteUser(@RequestHeader("X-REFRESH-TOKEN") String refreshToken,
-      @UserInfo User user) {
+      @UserInfo UserEntity userEntity) {
     DeleteUserCommand deleteUserCommand = DeleteUserCommand
         .builder()
-        .user(user)
+        .userEntity(userEntity)
         .refreshToken(refreshToken)
         .build();
 
     UserCommand userCommand = UserCommand
-        .builder().user(user).build();
+        .builder().userEntity(userEntity).build();
 
     appleLoginUseCase.appleRevoke(userCommand);
     deleteUserUseCase.deleteUser(deleteUserCommand);
