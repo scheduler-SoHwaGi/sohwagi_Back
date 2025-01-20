@@ -1,0 +1,69 @@
+package org.project.sohwagi.oauth;
+
+import org.project.sohwagi.oauth.dto.res.AppleOAuthInfoRes;
+import org.project.sohwagi.oauth.dto.res.PostAppleLoginRes;
+import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
+import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
+import org.project.sohwagi.token.Token;
+import org.project.sohwagi.token.TokenService;
+import org.project.sohwagi.user.User;
+import org.project.sohwagi.user.UserService;
+import org.project.sohwagi.user.dto.service.DeleteUserCommand;
+import org.project.sohwagi.user.dto.service.GetOrCreateUserCommand;
+import org.project.sohwagi.util.JwtUtil;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OAuthService {
+
+  private final AppleService appleService;
+  private final UserService userService;
+  private final TokenService tokenService;
+  private final JwtUtil jwtUtil;
+
+  public OAuthService(
+      AppleService appleService,
+      JwtUtil jwtUtil,
+      UserService userService,
+      TokenService tokenService
+  ) {
+    this.appleService = appleService;
+    this.jwtUtil = jwtUtil;
+    this.userService = userService;
+    this.tokenService = tokenService;
+  }
+
+  public PostAppleLoginRes appleLogin(AppleLoginCommand command) {
+    AppleOAuthInfoRes appleOAuthInfoRes = appleService.getAppleOAuthInfo(command);
+
+    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(command.userName(),
+        appleOAuthInfoRes.email(), "apple", appleOAuthInfoRes.subject(),
+        appleOAuthInfoRes.refreshToken());
+
+    User user = userService.getOrCreateUser(getOrCreateUserCommand);
+
+    String accessToken = jwtUtil.createAccessToken(user.getId());
+    String refreshToken = jwtUtil.createRefreshToken(user.getId());
+
+    RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
+    Token token = tokenService.saveToken(refreshTokenCommand);
+
+    return PostAppleLoginRes.builder()
+        .accessToken(accessToken)
+        .refreshToken(token.getRefreshToken())
+        .build();
+  }
+
+  public void deleteAppleUser(DeleteUserCommand deleteUserCommand) {
+    appleService.appleRevoke(deleteUserCommand);
+
+    RefreshTokenCommand refreshTokenCommand = RefreshTokenCommand.builder().refreshToken(
+        deleteUserCommand.refreshToken()).build();
+
+    tokenService.expireToken(refreshTokenCommand);
+
+    userService.deleteUser(
+        deleteUserCommand.user()
+    );
+  }
+}

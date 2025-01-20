@@ -3,7 +3,7 @@ package org.project.sohwagi.config;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.project.sohwagi.user.adapter.in.interceptor.LoginInterceptor;
+import org.project.sohwagi.util.LoginInterceptor;
 import org.project.sohwagi.util.UserInfoArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
