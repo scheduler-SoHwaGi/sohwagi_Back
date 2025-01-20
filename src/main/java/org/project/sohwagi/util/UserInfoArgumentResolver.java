@@ -4,9 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UserInfo;
-import org.project.sohwagi.user.application.domain.model.User;
-import org.project.sohwagi.user.application.domain.model.UserEntity;
-import org.project.sohwagi.user.application.port.out.LoadUserPort;
+import org.project.sohwagi.user.User;
+import org.project.sohwagi.user.UserService;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -20,7 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
   private final JwtUtil jwtUtil;
-  private final LoadUserPort loadUserPort;
+  private final UserService userService;
 
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
@@ -45,7 +44,7 @@ public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
     Long userId = jwtUtil.getUserInfoFromToken(token, isAccessToken);
     log.info(userId.toString());
 
-    return loadUserPort.loadUserById(userId);
+    return userService.loadUserById(userId);
   }
 
 }
