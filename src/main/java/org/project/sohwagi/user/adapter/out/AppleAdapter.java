@@ -22,7 +22,7 @@ import org.project.sohwagi.common.OutboundAdapter;
 import org.project.sohwagi.common.exception.OAuthRequestException;
 import org.project.sohwagi.user.adapter.in.web.response.AppleOAuthInfo;
 import org.project.sohwagi.user.adapter.in.web.response.AppleSocialToken;
-import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 import org.project.sohwagi.user.application.port.out.ApplePort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -91,14 +91,14 @@ public class AppleAdapter implements ApplePort {
   }
 
   @Override
-  public void revoke(User user) {
+  public void revoke(UserEntity userEntity) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
     HttpEntity<String> request = new HttpEntity<>(
         "client_id=" + clientId +
             "&client_secret=" + generateClientSecret() +
-            "&token=" + user.getRefreshToken(),
+            "&token=" + userEntity.getRefreshToken(),
         headers
     );
 

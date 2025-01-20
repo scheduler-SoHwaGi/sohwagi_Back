@@ -2,8 +2,10 @@ package org.project.sohwagi.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 import org.project.sohwagi.user.application.port.out.LoadUserPort;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
@@ -40,6 +43,7 @@ public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
     // JWT 파싱을 통해 사용자 정보 추출
     Long userId = jwtUtil.getUserInfoFromToken(token, isAccessToken);
+    log.info(userId.toString());
 
     return loadUserPort.loadUserById(userId);
   }

@@ -3,17 +3,13 @@ package org.project.sohwagi.user.adapter.in.interceptor;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.TokenValidationResult;
-import org.project.sohwagi.user.application.domain.model.User;
-import org.project.sohwagi.user.application.domain.service.UserService;
 import org.project.sohwagi.user.application.port.out.CheckRefreshTokenPort;
 import org.project.sohwagi.user.application.port.out.LoadUserPort;
 import org.project.sohwagi.util.JwtUtil;
 import org.springframework.stereotype.Component;
-import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j

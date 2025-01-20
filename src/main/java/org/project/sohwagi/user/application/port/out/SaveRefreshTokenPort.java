@@ -1,9 +1,9 @@
 package org.project.sohwagi.user.application.port.out;
 
-import org.project.sohwagi.user.application.domain.model.Token;
+import org.project.sohwagi.user.application.domain.model.TokenEntity;
 
 public interface SaveRefreshTokenPort {
 
-  Token saveRefreshToken(Token token);
+  TokenEntity saveRefreshToken(TokenEntity tokenEntity);
 
 }

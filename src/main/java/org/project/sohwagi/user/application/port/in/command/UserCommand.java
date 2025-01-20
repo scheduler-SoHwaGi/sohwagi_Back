@@ -4,17 +4,17 @@ import static org.project.sohwagi.common.validation.Validation.validate;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 
 public record UserCommand(
     @NotNull
-    User user
+    UserEntity userEntity
 ) {
   @Builder
   public UserCommand(
-      User user
+      UserEntity userEntity
   ){
-    this.user = user;
+    this.userEntity = userEntity;
     validate(this);
   }
 

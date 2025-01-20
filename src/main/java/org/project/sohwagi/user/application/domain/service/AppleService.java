@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.user.adapter.in.web.response.AppleOAuthInfo;
 import org.project.sohwagi.user.adapter.in.web.response.LoginResult;
-import org.project.sohwagi.user.application.domain.model.Token;
-import org.project.sohwagi.user.application.domain.model.User;
+import org.project.sohwagi.user.application.domain.model.TokenEntity;
+import org.project.sohwagi.user.application.domain.model.UserEntity;
 import org.project.sohwagi.user.application.port.in.command.AppleLoginCommand;
 import org.project.sohwagi.user.application.port.in.command.UserCommand;
 import org.project.sohwagi.user.application.port.in.usecase.AppleLoginUseCase;
@@ -33,20 +33,20 @@ public class AppleService implements AppleLoginUseCase {
   public LoginResult appleLogin(AppleLoginCommand command) {
     AppleOAuthInfo appleOAuthInfo = applePort.getAppleOAuthInfo(command.authorizationCode());
 
-    User user = getOrCreateUser(command.userName(), appleOAuthInfo.email(), "apple",
+    UserEntity userEntity = getOrCreateUser(command.userName(), appleOAuthInfo.email(), "apple",
         appleOAuthInfo.subject(), appleOAuthInfo.refreshToken());
 
-    String accessToken = jwtUtil.createAccessToken(user.getId());
-    String refreshToken = jwtUtil.createRefreshToken(user.getId());
+    String accessToken = jwtUtil.createAccessToken(userEntity.getId());
+    String refreshToken = jwtUtil.createRefreshToken(userEntity.getId());
 
-    Token token = Token
+    TokenEntity tokenEntity = TokenEntity
         .builder()
         .refreshToken(refreshToken)
         .isExpired(false)
-        .user(user)
+        .userEntity(userEntity)
         .build();
 
-    saveRefreshTokenPort.saveRefreshToken(token);
+    saveRefreshTokenPort.saveRefreshToken(tokenEntity);
 
     return LoginResult
         .builder()
@@ -57,14 +57,14 @@ public class AppleService implements AppleLoginUseCase {
 
   @Override
   public void appleRevoke(UserCommand userCommand) {
-    applePort.revoke(userCommand.user());
+    applePort.revoke(userCommand.userEntity());
   }
 
-   private User getOrCreateUser(String userName, String email, String oauthProvider,
+   private UserEntity getOrCreateUser(String userName, String email, String oauthProvider,
       String subject, String appleRefreshToken) {
     return loadUserPort.loadUserByOAuthProviderAndOAuthSubject(oauthProvider, subject)
         .orElseGet(() -> {
-          User newUser = User
+          UserEntity newUserEntity = UserEntity
               .builder()
               .userName(userName)
               .email(email)
@@ -72,7 +72,7 @@ public class AppleService implements AppleLoginUseCase {
               .oauthProvider(oauthProvider)
               .refreshToken(appleRefreshToken)
               .build();
-          return saveUserPort.saveUser(newUser);
+          return saveUserPort.saveUser(newUserEntity);
         });
   }
 
