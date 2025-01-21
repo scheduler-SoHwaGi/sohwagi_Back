@@ -1,5 +1,7 @@
 package org.project.sohwagi.oauth;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.oauth.dto.req.AppleLoginRequest;
 import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
@@ -51,6 +53,13 @@ public class OAuthController {
     oAuthService.deleteAppleUser(deleteUserCommand);
 
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/test")
+  public ResponseEntity<?> testLogin(@RequestBody String name) {
+    List<String> res = oAuthService.testLogin(name);
+
+    return ResponseEntity.ok(res);
   }
 
 }
