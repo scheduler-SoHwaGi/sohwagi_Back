@@ -15,11 +15,13 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.TokenValidationResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -80,13 +82,17 @@ public class JwtUtil {
   public Long getUserInfoFromToken(String token, boolean isAccessToken) {
     Key key = isAccessToken ? accessKey : refreshKey;
 
+    log.info("getUserInfo");
+
     String userId = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody()
         .getSubject();
 
+    log.info(userId);
     return Long.valueOf(userId);
   }
 
   public String substringToken(String tokenValue) {
+    log.info("tokenvalue : " + tokenValue);
     if (!StringUtils.hasText(tokenValue) || !tokenValue.startsWith(BEARER_PREFIX)) {
       throw new JwtException(INVALID_JWT_SIGNATURE);
     }
@@ -94,14 +100,16 @@ public class JwtUtil {
     return tokenValue.substring(7);
   }
 
-  public String getJwtFromRequest(HttpServletRequest request) {
-    return request.getHeader(AUTHORIZATION_HEADER);
+  public String getJwtFromRequest(HttpServletRequest request, boolean isAccessToken) {
+    String headerName = isAccessToken ? "X-ACCESS-TOKEN" : "X-REFRESH-TOKEN";
+    return request.getHeader(headerName);
   }
 
   public TokenValidationResult validateToken(String token, boolean isAccessToken) {
     try {
       Key key = isAccessToken ? accessKey : refreshKey;
 
+      log.info("validate 토큰");
       token = substringToken(token);
 
       Jwts.parserBuilder()

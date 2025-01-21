@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.project.sohwagi.common.TokenValidationResult;
 import org.project.sohwagi.token.TokenService;
 import org.project.sohwagi.user.UserService;
@@ -25,7 +26,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     log.info(request.getRequestURI());
     String accessToken = request.getHeader("X-ACCESS-TOKEN");
     String refreshToken = request.getHeader("X-REFRESH-TOKEN");
-    log.info(refreshToken);
+    log.info("Prehandle 시작 : "+refreshToken);
 
     if (accessToken == null || refreshToken == null) {
       throw new JwtException("Missing access or refresh token");
@@ -42,13 +43,20 @@ public class LoginInterceptor implements HandlerInterceptor {
     if (accessTokenResult == TokenValidationResult.EXPIRED) {
       TokenValidationResult refreshTokenResult = jwtUtil.validateToken(refreshToken, false);
       log.info(refreshTokenResult.toString());
+
       if (refreshTokenResult == TokenValidationResult.VALID) {
-        Long userId = jwtUtil.getUserInfoFromToken(refreshToken, false);
+        log.info("getUserInfo 전");
+        String substringToken = jwtUtil.substringToken(refreshToken);
+        Long userId = jwtUtil.getUserInfoFromToken(substringToken, false);
+        log.info("getUserInfo 후");
+
 
         if (tokenService.checkToken(refreshToken)) { // Port로 DB 검증
+          log.info("토큰 검증완료");
           String newAccessToken = jwtUtil.createAccessToken(userId);
-          response.setHeader("New-Access-Token", newAccessToken); // api 요청 결과와 함께 응답 헤더에 담김
+          response.setHeader("NEW-ACCESS-TOKEN", newAccessToken); // api 요청 결과와 함께 응답 헤더에 담김
           request.setAttribute("isAccessToken", false);
+
           return true;
         } else {
           throw new JwtException("Invalid refresh token in database");
