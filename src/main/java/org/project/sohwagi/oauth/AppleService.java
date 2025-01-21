@@ -99,7 +99,7 @@ public class AppleService {
     HttpEntity<String> request = new HttpEntity<>(
         "client_id=" + clientId +
             "&client_secret=" + generateClientSecret() +
-            "&token=" + deleteUserCommand.user().getAppleRefreshToken(),
+            "&token=" + deleteUserCommand.userDetails().appleRefreshToken(),
         headers
     );
 

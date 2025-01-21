@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UserInfo;
-import org.project.sohwagi.user.User;
+import org.project.sohwagi.user.UserDetails;
 import org.project.sohwagi.user.UserService;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     return parameter.hasParameterAnnotation(UserInfo.class)
-        && User.class.isAssignableFrom(parameter.getParameterType());
+        && UserDetails.class.isAssignableFrom(parameter.getParameterType());
   }
 
   @Override

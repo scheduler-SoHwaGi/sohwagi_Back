@@ -1,53 +1,36 @@
 package org.project.sohwagi.token;
 
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Entity
+@Table
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class Token {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column
   private String refreshToken;
 
+  @Column
   private boolean isExpired;
 
-  public TokenEntity toEntity(){
-    return new TokenEntity(
-        id,
-        refreshToken,
-        isExpired
-    );
-  }
-
-  public static Token from(TokenEntity tokenEntity){
-    return new Token(
-        tokenEntity.getId(),
-        tokenEntity.getRefreshToken(),
-        tokenEntity.isExpired()
-    );
-  }
-
-  public void expireToken(){
+  public void expireToken() {
     this.isExpired = true;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Token token)) {
-      return false;
-    }
-    return isExpired == token.isExpired && Objects.equals(id, token.id)
-        && Objects.equals(refreshToken, token.refreshToken);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, refreshToken, isExpired);
-  }
 }

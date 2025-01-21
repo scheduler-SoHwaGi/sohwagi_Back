@@ -1,79 +1,54 @@
 package org.project.sohwagi.user;
 
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
+@Entity
+@Table
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE id = ?")
 public class User {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column
   private String fcmToken;
 
+  @Column
   private String userName;
 
+  @Column
   private String oauthProvider;
 
+  @Column
   private String oauthSubject;
 
+  @Column
   private String email;
 
-  private boolean isDeleted;
+  @Column(name = "isDeleted", nullable = false)
+  @Builder.Default
+  private boolean isDeleted = false;
 
+  @Column
   private String appleRefreshToken;
-
-  public UserEntity toEntity() {
-    return new UserEntity(
-        id,
-        fcmToken,
-        userName,
-        oauthProvider,
-        oauthSubject,
-        email,
-        isDeleted,
-        appleRefreshToken
-    );
-  }
-
-  public static User from(UserEntity userEntity) {
-    return new User(
-        userEntity.getId(),
-        userEntity.getFcmToken(),
-        userEntity.getUserName(),
-        userEntity.getOauthProvider(),
-        userEntity.getOauthSubject(),
-        userEntity.getEmail(),
-        userEntity.isDeleted(),
-        userEntity.getAppleRefreshToken()
-    );
-  }
-
 
   public void updateFcmToken(String fcmToken) {
     this.fcmToken = fcmToken;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof User user)) {
-      return false;
-    }
-    return isDeleted == user.isDeleted && Objects.equals(id, user.id)
-        && Objects.equals(fcmToken, user.fcmToken) && Objects.equals(userName,
-        user.userName) && Objects.equals(oauthProvider, user.oauthProvider)
-        && Objects.equals(oauthSubject, user.oauthSubject) && Objects.equals(
-        email, user.email) && Objects.equals(appleRefreshToken, user.appleRefreshToken);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, fcmToken, userName, oauthProvider, oauthSubject, email, isDeleted,
-        appleRefreshToken);
-  }
 }

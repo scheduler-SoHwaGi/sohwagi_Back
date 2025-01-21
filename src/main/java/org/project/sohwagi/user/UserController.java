@@ -28,11 +28,11 @@ public class UserController {
 
   @PostMapping("/fcmTokens")
   public ResponseEntity<String> saveFcmToken(@RequestBody PostFcmTokenReq request,
-      @UserInfo User user) {
+      @UserInfo UserDetails userDetails) {
     SaveFcmTokenCommand command = SaveFcmTokenCommand
         .builder()
         .fcmToken(request.getFcmToken())
-        .user(user)
+        .userDetails(userDetails)
         .build();
 
     userService.saveFcmToken(command);
@@ -53,8 +53,8 @@ public class UserController {
 
   @GetMapping("/me")
   public ResponseEntity<GetUserInfoRes> getUserInfo(@UserInfo
-  User user) {
-    GetUserInfoRes getUserInfoRes = new GetUserInfoRes(user.getUserName(), user.getEmail());
+  UserDetails userDetails) {
+    GetUserInfoRes getUserInfoRes = new GetUserInfoRes(userDetails.userName(), userDetails.email());
 
     return ResponseEntity.ok(getUserInfoRes);
   }
