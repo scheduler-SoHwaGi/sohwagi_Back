@@ -1,5 +1,7 @@
 package org.project.sohwagi.oauth;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.project.sohwagi.oauth.dto.res.AppleOAuthInfoRes;
 import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
 import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
@@ -63,5 +65,25 @@ public class OAuthService {
     userService.deleteUser(
         deleteUserCommand.userDetails()
     );
+  }
+
+  public List<String> testLogin(String name) {
+    List<String> res = new ArrayList<>();
+
+    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(name,
+        null, "test", "1234", null);
+
+    Long userId = userService.getOrCreateUser(getOrCreateUserCommand);
+
+    String accessToken = jwtUtil.createAccessToken(userId);
+    String refreshToken = jwtUtil.createRefreshToken(userId);
+
+    RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
+    String token = tokenService.saveToken(refreshTokenCommand);
+
+    res.add(accessToken);
+    res.add(token);
+
+    return res;
   }
 }

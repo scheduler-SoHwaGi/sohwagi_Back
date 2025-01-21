@@ -37,9 +37,11 @@ public class LoginInterceptor implements HandlerInterceptor {
       request.setAttribute("isAccessToken", true);
       return true;
     }
+    log.info(accessTokenResult.toString());
 
     if (accessTokenResult == TokenValidationResult.EXPIRED) {
       TokenValidationResult refreshTokenResult = jwtUtil.validateToken(refreshToken, false);
+      log.info(refreshTokenResult.toString());
       if (refreshTokenResult == TokenValidationResult.VALID) {
         Long userId = jwtUtil.getUserInfoFromToken(refreshToken, false);
 
