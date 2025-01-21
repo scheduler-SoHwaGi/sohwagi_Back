@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
@@ -22,6 +23,7 @@ import org.project.sohwagi.schedule.application.port.out.SaveSchedulePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @UseCase
 @Service
 @RequiredArgsConstructor
@@ -63,6 +65,8 @@ public class ScheduleService
 	}
 
 	private Schedule parseDateString(ScheduleRequest request, Long userId) {
+		log.info(request.getDate());
+
 		Pattern pattern = Pattern.compile("(\\d{1,2})월 (\\d{1,2})일 (\\S+)");
 		Matcher matcher = pattern.matcher(request.getDate());
 
