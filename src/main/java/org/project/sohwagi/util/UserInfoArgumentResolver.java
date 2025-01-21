@@ -32,14 +32,17 @@ public class UserInfoArgumentResolver implements HandlerMethodArgumentResolver {
       NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
     HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
-    String tokenValue = jwtUtil.getJwtFromRequest(request);
+    Boolean isAccessToken = (Boolean) request.getAttribute("isAccessToken");
+
+    String tokenValue = jwtUtil.getJwtFromRequest(request, isAccessToken);
     String token = jwtUtil.substringToken(tokenValue);
 
-    Boolean isAccessToken = (Boolean) request.getAttribute("isAccessToken");
+    log.info(isAccessToken.toString());
     if (isAccessToken == null) {
       throw new IllegalArgumentException("Token type not found");
     }
 
+    log.info(token);
     // JWT 파싱을 통해 사용자 정보 추출
     Long userId = jwtUtil.getUserInfoFromToken(token, isAccessToken);
     log.info(userId.toString());

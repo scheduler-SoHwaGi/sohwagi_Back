@@ -1,18 +1,22 @@
 package org.project.sohwagi.token;
 
 import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
+import org.project.sohwagi.util.JwtUtil;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TokenService {
 
-  private TokenRepository tokenRepository;
+  private final JwtUtil jwtUtil;
+  private final TokenRepository tokenRepository;
 
-  public TokenService(TokenRepository tokenRepository){
+  public TokenService(TokenRepository tokenRepository, JwtUtil jwtUtil){
     this.tokenRepository = tokenRepository;
+    this.jwtUtil = jwtUtil;
   }
 
   public String saveToken(RefreshTokenCommand command){
+
     Token token = Token.builder()
         .refreshToken(command.refreshToken())
         .isExpired(false)
