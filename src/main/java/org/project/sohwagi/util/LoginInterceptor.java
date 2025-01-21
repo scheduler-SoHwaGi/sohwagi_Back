@@ -25,6 +25,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     log.info(request.getRequestURI());
     String accessToken = request.getHeader("X-ACCESS-TOKEN");
     String refreshToken = request.getHeader("X-REFRESH-TOKEN");
+    log.info(refreshToken);
 
     if (accessToken == null || refreshToken == null) {
       throw new JwtException("Missing access or refresh token");

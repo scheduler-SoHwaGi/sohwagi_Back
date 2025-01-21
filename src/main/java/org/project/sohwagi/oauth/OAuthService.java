@@ -1,12 +1,10 @@
 package org.project.sohwagi.oauth;
 
 import org.project.sohwagi.oauth.dto.res.AppleOAuthInfoRes;
-import org.project.sohwagi.oauth.dto.res.PostAppleLoginRes;
+import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
 import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
 import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
-import org.project.sohwagi.token.Token;
 import org.project.sohwagi.token.TokenService;
-import org.project.sohwagi.user.User;
 import org.project.sohwagi.user.UserService;
 import org.project.sohwagi.user.dto.service.DeleteUserCommand;
 import org.project.sohwagi.user.dto.service.GetOrCreateUserCommand;
@@ -33,24 +31,24 @@ public class OAuthService {
     this.tokenService = tokenService;
   }
 
-  public PostAppleLoginRes appleLogin(AppleLoginCommand command) {
+  public AppleLoginRes appleLogin(AppleLoginCommand command) {
     AppleOAuthInfoRes appleOAuthInfoRes = appleService.getAppleOAuthInfo(command);
 
     GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(command.userName(),
         appleOAuthInfoRes.email(), "apple", appleOAuthInfoRes.subject(),
         appleOAuthInfoRes.refreshToken());
 
-    User user = userService.getOrCreateUser(getOrCreateUserCommand);
+    Long userId = userService.getOrCreateUser(getOrCreateUserCommand);
 
-    String accessToken = jwtUtil.createAccessToken(user.getId());
-    String refreshToken = jwtUtil.createRefreshToken(user.getId());
+    String accessToken = jwtUtil.createAccessToken(userId);
+    String refreshToken = jwtUtil.createRefreshToken(userId);
 
     RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
-    Token token = tokenService.saveToken(refreshTokenCommand);
+    String token = tokenService.saveToken(refreshTokenCommand);
 
-    return PostAppleLoginRes.builder()
+    return AppleLoginRes.builder()
         .accessToken(accessToken)
-        .refreshToken(token.getRefreshToken())
+        .refreshToken(token)
         .build();
   }
 
@@ -63,7 +61,7 @@ public class OAuthService {
     tokenService.expireToken(refreshTokenCommand);
 
     userService.deleteUser(
-        deleteUserCommand.user()
+        deleteUserCommand.userDetails()
     );
   }
 }

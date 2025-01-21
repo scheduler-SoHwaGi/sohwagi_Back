@@ -12,8 +12,15 @@ public class TokenService {
     this.tokenRepository = tokenRepository;
   }
 
-  public Token saveToken(RefreshTokenCommand command){
-    return tokenRepository.save(command);
+  public String saveToken(RefreshTokenCommand command){
+    Token token = Token.builder()
+        .refreshToken(command.refreshToken())
+        .isExpired(false)
+        .build();
+
+    Token savedToken = tokenRepository.save(token);
+
+    return savedToken.getRefreshToken();
   }
 
   public boolean checkToken(String refreshToken) {

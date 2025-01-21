@@ -16,23 +16,26 @@ public class UserService {
 
   @Transactional
   public void saveFcmToken(SaveFcmTokenCommand command) {
-    command.user().updateFcmToken(command.fcmToken());
+    command.userDetails().toEntity().updateFcmToken(command.fcmToken());
 
-    userRepository.update(command.user());
+    userRepository.update(command.userDetails());
   }
 
   @Transactional
-  public void deleteUser(User user) {
+  public void deleteUser(UserDetails userDetails) {
 
-    userRepository.delete(user);
+    userRepository.delete(userDetails);
   }
 
-  public User getOrCreateUser(GetOrCreateUserCommand getOrCreateUserCommand) {
-
-    return userRepository.loadUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
+  public Long getOrCreateUser(GetOrCreateUserCommand getOrCreateUserCommand) {
+    User user = userRepository.loadUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
+    return user.getId();
   }
 
-  public User loadUserById(Long id){
-    return userRepository.findById(id);
+  public UserDetails loadUserById(Long id){
+
+    User user = userRepository.findById(id);
+
+    return UserDetails.from(user);
   }
 }

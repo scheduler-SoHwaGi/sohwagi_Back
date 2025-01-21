@@ -2,8 +2,8 @@ package org.project.sohwagi.oauth;
 
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.oauth.dto.req.AppleLoginRequest;
-import org.project.sohwagi.oauth.dto.res.PostAppleLoginRes;
-import org.project.sohwagi.user.User;
+import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
+import org.project.sohwagi.user.UserDetails;
 import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
 import org.project.sohwagi.user.dto.service.DeleteUserCommand;
 import org.springframework.http.ResponseEntity;
@@ -33,18 +33,18 @@ public class OAuthController {
         .userName(request.userName())
         .build();
 
-    PostAppleLoginRes postAppleLoginRes = oAuthService.appleLogin(command);
+    AppleLoginRes appleLoginRes = oAuthService.appleLogin(command);
 
-    return ResponseEntity.ok(postAppleLoginRes);
+    return ResponseEntity.ok(appleLoginRes);
   }
 
   @DeleteMapping("/apple/revoke")
   public ResponseEntity<String> deleteAppleUser(@RequestHeader("X-REFRESH-TOKEN") String refreshToken,
-      @UserInfo User user) {
+      @UserInfo UserDetails userDetails) {
 
     DeleteUserCommand deleteUserCommand = DeleteUserCommand
         .builder()
-        .user(user)
+        .userDetails(userDetails)
         .refreshToken(refreshToken)
         .build();
 

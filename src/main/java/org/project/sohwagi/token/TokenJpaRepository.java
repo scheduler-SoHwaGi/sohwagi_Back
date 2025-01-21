@@ -1,13 +1,12 @@
 package org.project.sohwagi.token;
 
 import java.util.Optional;
-import org.project.sohwagi.token.TokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TokenJpaRepository extends JpaRepository<TokenEntity, Long> {
+public interface TokenJpaRepository extends JpaRepository<Token, Long> {
 
   boolean existsByRefreshToken (String refreshToken);
 
-  Optional<TokenEntity> findByRefreshToken(String token);
+  Optional<Token> findByRefreshToken(String token);
 
 }

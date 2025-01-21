@@ -15,24 +15,17 @@ public class TokenRepository {
     return tokenJpaRepository.existsByRefreshToken(refreshToken);
   }
 
-  public Token save(RefreshTokenCommand command) {
-    TokenEntity tokenEntity = TokenEntity.builder()
-        .refreshToken(command.refreshToken())
-        .isExpired(false)
-        .build();
-
-    TokenEntity savedTokenEntity = tokenJpaRepository.save(tokenEntity);
-    return Token.from(savedTokenEntity);
+  public Token save(Token token) {
+    return tokenJpaRepository.save(token);
   }
 
   public Token findByRefreshToken(RefreshTokenCommand command) {
-    TokenEntity tokenEntity = tokenJpaRepository.findByRefreshToken(command.refreshToken())
+    return tokenJpaRepository.findByRefreshToken(command.refreshToken())
         .orElseThrow(() -> new EntityNotFoundException("리프레쉬 토큰이 존재하지 않습니다."));
 
-    return Token.from(tokenEntity);
   }
 
   public void update(Token token) {
-    tokenJpaRepository.saveAndFlush(token.toEntity());
+    tokenJpaRepository.saveAndFlush(token);
   }
 }

@@ -4,11 +4,11 @@ import static org.project.sohwagi.common.validation.Validation.validate;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import org.project.sohwagi.user.User;
+import org.project.sohwagi.user.UserDetails;
 
 public record DeleteUserCommand(
     @NotNull
-    User user,
+    UserDetails userDetails,
 
     @NotNull
     String refreshToken
@@ -16,10 +16,10 @@ public record DeleteUserCommand(
 
   @Builder
   public DeleteUserCommand(
-      User user,
+      UserDetails userDetails,
       String refreshToken
   ){
-    this.user = user;
+    this.userDetails = userDetails;
     this.refreshToken = refreshToken;
     validate(this);
   }

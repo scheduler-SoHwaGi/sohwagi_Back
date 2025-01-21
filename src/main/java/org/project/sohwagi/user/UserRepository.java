@@ -14,11 +14,12 @@ public class UserRepository {
   }
 
   public User loadUserByOAuthProviderAndOAuthSubject(GetOrCreateUserCommand getOrCreateUserCommand) {
-    UserEntity userEntity = userJpaRepository.findByOauthProviderAndOauthSubject(
+
+    return userJpaRepository.findByOauthProviderAndOauthSubject(
         getOrCreateUserCommand.oauthProvider(),
         getOrCreateUserCommand.subject()
     ).orElseGet(() -> userJpaRepository.save(
-        UserEntity.builder()
+        User.builder()
             .userName(getOrCreateUserCommand.userName())
             .email(getOrCreateUserCommand.email())
             .oauthSubject(getOrCreateUserCommand.subject())
@@ -26,25 +27,22 @@ public class UserRepository {
             .appleRefreshToken(getOrCreateUserCommand.appleRefreshToken())
             .build()
     ));
-
-    return User.from(userEntity);
   }
 
-  public void delete(User user) {
-    UserEntity userEntity = userJpaRepository.findById(user.getId())
-        .orElseThrow(() -> new EntityNotFoundException("해당 유저도는 존재하지 않습니다."));
+  public void delete(UserDetails userDetails) {
+    User user = userJpaRepository.findById(userDetails.id())
+        .orElseThrow(() -> new EntityNotFoundException("해당 유저는 존재하지 않습니다."));
 
-    userJpaRepository.delete(userEntity);
+    userJpaRepository.delete(user);
   }
 
-  public void update(User user) {
-    userJpaRepository.saveAndFlush(user.toEntity());
+  public void update(UserDetails userDetails) {
+    userJpaRepository.saveAndFlush(userDetails.toEntity());
   }
 
   public User findById(Long id) {
-    UserEntity userEntity = userJpaRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("해당 유저도는 존재하지 않습니다."));
 
-    return User.from(userEntity);
+    return userJpaRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("해당 유저도는 존재하지 않습니다."));
   }
 }
