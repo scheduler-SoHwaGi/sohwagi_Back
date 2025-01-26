@@ -54,7 +54,7 @@ public class UserController {
   @GetMapping("/me")
   public ResponseEntity<GetUserInfoRes> getUserInfo(@UserInfo
   UserDetails userDetails) {
-    GetUserInfoRes getUserInfoRes = new GetUserInfoRes(userDetails.userName(), userDetails.email());
+    GetUserInfoRes getUserInfoRes = userService.getUserInfo(userDetails);
 
     return ResponseEntity.ok(getUserInfoRes);
   }
