@@ -36,8 +36,8 @@ public class UserRepository {
     userJpaRepository.delete(user);
   }
 
-  public void update(UserDetails userDetails) {
-    userJpaRepository.saveAndFlush(userDetails.toEntity());
+  public void update(User user) {
+    userJpaRepository.saveAndFlush(user);
   }
 
   public User findById(Long id) {

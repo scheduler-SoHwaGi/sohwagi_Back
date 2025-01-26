@@ -17,9 +17,10 @@ public class UserService {
 
   @Transactional
   public void saveFcmToken(SaveFcmTokenCommand command) {
-    command.userDetails().toEntity().updateFcmToken(command.fcmToken());
+    User user = command.userDetails().toEntity();
+    user.updateFcmToken(command.fcmToken());
 
-    userRepository.update(command.userDetails());
+    userRepository.update(user);
   }
 
   @Transactional
