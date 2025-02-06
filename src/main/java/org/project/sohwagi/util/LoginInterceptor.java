@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.project.sohwagi.common.TokenValidationResult;
+import org.project.sohwagi.common.exception.RefreshTokenException;
 import org.project.sohwagi.token.TokenService;
 import org.project.sohwagi.user.UserService;
 import org.springframework.stereotype.Component;
@@ -51,7 +52,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("getUserInfo 후");
 
 
-        if (tokenService.checkToken(refreshToken)) { // Port로 DB 검증
+        if (!tokenService.checkToken(refreshToken)) { // Port로 DB 검증
           log.info("토큰 검증완료");
           String newAccessToken = jwtUtil.createAccessToken(userId);
           response.setHeader("NEW-ACCESS-TOKEN", newAccessToken); // api 요청 결과와 함께 응답 헤더에 담김
@@ -59,7 +60,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
           return true;
         } else {
-          throw new JwtException("Invalid refresh token in database");
+          throw new RefreshTokenException("RefreshToken 만료되었습니다. 로그인 필요합니다.");
         }
       }
     }

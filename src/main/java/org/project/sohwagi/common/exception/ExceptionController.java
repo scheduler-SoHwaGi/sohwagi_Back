@@ -26,7 +26,7 @@ public class ExceptionController {
       EntityNotFoundException.class
   })
   public ResponseEntity<ExceptionDto> handleBadRequestException(Exception e) {
-    return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    return createResponse(HttpStatus.NOT_FOUND, e.getMessage());
   }
 
   @ExceptionHandler(DuplicateKeyException.class)
@@ -45,6 +45,11 @@ public class ExceptionController {
   @ExceptionHandler(OAuthRequestException.class)
   public ResponseEntity<ExceptionDto> handleOAuthException(OAuthRequestException e) {
     return createResponse(e.getStatus(), e.getMessage());
+  }
+
+  @ExceptionHandler(RefreshTokenException.class)
+  public ResponseEntity<ExceptionDto> handleRefreshTokenException(Exception e) {
+    return createResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
   }
 
   private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {

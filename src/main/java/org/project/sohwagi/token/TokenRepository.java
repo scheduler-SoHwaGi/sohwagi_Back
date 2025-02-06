@@ -3,6 +3,7 @@ package org.project.sohwagi.token;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.common.PersistenceAdapter;
+import org.project.sohwagi.common.exception.RefreshTokenException;
 import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
 
 @PersistenceAdapter
@@ -12,7 +13,10 @@ public class TokenRepository {
   private final TokenJpaRepository tokenJpaRepository;
 
   public boolean checkRefreshToken(String refreshToken) {
-    return tokenJpaRepository.existsByRefreshToken(refreshToken);
+    Token token = tokenJpaRepository.findByRefreshToken(refreshToken)
+        .orElseThrow(() -> new RefreshTokenException("해당 RefreshToken이 DB 내 존재하지 않습니다."));
+
+    return token.isExpired();
   }
 
   public Token save(Token token) {
@@ -21,7 +25,7 @@ public class TokenRepository {
 
   public Token findByRefreshToken(RefreshTokenCommand command) {
     return tokenJpaRepository.findByRefreshToken(command.refreshToken())
-        .orElseThrow(() -> new EntityNotFoundException("리프레쉬 토큰이 존재하지 않습니다."));
+        .orElseThrow(() -> new RefreshTokenException("해당 RefreshToken이 DB 내 존재하지 않습니다."));
 
   }
 

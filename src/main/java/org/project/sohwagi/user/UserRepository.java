@@ -43,6 +43,6 @@ public class UserRepository {
   public User findById(Long id) {
 
     return userJpaRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("해당 유저도는 존재하지 않습니다."));
+        .orElseThrow(() -> new EntityNotFoundException("해당 유저는 존재하지 않습니다."));
   }
 }

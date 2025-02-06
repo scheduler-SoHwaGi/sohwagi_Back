@@ -8,11 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class OAuthRequestException extends RuntimeException{
   private final HttpStatus status;
-  private final String message;
   public OAuthRequestException(HttpStatus status, String rawMessage) {
     super(parseErrorDescription(rawMessage));
     this.status = status;
-    this.message = parseErrorDescription(rawMessage);
   }
   private static String parseErrorDescription(String rawMessage) {
     try {
