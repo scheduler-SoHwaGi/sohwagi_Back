@@ -39,9 +39,17 @@ public class LoginInterceptor implements HandlerInterceptor {
       request.setAttribute("isAccessToken", true);
       return true;
     }
-    log.info(accessTokenResult.toString());
 
-    if (accessTokenResult == TokenValidationResult.EXPIRED) {
+    try {
+      if (accessTokenResult == TokenValidationResult.EXPIRED){
+        log.info("access-token-state : "+accessTokenResult.toString());
+        log.error("엑세스 토큰 만료. 에러 던집니다.");
+
+        throw new JwtException("엑세스 토큰 만료");
+      }
+    } catch (JwtException e){
+      log.error("JwtException 감지");
+
       TokenValidationResult refreshTokenResult = jwtUtil.validateToken(refreshToken, false);
       log.info(refreshTokenResult.toString());
 
@@ -58,11 +66,12 @@ public class LoginInterceptor implements HandlerInterceptor {
           response.setHeader("NEW-ACCESS-TOKEN", newAccessToken); // api 요청 결과와 함께 응답 헤더에 담김
           request.setAttribute("isAccessToken", false);
 
-          return true;
         } else {
           throw new RefreshTokenException("RefreshToken 만료되었습니다. 로그인 필요합니다.");
         }
       }
+
+      throw e;
     }
 
     throw new JwtException("Invalid tokens");
