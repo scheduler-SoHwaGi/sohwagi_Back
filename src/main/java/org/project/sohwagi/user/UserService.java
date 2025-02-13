@@ -31,6 +31,13 @@ public class UserService {
 
   public Long getOrCreateUser(GetOrCreateUserCommand getOrCreateUserCommand) {
     User user = userRepository.loadUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
+
+    if(user.isDeleted()){
+      user.reLogin();
+
+      userRepository.update(user);
+    }
+
     return user.getId();
   }
 
@@ -59,5 +66,4 @@ public class UserService {
     }
     return name;
   }
-
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,9 +15,7 @@ import org.hibernate.annotations.SQLDelete;
 @Getter
 @Entity
 @Table
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE id = ?")
 public class User {
 
@@ -40,15 +38,31 @@ public class User {
   @Column
   private String email;
 
-  @Column(name = "isDeleted", nullable = false)
-  @Builder.Default
-  private boolean isDeleted = false;
+  @Column(name = "is_deleted", nullable = false)
+  private boolean isDeleted;
 
   @Column
   private String appleRefreshToken;
 
+  @Builder
+  private User(Long id, String fcmToken, String userName, String oauthProvider, String oauthSubject,
+      String email, boolean isDeleted, String appleRefreshToken) {
+    this.fcmToken = fcmToken;
+    this.id = id;
+    this.userName = userName;
+    this.oauthProvider = oauthProvider;
+    this.oauthSubject = oauthSubject;
+    this.email = email;
+    this.isDeleted = isDeleted;
+    this.appleRefreshToken = appleRefreshToken;
+  }
+
   public void updateFcmToken(String fcmToken) {
     this.fcmToken = fcmToken;
+  }
+
+  public void reLogin() {
+    this.isDeleted = false;
   }
 
 }

@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.token.TokenService;
 import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
-import org.project.sohwagi.user.dto.service.SaveFcmTokenCommand;
 import org.project.sohwagi.user.dto.req.PostFcmTokenReq;
 import org.project.sohwagi.user.dto.res.GetUserInfoRes;
+import org.project.sohwagi.user.dto.service.GetOrCreateUserCommand;
+import org.project.sohwagi.user.dto.service.SaveFcmTokenCommand;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -57,5 +58,16 @@ public class UserController {
     GetUserInfoRes getUserInfoRes = userService.getUserInfo(userDetails);
 
     return ResponseEntity.ok(getUserInfoRes);
+  }
+
+  @GetMapping("/test")
+  public ResponseEntity<String> test(@UserInfo UserDetails userDetails) {
+
+    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(
+        userDetails.userName(), userDetails.email(), userDetails.oauthProvider(), userDetails.oauthSubject(),
+        userDetails.appleRefreshToken());
+    userService.getOrCreateUser(getOrCreateUserCommand);
+
+    return  ResponseEntity.ok().build();
   }
 }
