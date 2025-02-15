@@ -15,17 +15,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-	private final LoginInterceptor loginInterceptor;
-	private final UserInfoArgumentResolver userInfoArgumentResolver;
+  private final LoginInterceptor loginInterceptor;
+  private final UserInfoArgumentResolver userInfoArgumentResolver;
 
-	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(userInfoArgumentResolver);
-	}
+  public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
+    resolvers.add(userInfoArgumentResolver);
+  }
 
-	public void addInterceptors(InterceptorRegistry registry) {
-		log.info("인터셉터 등록");
-		registry.addInterceptor(loginInterceptor)
-				.addPathPatterns("/**")
-				.excludePathPatterns("/oauth/apple/login", "/error", "/oauth/test", "/", "/manager/**");
-	}
+  public void addInterceptors(InterceptorRegistry registry) {
+    log.info("인터셉터 등록");
+    registry.addInterceptor(loginInterceptor)
+        .addPathPatterns("/**")
+        .excludePathPatterns("/oauth/apple/login", "/error", "/oauth/test", "/", "/manager/**",
+            "/users/logout");
+  }
 }
