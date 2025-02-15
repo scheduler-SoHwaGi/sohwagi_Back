@@ -11,6 +11,6 @@ public class ExceptionDto {
   private int statusCode;
   private HttpStatus state;
   private String message;
-
+  private String newAccessToken;
 }
 

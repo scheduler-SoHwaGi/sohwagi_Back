@@ -2,6 +2,7 @@ package org.project.sohwagi.common.exception;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 import org.springframework.dao.DuplicateKeyException;
@@ -52,12 +53,29 @@ public class ExceptionController {
     return createResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
   }
 
+  @ExceptionHandler(
+      AccessTokenException.class
+  )
+  public ResponseEntity<ExceptionDto> handleAccessTokenException(AccessTokenException e) {
+    return createAccessTokenResponse(HttpStatus.FORBIDDEN, e.getMessage(), e.getNewAccessToken());
+  }
+
   private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {
     return ResponseEntity.status(status.value())
         .body(ExceptionDto.builder()
             .statusCode(status.value())
             .state(status)
             .message(message)
+            .build());
+  }
+
+  private ResponseEntity<ExceptionDto> createAccessTokenResponse(HttpStatus status, String message, String newAccessToken){
+    return ResponseEntity.status(status.value())
+        .body(ExceptionDto.builder()
+            .statusCode(status.value())
+            .state(status)
+            .message(message)
+            .newAccessToken(newAccessToken)
             .build());
   }
 }
