@@ -30,6 +30,11 @@ public class LoginInterceptor implements HandlerInterceptor {
     String refreshToken = request.getHeader("X-REFRESH-TOKEN");
     log.info("Prehandle 시작 : "+refreshToken);
 
+    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+      log.info("OPTIONS 요청이므로 인증 검사 생략");
+      return true;
+    }
+
     if (accessToken == null || refreshToken == null) {
       throw new JwtException("Missing access or refresh token");
     }
