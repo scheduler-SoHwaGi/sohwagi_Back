@@ -10,37 +10,17 @@ public record UserDetails(
     boolean isDeleted,
     String appleRefreshToken) {
 
-  public UserDetails(
-      Long id,
-      String fcmToken,
-      String userName,
-      String oauthProvider,
-      String oauthSubject,
-      String email,
-      boolean isDeleted,
-      String appleRefreshToken
-  ) {
-    this.id = id;
-    this.fcmToken = fcmToken;
-    this.userName = userName;
-    this.oauthProvider = oauthProvider;
-    this.oauthSubject = oauthSubject;
-    this.email = email;
-    this.isDeleted = isDeleted;
-    this.appleRefreshToken = appleRefreshToken;
-  }
-
   public User toEntity() {
-    return new User(
-        id,
-        fcmToken,
-        userName,
-        oauthProvider,
-        oauthSubject,
-        email,
-        isDeleted,
-        appleRefreshToken
-    );
+    return User.builder()
+        .id(id)
+        .fcmToken(fcmToken)
+        .userName(userName)
+        .oauthProvider(oauthProvider)
+        .oauthSubject(oauthSubject)
+        .email(email)
+        .isDeleted(isDeleted)
+        .appleRefreshToken(appleRefreshToken)
+        .build();
   }
 
   public static UserDetails from(User user) {
