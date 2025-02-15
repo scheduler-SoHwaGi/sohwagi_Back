@@ -10,8 +10,8 @@ public class CorsConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
-        .allowedMethods("https://sohawgi-front.vercel.app")
-        .allowedOrigins("http://client")
+        .allowedMethods("*")
+        .allowedOrigins("https://sohawgi-front.vercel.app")
         .allowedHeaders("Authorization", "Content-Type", "X-ACCESS-TOKEN", "X-REFRESH-TOKEN")
         .allowCredentials(true);
   }
