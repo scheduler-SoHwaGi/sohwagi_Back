@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
+import org.project.sohwagi.schedule.adapter.out.persistence.respository.ScheduleJpaRepository;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 import org.project.sohwagi.schedule.application.port.in.command.CreateScheduleByTextCommand;
 import org.project.sohwagi.schedule.application.port.in.command.DeleteScheduleCommand;
@@ -34,6 +35,7 @@ public class ScheduleService
 	private final SaveSchedulePort saveSchedulePort;
 	private final LoadSchedulePort loadSchedulePort;
 	private final DeleteSchedulePort deleteSchedulePort;
+	private final ScheduleJpaRepository scheduleJpaRepository;
 
 	@Override
 	@Transactional
@@ -62,6 +64,15 @@ public class ScheduleService
 		Schedule schedule = loadSchedulePort.loadScheduleById(command.scheduleId());
 
 		deleteSchedulePort.deleteSchedule(schedule);
+	}
+
+	@Transactional
+	public void deleteScheduleByUserRevoke(Long userId) {
+		List<Schedule> schedules = scheduleJpaRepository.findAllByUserId(userId);
+
+		for(Schedule schedule : schedules){
+			deleteSchedulePort.deleteSchedule(schedule);
+		}
 	}
 
 	private Schedule parseDateString(ScheduleRequest request, Long userId) {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.project.sohwagi.oauth.dto.res.AppleOAuthInfoRes;
 import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
 import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
+import org.project.sohwagi.schedule.application.domain.service.ScheduleService;
 import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
 import org.project.sohwagi.token.TokenService;
 import org.project.sohwagi.user.UserService;
@@ -20,17 +21,20 @@ public class OAuthService {
   private final UserService userService;
   private final TokenService tokenService;
   private final JwtUtil jwtUtil;
+  private final ScheduleService scheduleService;
 
   public OAuthService(
       AppleService appleService,
       JwtUtil jwtUtil,
       UserService userService,
-      TokenService tokenService
+      TokenService tokenService,
+      ScheduleService scheduleService
   ) {
     this.appleService = appleService;
     this.jwtUtil = jwtUtil;
     this.userService = userService;
     this.tokenService = tokenService;
+    this.scheduleService = scheduleService;
   }
 
   public AppleLoginRes appleLogin(AppleLoginCommand command) {
@@ -61,6 +65,8 @@ public class OAuthService {
         deleteUserCommand.refreshToken()).build();
 
     tokenService.expireToken(refreshTokenCommand);
+
+    scheduleService.deleteScheduleByUserRevoke(deleteUserCommand.userDetails().id());
 
     userService.deleteUser(
         deleteUserCommand.userDetails()
