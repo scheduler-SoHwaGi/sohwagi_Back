@@ -26,6 +26,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		log.info("인터셉터 등록");
 		registry.addInterceptor(loginInterceptor)
 				.addPathPatterns("/**")
-				.excludePathPatterns("/oauth/apple/login", "/error", "/oauth/test", "/");
+				.excludePathPatterns("/oauth/apple/login", "/error", "/oauth/test", "/", "/manager/**");
 	}
 }
