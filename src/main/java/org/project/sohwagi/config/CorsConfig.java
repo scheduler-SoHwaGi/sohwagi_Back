@@ -12,7 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
     registry.addMapping("/**")
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         .allowedOrigins("https://sohawgi-front.vercel.app")
-        .allowedHeaders("Authorization", "Content-Type", "X-ACCESS-TOKEN", "X-REFRESH-TOKEN")
+        .allowedHeaders("Authorization", "content-type", "X-ACCESS-TOKEN", "X-REFRESH-TOKEN")
         .allowCredentials(true);
   }
 
