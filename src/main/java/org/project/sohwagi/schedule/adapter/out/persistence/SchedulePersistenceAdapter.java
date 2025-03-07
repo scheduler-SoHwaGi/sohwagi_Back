@@ -24,7 +24,7 @@ public class SchedulePersistenceAdapter implements SaveSchedulePort, LoadSchedul
 
 	@Override
 	public List<Schedule> loadSchedulesByUserId(Long userId) {
-		return scheduleJpaRepository.findAllByUserId(userId);
+		return scheduleJpaRepository.findAllByUserIdOrderByMonthAscDayAsc(userId);
 	}
 
 	@Override
