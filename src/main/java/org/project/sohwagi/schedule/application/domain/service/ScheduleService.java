@@ -68,7 +68,7 @@ public class ScheduleService
 
 	@Transactional
 	public void deleteScheduleByUserRevoke(Long userId) {
-		List<Schedule> schedules = scheduleJpaRepository.findAllByUserId(userId);
+		List<Schedule> schedules = scheduleJpaRepository.findAllByUserIdOrderByMonthAscDayAsc(userId);
 
 		for(Schedule schedule : schedules){
 			deleteSchedulePort.deleteSchedule(schedule);
