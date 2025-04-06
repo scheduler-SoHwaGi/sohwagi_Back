@@ -15,7 +15,7 @@ public record YearWeekKey(int year, int weekOfMonth, LocalDate startOfWeek) impl
         return new YearWeekKey(year, week, start);
     }
 
-    public String toKoreanLabel() {
+    public String toLabel() {
         return switch (weekOfMonth) {
             case 1 -> "첫째주";
             case 2 -> "둘째주";

@@ -3,8 +3,10 @@ package org.project.sohwagi.schedule.application.domain.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
 import org.project.sohwagi.schedule.adapter.out.persistence.respository.ScheduleJpaRepository;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
+import org.project.sohwagi.schedule.application.domain.model.YearWeekKey;
 import org.project.sohwagi.schedule.application.port.in.command.CreateScheduleByTextCommand;
 import org.project.sohwagi.schedule.application.port.in.command.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.query.GetScheduleListQuery;
@@ -56,10 +59,22 @@ public class ScheduleService
 
     @Override
     @Transactional(readOnly = true)
-    public List<ScheduleResponse.ScheduleDetailResponse> getScheduleList(GetScheduleListQuery query) {
+    public List<ScheduleResponse.WeekGroupedScheduleResponse> getScheduleList(GetScheduleListQuery query) {
         List<Schedule> schedules = loadSchedulePort.loadSchedulesByUserId(query.userId());
-        return schedules.stream().map(ScheduleResponse.ScheduleDetailResponse::new
-        ).toList();
+
+        Map<YearWeekKey, List<Schedule>> grouped = schedules.stream()
+                .collect(Collectors.groupingBy(s -> YearWeekKey.from(s.getYear(), s.getMonth(), s.getDay())));
+
+        return grouped.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> new ScheduleResponse.WeekGroupedScheduleResponse(
+                        entry.getKey().toLabel(),
+                        entry.getKey().toPeriodString(),
+                        entry.getValue().stream()
+                                .map(ScheduleResponse.ScheduleDetailResponse::new)
+                                .toList()
+                ))
+                .toList();
     }
 
 
