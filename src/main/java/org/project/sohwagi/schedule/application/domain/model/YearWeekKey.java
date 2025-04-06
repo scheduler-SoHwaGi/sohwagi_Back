@@ -34,6 +34,6 @@ public record YearWeekKey(int year, int weekOfMonth, LocalDate startOfWeek) impl
 
     @Override
     public int compareTo(YearWeekKey o) {
-        return 0;
+        return this.startOfWeek.compareTo(o.startOfWeek);
     }
 }
