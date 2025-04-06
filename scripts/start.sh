@@ -9,10 +9,6 @@ DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
 TIME_NOW=$(date +%c)
 
-# 기존에 빌드된 JAR 복사
-echo "$TIME_NOW > JAR 파일 복사 시작" >> $DEPLOY_LOG
-cp $PROJECT_ROOT/build/libs/sohwagi-app.jar $JAR_FILE
-
 # jar 파일 실행
 echo "$TIME_NOW > $JAR_FILE 실행 시작" >> $DEPLOY_LOG
 nohup java -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
