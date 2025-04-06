@@ -1,9 +1,11 @@
 package org.project.sohwagi.schedule.application.domain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UseCase;
@@ -29,72 +31,76 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService
-	implements CreateScheduleUseCase, GetScheduleUseCase, DeleteScheduleUseCase {
+        implements CreateScheduleUseCase, GetScheduleUseCase, DeleteScheduleUseCase {
 
-	private final CallGptPort callGptPort;
-	private final SaveSchedulePort saveSchedulePort;
-	private final LoadSchedulePort loadSchedulePort;
-	private final DeleteSchedulePort deleteSchedulePort;
-	private final ScheduleJpaRepository scheduleJpaRepository;
+    private final CallGptPort callGptPort;
+    private final SaveSchedulePort saveSchedulePort;
+    private final LoadSchedulePort loadSchedulePort;
+    private final DeleteSchedulePort deleteSchedulePort;
+    private final ScheduleJpaRepository scheduleJpaRepository;
 
-	@Override
-	@Transactional
-	public Long createScheduleByText(CreateScheduleByTextCommand command)
-		throws JsonProcessingException {
-		log.info("Create schedule by text 시작");
+    @Override
+    @Transactional
+    public Long createScheduleByText(CreateScheduleByTextCommand command)
+            throws JsonProcessingException {
+        log.info("Create schedule by text 시작");
 
-		ScheduleRequest scheduleRequest = callGptPort.callGptForTextSchedule(command.text());
+        ScheduleRequest scheduleRequest = callGptPort.callGptForTextSchedule(command.text());
 
-		Schedule schedule = parseDateString(scheduleRequest, command.userId());
+        Schedule schedule = parseDateString(scheduleRequest, command.userId());
 
-		Schedule savedSchedule = saveSchedulePort.saveSchedule(schedule);
+        Schedule savedSchedule = saveSchedulePort.saveSchedule(schedule);
 
-		return savedSchedule.getId();
-	}
+        return savedSchedule.getId();
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<ScheduleResponse.ScheduleDetailResponse> getScheduleList(GetScheduleListQuery query) {
-		List<Schedule> schedules = loadSchedulePort.loadSchedulesByUserId(query.userId());
-		return schedules.stream().map(ScheduleResponse.ScheduleDetailResponse::new
-		).toList();
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public List<ScheduleResponse.ScheduleDetailResponse> getScheduleList(GetScheduleListQuery query) {
+        List<Schedule> schedules = loadSchedulePort.loadSchedulesByUserId(query.userId());
+        return schedules.stream().map(ScheduleResponse.ScheduleDetailResponse::new
+        ).toList();
+    }
 
 
-	@Override
-	@Transactional
-	public void deleteSchedule(DeleteScheduleCommand command) {
-		Schedule schedule = loadSchedulePort.loadScheduleById(command.scheduleId());
+    @Override
+    @Transactional
+    public void deleteSchedule(DeleteScheduleCommand command) {
+        Schedule schedule = loadSchedulePort.loadScheduleById(command.scheduleId());
 
-		deleteSchedulePort.deleteSchedule(schedule);
-	}
+        deleteSchedulePort.deleteSchedule(schedule);
+    }
 
-	@Transactional
-	public void deleteScheduleByUserRevoke(Long userId) {
-		List<Schedule> schedules = scheduleJpaRepository.findAllByUserIdOrderByMonthAscDayAsc(userId);
+    @Transactional
+    public void deleteScheduleByUserRevoke(Long userId) {
+        List<Schedule> schedules = scheduleJpaRepository.findAllByUserIdOrderByMonthAscDayAsc(userId);
 
-		for(Schedule schedule : schedules){
-			deleteSchedulePort.deleteSchedule(schedule);
-		}
-	}
+        for (Schedule schedule : schedules) {
+            deleteSchedulePort.deleteSchedule(schedule);
+        }
+    }
 
-	private Schedule parseDateString(ScheduleRequest request, Long userId) {
-		log.info(request.getDate());
-		long startTime = System.currentTimeMillis();
+    private Schedule parseDateString(ScheduleRequest request, Long userId) {
+        log.info(request.getDate());
+        long startTime = System.currentTimeMillis();
 
-		Pattern pattern = Pattern.compile("(\\d{1,2})월 (\\d{1,2})일 (\\S+)");
-		Matcher matcher = pattern.matcher(request.getDate());
+        Pattern pattern = Pattern.compile("(\\d{4})년 (\\d{1,2})월 (\\d{1,2})일 (\\S+) (오전|오후) (\\d{1,2})시 (\\d{2})분");
+        Matcher matcher = pattern.matcher(request.getDate());
 
-		if (matcher.matches()) {
-			int month = Integer.parseInt(matcher.group(1));
-			int day = Integer.parseInt(matcher.group(2));
-			String dayOfWeek = matcher.group(3);
+        if (matcher.matches()) {
+            int year = Integer.parseInt(matcher.group(1));
+            int month = Integer.parseInt(matcher.group(2));
+            int day = Integer.parseInt(matcher.group(3));
+            String dayOfWeek = matcher.group(4);
+            String amPm = matcher.group(5);
+            int hour = Integer.parseInt(matcher.group(6));
+            int minute = Integer.parseInt(matcher.group(7));
 
-			log.info("parseDateString proceeds in {} ms", System.currentTimeMillis() - startTime);
-			return new Schedule(request.getTitle(), month, day, dayOfWeek, userId);
-		} else {
-			throw new IllegalArgumentException("Invalid date format: " + request.getDate());
-		}
-	}
+            log.info("parseDateString proceeds in {} ms", System.currentTimeMillis() - startTime);
+            return new Schedule(request.getTitle(), userId, year, month, day, dayOfWeek, amPm, hour, minute);
+        } else {
+            throw new IllegalArgumentException("Invalid date format: " + request.getDate());
+        }
+    }
 
 }
