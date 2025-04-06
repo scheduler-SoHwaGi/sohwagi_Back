@@ -23,12 +23,17 @@ public class ScheduleResponse {
 
 		private String dayOfWeek;
 
+		private String time;
+
 		public ScheduleDetailResponse(Schedule schedule) {
 			this.scheduleId = schedule.getId();
 			this.title = schedule.getTitle();
 			this.month = schedule.getMonth();
 			this.day = schedule.getDay();
 			this.dayOfWeek = schedule.getDayOfWeek();
+			this.time = schedule.getAmPm() + " "
+					+ schedule.getHour() + "시 "
+					+ String.format("%02d", schedule.getMinute()) + "분";
 		}
 	}
 }
