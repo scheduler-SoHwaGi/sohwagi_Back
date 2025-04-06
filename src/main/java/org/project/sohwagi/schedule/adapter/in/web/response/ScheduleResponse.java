@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 
+import java.util.List;
+
 public class ScheduleResponse {
 
 	@AllArgsConstructor
@@ -36,4 +38,14 @@ public class ScheduleResponse {
 					+ String.format("%02d", schedule.getMinute()) + "분";
 		}
 	}
+
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class WeekGroupedScheduleResponse {
+		private String week;
+		private String periodOfWeek;
+		private List<ScheduleDetailResponse> schedules;
+	}
+
 }
