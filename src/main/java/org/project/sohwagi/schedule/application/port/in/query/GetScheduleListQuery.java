@@ -7,14 +7,8 @@ import lombok.Builder;
 
 public record GetScheduleListQuery(
 	@NotNull(message = "userId is required")
-	Long userId
+	Long userId,
+	int year,
+	int month
 ) {
-	@Builder
-	public GetScheduleListQuery(
-		Long userId
-	) {
-		this.userId = userId;
-		validate(this);
-	}
-
 }
