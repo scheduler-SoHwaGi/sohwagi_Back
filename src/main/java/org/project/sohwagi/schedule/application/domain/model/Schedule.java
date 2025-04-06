@@ -1,9 +1,7 @@
 package org.project.sohwagi.schedule.application.domain.model;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,53 +19,34 @@ import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 @SQLDelete(sql = "UPDATE schedule SET deleted_at = NOW() WHERE id = ?")
 public class Schedule {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column
-    private String title;
+	@Column
+	private String title;
 
-    @Column
-    private int month;
+	@Column
+	private int month;
 
-    @Column
-    private int day;
+	@Column
+	private int day;
 
-    @Column
-    private String dayOfWeek;
+	@Column
+	private String dayOfWeek;
 
-    @Column
-    private Long userId;
+	@Column
+	private Long userId;
 
-    @Column
-    @ColumnDefault("NULL")
-    private LocalDateTime deletedAt;
+	@Column
+	@ColumnDefault("NULL")
+	private LocalDateTime deletedAt;
 
-    @Column
-    private String amPm;
-
-    @Column
-    private int hour;
-
-    @Column
-    private int minute;
-
-    @Column
-    private int year;
-
-    @Column
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    public Schedule(String title, Long userId, int year, int month, int day, String dayOfWeek, String amPm, int hour, int minute) {
-        this.title = title;
-        this.month = month;
-        this.day = day;
-        this.dayOfWeek = dayOfWeek;
-        this.userId = userId;
-        this.hour = hour;
-        this.minute = minute;
-        this.year = year;
-        this.amPm = amPm;
-    }
+	public Schedule (String title, int month, int day, String dayOfWeek, Long userId) {
+		this.title = title;
+		this.month = month;
+		this.day = day;
+		this.dayOfWeek = dayOfWeek;
+		this.userId = userId;
+	}
 }
