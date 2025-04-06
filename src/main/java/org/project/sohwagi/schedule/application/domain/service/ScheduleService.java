@@ -2,6 +2,10 @@ package org.project.sohwagi.schedule.application.domain.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -13,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
-import org.project.sohwagi.schedule.adapter.out.persistence.respository.ScheduleJpaRepository;
+import org.project.sohwagi.schedule.adapter.out.persistence.ScheduleRepositoryImpl;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 import org.project.sohwagi.schedule.application.domain.model.YearWeekKey;
 import org.project.sohwagi.schedule.application.port.in.command.CreateScheduleByTextCommand;
@@ -23,9 +27,6 @@ import org.project.sohwagi.schedule.application.port.in.usecase.CreateScheduleUs
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.in.usecase.GetScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.out.CallGptPort;
-import org.project.sohwagi.schedule.application.port.out.DeleteSchedulePort;
-import org.project.sohwagi.schedule.application.port.out.LoadSchedulePort;
-import org.project.sohwagi.schedule.application.port.out.SaveSchedulePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,10 +38,7 @@ public class ScheduleService
         implements CreateScheduleUseCase, GetScheduleUseCase, DeleteScheduleUseCase {
 
     private final CallGptPort callGptPort;
-    private final SaveSchedulePort saveSchedulePort;
-    private final LoadSchedulePort loadSchedulePort;
-    private final DeleteSchedulePort deleteSchedulePort;
-    private final ScheduleJpaRepository scheduleJpaRepository;
+    private final ScheduleRepositoryImpl scheduleRepositoryImpl;
 
     @Override
     @Transactional
@@ -52,7 +50,7 @@ public class ScheduleService
 
         Schedule schedule = parseDateString(scheduleRequest, command.userId());
 
-        Schedule savedSchedule = saveSchedulePort.saveSchedule(schedule);
+        Schedule savedSchedule = scheduleRepositoryImpl.saveSchedule(schedule);
 
         return savedSchedule.getId();
     }
@@ -60,7 +58,7 @@ public class ScheduleService
     @Override
     @Transactional(readOnly = true)
     public List<ScheduleResponse.WeekGroupedScheduleResponse> getScheduleList(GetScheduleListQuery query) {
-        List<Schedule> schedules = loadSchedulePort.loadSchedulesByUserId(query.userId());
+        List<Schedule> schedules = scheduleRepositoryImpl.findAllByUserIdAndYearAndMonth(query.userId(), query.year(), query.month());
 
         Map<YearWeekKey, List<Schedule>> grouped = schedules.stream()
                 .collect(Collectors.groupingBy(s -> YearWeekKey.from(s.getYear(), s.getMonth(), s.getDay())));
@@ -71,6 +69,10 @@ public class ScheduleService
                         entry.getKey().toLabel(),
                         entry.getKey().toPeriodString(),
                         entry.getValue().stream()
+                                .sorted(Comparator.comparing(s -> LocalDateTime.of(
+                                        LocalDate.of(query.month(), query.month(), s.getDay()),
+                                        LocalTime.of(convertTo24Hour(s.getAmPm(), s.getHour()), s.getMinute())
+                                )))
                                 .map(ScheduleResponse.ScheduleDetailResponse::new)
                                 .toList()
                 ))
@@ -81,17 +83,17 @@ public class ScheduleService
     @Override
     @Transactional
     public void deleteSchedule(DeleteScheduleCommand command) {
-        Schedule schedule = loadSchedulePort.loadScheduleById(command.scheduleId());
+        Schedule schedule = scheduleRepositoryImpl.loadScheduleById(command.scheduleId());
 
-        deleteSchedulePort.deleteSchedule(schedule);
+        scheduleRepositoryImpl.deleteSchedule(schedule);
     }
 
     @Transactional
     public void deleteScheduleByUserRevoke(Long userId) {
-        List<Schedule> schedules = scheduleJpaRepository.findAllByUserIdOrderByMonthAscDayAsc(userId);
+        List<Schedule> schedules = scheduleRepositoryImpl.loadSchedulesByUserId(userId);
 
         for (Schedule schedule : schedules) {
-            deleteSchedulePort.deleteSchedule(schedule);
+            scheduleRepositoryImpl.deleteSchedule(schedule);
         }
     }
 
@@ -115,6 +117,14 @@ public class ScheduleService
             return new Schedule(request.getTitle(), userId, year, month, day, dayOfWeek, amPm, hour, minute);
         } else {
             throw new IllegalArgumentException("Invalid date format: " + request.getDate());
+        }
+    }
+
+    private int convertTo24Hour(String amPm, int hour) {
+        if ("오전".equals(amPm)) {
+            return hour == 12 ? 0 : hour;
+        } else {
+            return hour == 12 ? 12 : hour + 12;
         }
     }
 
