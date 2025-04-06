@@ -4,7 +4,7 @@ version: 0.0
 os: linux
 
 files:
-  - source:  /
+  - source: build/libs/sohwagi-app.jar
     destination: /home/ubuntu/app
     overwrite: yes
 
