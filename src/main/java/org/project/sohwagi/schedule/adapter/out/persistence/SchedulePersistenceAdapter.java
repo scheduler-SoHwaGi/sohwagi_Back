@@ -3,6 +3,7 @@ package org.project.sohwagi.schedule.adapter.out.persistence;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.PersistenceAdapter;
 import org.project.sohwagi.schedule.adapter.out.persistence.respository.ScheduleJpaRepository;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
@@ -10,6 +11,7 @@ import org.project.sohwagi.schedule.application.port.out.DeleteSchedulePort;
 import org.project.sohwagi.schedule.application.port.out.LoadSchedulePort;
 import org.project.sohwagi.schedule.application.port.out.SaveSchedulePort;
 
+@Slf4j
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class SchedulePersistenceAdapter implements SaveSchedulePort, LoadSchedulePort,
@@ -19,7 +21,12 @@ public class SchedulePersistenceAdapter implements SaveSchedulePort, LoadSchedul
 
 	@Override
 	public Schedule saveSchedule(Schedule schedule) {
-		return scheduleJpaRepository.save(schedule);
+		long startTime = System.currentTimeMillis();
+
+		Schedule savedSchedule = scheduleJpaRepository.save(schedule);
+
+		log.info("db saved schedule in {} ms", System.currentTimeMillis() - startTime);
+		return savedSchedule;
 	}
 
 	@Override

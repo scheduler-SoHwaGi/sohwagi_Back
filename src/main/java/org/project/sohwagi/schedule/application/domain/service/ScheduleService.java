@@ -41,6 +41,8 @@ public class ScheduleService
 	@Transactional
 	public Long createScheduleByText(CreateScheduleByTextCommand command)
 		throws JsonProcessingException {
+		log.info("Create schedule by text 시작");
+
 		ScheduleRequest scheduleRequest = callGptPort.callGptForTextSchedule(command.text());
 
 		Schedule schedule = parseDateString(scheduleRequest, command.userId());
@@ -77,6 +79,7 @@ public class ScheduleService
 
 	private Schedule parseDateString(ScheduleRequest request, Long userId) {
 		log.info(request.getDate());
+		long startTime = System.currentTimeMillis();
 
 		Pattern pattern = Pattern.compile("(\\d{1,2})월 (\\d{1,2})일 (\\S+)");
 		Matcher matcher = pattern.matcher(request.getDate());
@@ -86,6 +89,7 @@ public class ScheduleService
 			int day = Integer.parseInt(matcher.group(2));
 			String dayOfWeek = matcher.group(3);
 
+			log.info("parseDateString proceeds in {} ms", System.currentTimeMillis() - startTime);
 			return new Schedule(request.getTitle(), month, day, dayOfWeek, userId);
 		} else {
 			throw new IllegalArgumentException("Invalid date format: " + request.getDate());

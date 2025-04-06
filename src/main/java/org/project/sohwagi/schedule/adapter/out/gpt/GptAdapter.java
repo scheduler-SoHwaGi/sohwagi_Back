@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.OutboundAdapter;
 import org.project.sohwagi.schedule.util.gpt.GPTRequest;
 import org.project.sohwagi.schedule.util.gpt.GPTResponse;
@@ -15,6 +16,7 @@ import org.project.sohwagi.schedule.application.port.out.CallGptPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @OutboundAdapter
 @RequiredArgsConstructor
 public class GptAdapter implements CallGptPort {
@@ -31,6 +33,8 @@ public class GptAdapter implements CallGptPort {
 
 	@Override
 	public ScheduleRequest callGptForTextSchedule(String prompt) throws JsonProcessingException {
+		long startTime = System.currentTimeMillis();
+
 		String SYSTEM_MESSAGE =
 			"너는 한 문장에서 일정 관련 정보를 추출하는 역할이야. "
 				+ "prompt 문장을 일정으로 등록하려는데 JSON 형태로 일정 제목, 일정 날짜로 분류해줘. 해당 값이 없으면 null 표시해줘."
@@ -59,6 +63,7 @@ public class GptAdapter implements CallGptPort {
 			.replace("```", "")
 			.trim();
 
+		log.info("OpenAI API response time : {} ms", System.currentTimeMillis() - startTime);
 		return objectMapper.readValue(jsonString,
 			ScheduleRequest.class);
 	}
