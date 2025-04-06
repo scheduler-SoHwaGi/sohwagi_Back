@@ -6,27 +6,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 public class ScheduleResponse {
 
-	private Long scheduleId;
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Getter
+	public static class ScheduleDetailResponse {
 
-	private String title;
+		private Long scheduleId;
 
-	private int month;
+		private String title;
 
-	private int day;
+		private int month;
 
-	private String dayOfWeek;
+		private int day;
 
-	public ScheduleResponse(Schedule schedule) {
-		this.scheduleId = schedule.getId();
-		this.title = schedule.getTitle();
-		this.month = schedule.getMonth();
-		this.day = schedule.getDay();
-		this.dayOfWeek = schedule.getDayOfWeek();
+		private String dayOfWeek;
+
+		public ScheduleDetailResponse(Schedule schedule) {
+			this.scheduleId = schedule.getId();
+			this.title = schedule.getTitle();
+			this.month = schedule.getMonth();
+			this.day = schedule.getDay();
+			this.dayOfWeek = schedule.getDayOfWeek();
+		}
 	}
-
 }

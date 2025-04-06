@@ -44,7 +44,7 @@ public class ScheduleController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<ScheduleResponse>> getSchedules(
+	public ResponseEntity<List<ScheduleResponse.ScheduleDetailResponse>> getSchedules(
 			@UserInfo UserDetails userDetails) {
 
 		GetScheduleListQuery query = GetScheduleListQuery
@@ -52,7 +52,7 @@ public class ScheduleController {
 			.userId(userDetails.id())
 			.build();
 
-		List<ScheduleResponse> scheduleResponses = getScheduleUseCase.getScheduleList(query);
+		List<ScheduleResponse.ScheduleDetailResponse> scheduleResponses = getScheduleUseCase.getScheduleList(query);
 
 		return ResponseEntity.ok().body(scheduleResponses);
 	}

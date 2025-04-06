@@ -54,9 +54,10 @@ public class ScheduleService
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ScheduleResponse> getScheduleList(GetScheduleListQuery query) {
+	public List<ScheduleResponse.ScheduleDetailResponse> getScheduleList(GetScheduleListQuery query) {
 		List<Schedule> schedules = loadSchedulePort.loadSchedulesByUserId(query.userId());
-		return schedules.stream().map(ScheduleResponse::new).toList();
+		return schedules.stream().map(ScheduleResponse.ScheduleDetailResponse::new
+		).toList();
 	}
 
 

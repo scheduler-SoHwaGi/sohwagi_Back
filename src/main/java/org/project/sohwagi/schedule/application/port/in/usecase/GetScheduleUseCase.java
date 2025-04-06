@@ -6,6 +6,6 @@ import org.project.sohwagi.schedule.application.port.in.query.GetScheduleListQue
 
 public interface GetScheduleUseCase {
 
-	List<ScheduleResponse> getScheduleList(GetScheduleListQuery query);
+	List<ScheduleResponse.ScheduleDetailResponse> getScheduleList(GetScheduleListQuery query);
 
 }
