@@ -70,7 +70,7 @@ public class ScheduleService
                         entry.getKey().toPeriodString(),
                         entry.getValue().stream()
                                 .sorted(Comparator.comparing(s -> LocalDateTime.of(
-                                        LocalDate.of(query.month(), query.month(), s.getDay()),
+                                        LocalDate.of(query.year(), query.month(), s.getDay()),
                                         LocalTime.of(convertTo24Hour(s.getAmPm(), s.getHour()), s.getMinute())
                                 )))
                                 .map(ScheduleResponse.ScheduleDetailResponse::new)
