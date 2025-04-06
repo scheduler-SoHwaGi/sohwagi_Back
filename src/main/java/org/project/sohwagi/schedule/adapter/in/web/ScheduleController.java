@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Parameter;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
 import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleTextRequest;
@@ -45,13 +44,15 @@ public class ScheduleController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<ScheduleResponse.WeekGroupedScheduleResponse>> getSchedules(
-			@RequestParam int year, @RequestParam int month,
+	public ResponseEntity<List<ScheduleResponse>> getSchedules(
 			@UserInfo UserDetails userDetails) {
 
-		GetScheduleListQuery query = new GetScheduleListQuery(userDetails.id(), year, month);
+		GetScheduleListQuery query = GetScheduleListQuery
+			.builder()
+			.userId(userDetails.id())
+			.build();
 
-		List<ScheduleResponse.WeekGroupedScheduleResponse> scheduleResponses = getScheduleUseCase.getScheduleList(query);
+		List<ScheduleResponse> scheduleResponses = getScheduleUseCase.getScheduleList(query);
 
 		return ResponseEntity.ok().body(scheduleResponses);
 	}
