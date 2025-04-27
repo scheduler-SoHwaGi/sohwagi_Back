@@ -19,5 +19,7 @@ public interface ScheduleRepository {
 
     List<Object[]> findCountByDateBetween(LocalDate start, LocalDate end);
 
-    long countByYearAndMonthAndDay(int year, int month, int day);
+    long countByYearAndMonthAndDay(Long userId, int year, int month, int day);
+
+    List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month, int day);
 }
