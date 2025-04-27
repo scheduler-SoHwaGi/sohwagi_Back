@@ -4,11 +4,13 @@ import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.nio.file.AccessDeniedException;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -58,6 +60,14 @@ public class ExceptionController {
   )
   public ResponseEntity<ExceptionDto> handleAccessTokenException(AccessTokenException e) {
     return createAccessTokenResponse(HttpStatus.FORBIDDEN, e.getMessage(), e.getNewAccessToken());
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<Map<String,String>> handleMissingParam(MissingServletRequestParameterException ex) {
+    String name = ex.getParameterName();
+    return ResponseEntity
+        .badRequest()
+        .body(Map.of("error", String.format("'%s' 파라미터는 필수입니다.", name)));
   }
 
   private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {
