@@ -5,18 +5,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
+import org.project.sohwagi.schedule.adapter.out.persistence.ScheduleRepository;
 import org.project.sohwagi.schedule.adapter.out.persistence.ScheduleRepositoryImpl;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 import org.project.sohwagi.schedule.application.domain.model.YearWeekKey;
@@ -38,7 +42,7 @@ public class ScheduleService
         implements CreateScheduleUseCase, GetScheduleUseCase, DeleteScheduleUseCase {
 
     private final CallGptPort callGptPort;
-    private final ScheduleRepositoryImpl scheduleRepositoryImpl;
+    private final ScheduleRepository scheduleRepository;
 
     @Override
     @Transactional
@@ -50,7 +54,7 @@ public class ScheduleService
 
         Schedule schedule = parseDateString(scheduleRequest, command.userId());
 
-        Schedule savedSchedule = scheduleRepositoryImpl.saveSchedule(schedule);
+        Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
 
         return savedSchedule.getId();
     }
@@ -58,7 +62,7 @@ public class ScheduleService
     @Override
     @Transactional(readOnly = true)
     public List<ScheduleResponse.WeekGroupedScheduleResponse> getScheduleList(GetScheduleListQuery query) {
-        List<Schedule> schedules = scheduleRepositoryImpl.findAllByUserIdAndYearAndMonth(query.userId(), query.year(), query.month());
+        List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYearAndMonth(query.userId(), query.year(), query.month());
 
         Map<YearWeekKey, List<Schedule>> grouped = schedules.stream()
                 .collect(Collectors.groupingBy(s -> YearWeekKey.from(s.getYear(), s.getMonth(), s.getDay())));
@@ -83,17 +87,17 @@ public class ScheduleService
     @Override
     @Transactional
     public void deleteSchedule(DeleteScheduleCommand command) {
-        Schedule schedule = scheduleRepositoryImpl.loadScheduleById(command.scheduleId());
+        Schedule schedule = scheduleRepository.loadScheduleById(command.scheduleId());
 
-        scheduleRepositoryImpl.deleteSchedule(schedule);
+        scheduleRepository.deleteSchedule(schedule);
     }
 
     @Transactional
     public void deleteScheduleByUserRevoke(Long userId) {
-        List<Schedule> schedules = scheduleRepositoryImpl.loadSchedulesByUserId(userId);
+        List<Schedule> schedules = scheduleRepository.loadSchedulesByUserId(userId);
 
         for (Schedule schedule : schedules) {
-            scheduleRepositoryImpl.deleteSchedule(schedule);
+            scheduleRepository.deleteSchedule(schedule);
         }
     }
 
@@ -128,4 +132,20 @@ public class ScheduleService
         }
     }
 
+    public Map<String, Integer> getScheduleCounts(LocalDate start, LocalDate end) {
+
+        long days = ChronoUnit.DAYS.between(start, end) + 1;
+        return Stream.iterate(start, date -> date.plusDays(1))
+            .limit(days)
+            .collect(Collectors.toMap(
+                LocalDate::toString,
+                date -> (int) scheduleRepository.countByYearAndMonthAndDay(
+                    date.getYear(),
+                    date.getMonthValue(),
+                    date.getDayOfMonth()
+                ),
+                (a, b) -> b,
+                LinkedHashMap::new
+            ));
+    }
 }

@@ -1,12 +1,14 @@
 package org.project.sohwagi.schedule.adapter.in.web.response;
 
 import jakarta.persistence.Column;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 
 import java.util.List;
+import org.project.sohwagi.schedule.application.info.ScheduleInfo;
 
 public class ScheduleResponse {
 
@@ -46,6 +48,14 @@ public class ScheduleResponse {
 		private String week;
 		private String periodOfWeek;
 		private List<ScheduleDetailResponse> schedules;
+	}
+
+	public record V1_GetScheduleCount(
+			Map<String, Integer> scheduleCounts
+	) {
+		public static V1_GetScheduleCount from(ScheduleInfo.ScheduleCounts info) {
+			return new V1_GetScheduleCount(info.scheduleCounts());
+		}
 	}
 
 }
