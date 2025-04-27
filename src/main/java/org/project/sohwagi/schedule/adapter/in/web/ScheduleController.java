@@ -6,16 +6,14 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Parameter;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
 import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleTextRequest;
+import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse.V1_GetList;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse.V1_GetScheduleCount;
 import org.project.sohwagi.schedule.application.ScheduleFacadeService;
 import org.project.sohwagi.schedule.application.cmd.ScheduleCommand;
-import org.project.sohwagi.schedule.application.domain.service.ScheduleService;
 import org.project.sohwagi.schedule.application.info.ScheduleInfo;
-import org.project.sohwagi.schedule.application.info.ScheduleInfo.ScheduleCounts;
 import org.project.sohwagi.schedule.application.port.in.command.CreateScheduleByTextCommand;
 import org.project.sohwagi.schedule.application.port.in.command.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.query.GetScheduleListQuery;
@@ -26,7 +24,6 @@ import org.project.sohwagi.user.UserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -83,20 +80,32 @@ public class ScheduleController {
   }
 
   @GetMapping("/counts")
-  public ResponseEntity<V1_GetScheduleCount> getScheduleCounts(
+  public ResponseEntity<V1_GetScheduleCount> V1_Get_Schedule_Counts(
       @RequestParam @DateTimeFormat(iso = ISO.DATE)
       @NotNull
       LocalDate startDate,
 
       @RequestParam @DateTimeFormat(iso = ISO.DATE)
       @NotNull
-      LocalDate endDate){
+      LocalDate endDate) {
 
     ScheduleInfo.ScheduleCounts info = scheduleFacadeService.getScheduleCounts(
         ScheduleCommand.CountScheduleUseCase.from(startDate, endDate)
     );
 
     return ResponseEntity.ok().body(ScheduleResponse.V1_GetScheduleCount.from(info));
+  }
+
+  @GetMapping()
+  public ResponseEntity<V1_GetList> V1_Get_Schedules_On_Date(
+      @RequestParam @NotNull int year, @RequestParam @NotNull int month,
+      @RequestParam @NotNull int day
+  ) {
+    ScheduleInfo.ScheduleDetails info = scheduleFacadeService.getSchedulesOnDate(
+        ScheduleCommand.GetSchedulesOnDateUseCase.from(year, month, day)
+    );
+
+    return ResponseEntity.ok().body(ScheduleResponse.V1_GetList.from(info));
   }
 
 }
