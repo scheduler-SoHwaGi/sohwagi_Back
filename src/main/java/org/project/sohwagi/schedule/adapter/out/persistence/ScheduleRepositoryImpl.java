@@ -59,6 +59,6 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	@Override
 	public List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month,
 			int day) {
-		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDay(userId, year, month, day);
+		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(userId, year, month, day);
 	}
 }
