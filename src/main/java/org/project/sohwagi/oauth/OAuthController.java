@@ -1,10 +1,9 @@
 package org.project.sohwagi.oauth;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.oauth.dto.req.AppleLoginRequest;
-import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
+import org.project.sohwagi.oauth.dto.res.LoginRes;
 import org.project.sohwagi.user.UserDetails;
 import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
 import org.project.sohwagi.user.dto.service.DeleteUserCommand;
@@ -35,9 +34,9 @@ public class OAuthController {
         .userName(request.userName())
         .build();
 
-    AppleLoginRes appleLoginRes = oAuthService.appleLogin(command);
+    LoginRes loginRes = oAuthService.appleLogin(command);
 
-    return ResponseEntity.ok(appleLoginRes);
+    return ResponseEntity.ok(loginRes);
   }
 
   @DeleteMapping("/apple/revoke")
@@ -60,6 +59,13 @@ public class OAuthController {
     List<String> res = oAuthService.testLogin(name);
 
     return ResponseEntity.ok(res);
+  }
+
+  @PostMapping("/qa")
+  public ResponseEntity<LoginRes> qaLogin() {
+    LoginRes loginRes = oAuthService.qaLogin();
+
+    return ResponseEntity.ok().body(loginRes);
   }
 
 }
