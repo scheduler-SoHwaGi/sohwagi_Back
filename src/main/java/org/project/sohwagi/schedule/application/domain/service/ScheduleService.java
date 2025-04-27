@@ -22,6 +22,7 @@ import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 import org.project.sohwagi.schedule.adapter.in.web.response.ScheduleResponse;
 import org.project.sohwagi.schedule.adapter.out.persistence.ScheduleRepository;
 import org.project.sohwagi.schedule.adapter.out.persistence.ScheduleRepositoryImpl;
+import org.project.sohwagi.schedule.application.cmd.ScheduleCommand.CountScheduleUseCase;
 import org.project.sohwagi.schedule.application.cmd.ScheduleCommand.GetSchedulesOnDateUseCase;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 import org.project.sohwagi.schedule.application.domain.model.YearWeekKey;
@@ -140,14 +141,15 @@ public class ScheduleService
     }
   }
 
-  public Map<String, Integer> getScheduleCounts(LocalDate start, LocalDate end) {
+  public Map<String, Integer> getScheduleCounts(CountScheduleUseCase cmd) {
 
-    long days = ChronoUnit.DAYS.between(start, end) + 1;
-    return Stream.iterate(start, date -> date.plusDays(1))
+    long days = ChronoUnit.DAYS.between(cmd.start(), cmd.end()) + 1;
+    return Stream.iterate(cmd.start(), date -> date.plusDays(1))
         .limit(days)
         .collect(Collectors.toMap(
             LocalDate::toString,
             date -> (int) scheduleRepository.countByYearAndMonthAndDay(
+                cmd.userId(),
                 date.getYear(),
                 date.getMonthValue(),
                 date.getDayOfMonth()

@@ -52,8 +52,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	}
 
 	@Override
-	public long countByYearAndMonthAndDay(int year, int month, int day) {
-		return scheduleJpaRepository.countByYearAndMonthAndDay(year, month, day);
+	public long countByYearAndMonthAndDay(Long userId, int year, int month, int day) {
+		return scheduleJpaRepository.countByUserIdAndYearAndMonthAndDay(userId, year, month, day);
 	}
 
 	@Override

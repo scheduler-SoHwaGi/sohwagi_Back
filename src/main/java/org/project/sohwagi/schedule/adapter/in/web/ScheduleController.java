@@ -52,18 +52,18 @@ public class ScheduleController {
     return ResponseEntity.created(URI.create("/api/v1/schedules/" + scheduleId)).build();
   }
 
-  @GetMapping
-  public ResponseEntity<List<ScheduleResponse.WeekGroupedScheduleResponse>> getSchedules(
-      @RequestParam int year, @RequestParam int month,
-      @UserInfo UserDetails userDetails) {
-
-    GetScheduleListQuery query = new GetScheduleListQuery(userDetails.id(), year, month);
-
-    List<ScheduleResponse.WeekGroupedScheduleResponse> scheduleResponses = getScheduleUseCase.getScheduleList(
-        query);
-
-    return ResponseEntity.ok().body(scheduleResponses);
-  }
+//  @GetMapping
+//  public ResponseEntity<List<ScheduleResponse.WeekGroupedScheduleResponse>> getSchedules(
+//      @RequestParam int year, @RequestParam int month,
+//      @UserInfo UserDetails userDetails) {
+//
+//    GetScheduleListQuery query = new GetScheduleListQuery(userDetails.id(), year, month);
+//
+//    List<ScheduleResponse.WeekGroupedScheduleResponse> scheduleResponses = getScheduleUseCase.getScheduleList(
+//        query);
+//
+//    return ResponseEntity.ok().body(scheduleResponses);
+//  }
 
   @DeleteMapping("/{scheduleId}")
   public ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId,
@@ -81,16 +81,14 @@ public class ScheduleController {
 
   @GetMapping("/counts")
   public ResponseEntity<V1_GetScheduleCount> V1_Get_Schedule_Counts(
-      @RequestParam @DateTimeFormat(iso = ISO.DATE)
-      @NotNull
+      @RequestParam @DateTimeFormat(iso = ISO.DATE) @NotNull
       LocalDate startDate,
-
-      @RequestParam @DateTimeFormat(iso = ISO.DATE)
-      @NotNull
-      LocalDate endDate) {
+      @RequestParam @DateTimeFormat(iso = ISO.DATE) @NotNull
+      LocalDate endDate,
+      @UserInfo UserDetails userDetails) {
 
     ScheduleInfo.ScheduleCounts info = scheduleFacadeService.getScheduleCounts(
-        ScheduleCommand.CountScheduleUseCase.from(startDate, endDate)
+        ScheduleCommand.CountScheduleUseCase.from(userDetails.id(), startDate, endDate)
     );
 
     return ResponseEntity.ok().body(ScheduleResponse.V1_GetScheduleCount.from(info));

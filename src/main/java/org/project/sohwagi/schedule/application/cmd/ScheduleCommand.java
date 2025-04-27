@@ -7,9 +7,10 @@ public class ScheduleCommand {
 
   public record CountScheduleUseCase(
       LocalDate start,
-      LocalDate end) {
-    public static CountScheduleUseCase from(LocalDate start, LocalDate end) {
-      return new CountScheduleUseCase(start, end);
+      LocalDate end,
+      Long userId) {
+    public static CountScheduleUseCase from(Long userId, LocalDate start, LocalDate end) {
+      return new CountScheduleUseCase(start, end, userId);
     }
   }
 

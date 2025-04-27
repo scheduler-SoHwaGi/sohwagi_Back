@@ -20,7 +20,7 @@ public class ScheduleFacadeService {
   private final ScheduleService scheduleService;
 
   public ScheduleInfo.ScheduleCounts getScheduleCounts(ScheduleCommand.CountScheduleUseCase cmd) {
-    Map<String, Integer> result = scheduleService.getScheduleCounts(cmd.start(), cmd.end());
+    Map<String, Integer> result = scheduleService.getScheduleCounts(cmd);
 
     return new ScheduleInfo.ScheduleCounts(result);
   }

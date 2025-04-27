@@ -12,7 +12,7 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, Long> {
 
   List<Schedule> findALlByUserIdAndYearAndMonth(Long userId, Integer year, Integer month);
 
-  long countByYearAndMonthAndDay(int year, int month, int day);
+  long countByUserIdAndYearAndMonthAndDay(Long userId, int year, int month, int day);
 
   List<Schedule> findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(Long userId,
       int year, int month, int day);
