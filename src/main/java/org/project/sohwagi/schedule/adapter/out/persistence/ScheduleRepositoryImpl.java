@@ -55,4 +55,10 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	public long countByYearAndMonthAndDay(int year, int month, int day) {
 		return scheduleJpaRepository.countByYearAndMonthAndDay(year, month, day);
 	}
+
+	@Override
+	public List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month,
+			int day) {
+		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDay(userId, year, month, day);
+	}
 }
