@@ -1,6 +1,7 @@
 package org.project.sohwagi.schedule.adapter.in.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.project.sohwagi.user.UserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -82,8 +84,13 @@ public class ScheduleController {
 
   @GetMapping("/counts")
   public ResponseEntity<V1_GetScheduleCount> getScheduleCounts(
-      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
-      @RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate endDate){
+      @RequestParam @DateTimeFormat(iso = ISO.DATE)
+      @NotNull
+      LocalDate startDate,
+
+      @RequestParam @DateTimeFormat(iso = ISO.DATE)
+      @NotNull
+      LocalDate endDate){
 
     ScheduleInfo.ScheduleCounts info = scheduleFacadeService.getScheduleCounts(
         ScheduleCommand.CountScheduleUseCase.from(startDate, endDate)
