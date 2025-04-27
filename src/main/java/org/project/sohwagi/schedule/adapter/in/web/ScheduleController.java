@@ -99,10 +99,10 @@ public class ScheduleController {
   @GetMapping()
   public ResponseEntity<V1_GetList> V1_Get_Schedules_On_Date(
       @RequestParam @NotNull int year, @RequestParam @NotNull int month,
-      @RequestParam @NotNull int day
+      @RequestParam @NotNull int day, @UserInfo UserDetails userDetails
   ) {
     ScheduleInfo.ScheduleDetails info = scheduleFacadeService.getSchedulesOnDate(
-        ScheduleCommand.GetSchedulesOnDateUseCase.from(year, month, day)
+        ScheduleCommand.GetSchedulesOnDateUseCase.from(year, month, day, userDetails.id())
     );
 
     return ResponseEntity.ok().body(ScheduleResponse.V1_GetList.from(info));

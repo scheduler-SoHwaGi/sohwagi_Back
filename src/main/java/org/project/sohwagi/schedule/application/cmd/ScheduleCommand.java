@@ -12,4 +12,15 @@ public class ScheduleCommand {
       return new CountScheduleUseCase(start, end);
     }
   }
+
+  public record GetSchedulesOnDateUseCase(
+      int year,
+      int month,
+      int day,
+      Long userId
+  ) {
+    public static GetSchedulesOnDateUseCase from(int year, int month, int day, Long userId) {
+      return new GetSchedulesOnDateUseCase(year, month, day, userId);
+    }
+  }
 }
