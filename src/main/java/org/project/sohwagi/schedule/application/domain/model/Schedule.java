@@ -1,14 +1,15 @@
 package org.project.sohwagi.schedule.application.domain.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
 
 @Getter
 @Entity
@@ -42,11 +43,30 @@ public class Schedule {
 	@ColumnDefault("NULL")
 	private LocalDateTime deletedAt;
 
-	public Schedule (String title, int month, int day, String dayOfWeek, Long userId) {
+	@Column
+	private String amPm;
+
+	@Column
+	private int hour;
+
+	@Column
+	private int minute;
+
+	@Column
+	private int year;
+
+	@Column
+	private LocalDateTime createdAt = LocalDateTime.now();
+
+	public Schedule(String title, Long userId, int year, int month, int day, String dayOfWeek, String amPm, int hour, int minute) {
 		this.title = title;
 		this.month = month;
 		this.day = day;
 		this.dayOfWeek = dayOfWeek;
 		this.userId = userId;
+		this.hour = hour;
+		this.minute = minute;
+		this.year = year;
+		this.amPm = amPm;
 	}
 }
