@@ -3,7 +3,7 @@ package org.project.sohwagi.oauth;
 import java.util.ArrayList;
 import java.util.List;
 import org.project.sohwagi.oauth.dto.res.AppleOAuthInfoRes;
-import org.project.sohwagi.oauth.dto.res.AppleLoginRes;
+import org.project.sohwagi.oauth.dto.res.LoginRes;
 import org.project.sohwagi.oauth.dto.service.AppleLoginCommand;
 import org.project.sohwagi.schedule.application.domain.service.ScheduleService;
 import org.project.sohwagi.token.dto.service.RefreshTokenCommand;
@@ -13,6 +13,7 @@ import org.project.sohwagi.user.dto.service.DeleteUserCommand;
 import org.project.sohwagi.user.dto.service.GetOrCreateUserCommand;
 import org.project.sohwagi.util.JwtUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OAuthService {
@@ -37,7 +38,8 @@ public class OAuthService {
     this.scheduleService = scheduleService;
   }
 
-  public AppleLoginRes appleLogin(AppleLoginCommand command) {
+  @Transactional
+  public LoginRes appleLogin(AppleLoginCommand command) {
     AppleOAuthInfoRes appleOAuthInfoRes = appleService.getAppleOAuthInfo(command);
 
     GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(command.userName(),
@@ -52,12 +54,13 @@ public class OAuthService {
     RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
     String token = tokenService.saveToken(refreshTokenCommand);
 
-    return AppleLoginRes.builder()
+    return LoginRes.builder()
         .accessToken(accessToken)
         .refreshToken(token)
         .build();
   }
 
+  @Transactional
   public void deleteAppleUser(DeleteUserCommand deleteUserCommand) {
     appleService.appleRevoke(deleteUserCommand);
 
@@ -91,5 +94,24 @@ public class OAuthService {
     res.add(token);
 
     return res;
+  }
+
+  @Transactional
+  public LoginRes qaLogin() {
+    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand("test", null, "test",
+        null, null);
+
+    Long userId = userService.getOrCreateUser(getOrCreateUserCommand);
+
+    String accessToken = jwtUtil.createAccessToken(userId);
+    String refreshToken = jwtUtil.createRefreshToken(userId);
+
+    RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
+    String token = tokenService.saveToken(refreshTokenCommand);
+
+    return LoginRes.builder()
+        .accessToken(accessToken)
+        .refreshToken(token)
+        .build();
   }
 }

@@ -1,32 +1,84 @@
 package org.project.sohwagi.schedule.adapter.in.web.response;
 
 import jakarta.persistence.Column;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
+import java.util.List;
+import org.project.sohwagi.schedule.application.info.ScheduleInfo;
+
 public class ScheduleResponse {
 
-	private Long scheduleId;
+  @AllArgsConstructor
+  @NoArgsConstructor
+  @Getter
+  public static class ScheduleDetailResponse {
 
-	private String title;
+    private Long scheduleId;
 
-	private int month;
+    private String title;
 
-	private int day;
+    private int month;
 
-	private String dayOfWeek;
+    private int day;
 
-	public ScheduleResponse(Schedule schedule) {
-		this.scheduleId = schedule.getId();
-		this.title = schedule.getTitle();
-		this.month = schedule.getMonth();
-		this.day = schedule.getDay();
-		this.dayOfWeek = schedule.getDayOfWeek();
-	}
+    private String dayOfWeek;
+
+    private String time;
+
+    public ScheduleDetailResponse(Schedule schedule) {
+      this.scheduleId = schedule.getId();
+      this.title = schedule.getTitle();
+      this.month = schedule.getMonth();
+      this.day = schedule.getDay();
+      this.dayOfWeek = schedule.getDayOfWeek();
+      this.time = schedule.getAmPm() + " " + schedule.getHour() + "시 " + String.format("%02d",
+          schedule.getMinute()) + "분";
+    }
+  }
+
+  @Getter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class WeekGroupedScheduleResponse {
+
+    private String week;
+    private String periodOfWeek;
+    private List<ScheduleDetailResponse> schedules;
+  }
+
+  public record V1_GetScheduleCount(Map<String, Integer> scheduleCounts) {
+
+    public static V1_GetScheduleCount from(ScheduleInfo.ScheduleCounts info) {
+      return new V1_GetScheduleCount(info.scheduleCounts());
+    }
+  }
+
+  public record V1_Get(
+      Long scheduleId,
+      String title,
+      String time
+  ) {
+
+    public static V1_Get from(ScheduleInfo.ScheduleDetail info) {
+      return new V1_Get(info.scheduleId(), info.title(),
+          info.amPm() + " " + info.hour() + "시 " + String.format("%02d",
+              info.minute()) + "분");
+    }
+  }
+
+  public record V1_GetList(
+      List<V1_Get> schedules
+  ) {
+
+    public static V1_GetList from(ScheduleInfo.ScheduleDetails info) {
+      return new V1_GetList(
+          info.schedules().stream().map(V1_Get::from).toList()
+      );
+    }
+  }
 
 }

@@ -1,25 +1,28 @@
 package org.project.sohwagi.schedule.adapter.out.persistence;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.PersistenceAdapter;
-import org.project.sohwagi.schedule.adapter.out.persistence.respository.ScheduleJpaRepository;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
-import org.project.sohwagi.schedule.application.port.out.DeleteSchedulePort;
-import org.project.sohwagi.schedule.application.port.out.LoadSchedulePort;
-import org.project.sohwagi.schedule.application.port.out.SaveSchedulePort;
 
+@Slf4j
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class SchedulePersistenceAdapter implements SaveSchedulePort, LoadSchedulePort,
-	DeleteSchedulePort {
+public class ScheduleRepositoryImpl implements ScheduleRepository {
 
 	private final ScheduleJpaRepository scheduleJpaRepository;
 
 	@Override
 	public Schedule saveSchedule(Schedule schedule) {
-		return scheduleJpaRepository.save(schedule);
+		long startTime = System.currentTimeMillis();
+
+		Schedule savedSchedule = scheduleJpaRepository.save(schedule);
+
+		log.info("db saved schedule in {} ms", System.currentTimeMillis() - startTime);
+		return savedSchedule;
 	}
 
 	@Override
@@ -36,5 +39,26 @@ public class SchedulePersistenceAdapter implements SaveSchedulePort, LoadSchedul
 	@Override
 	public void deleteSchedule(Schedule schedule) {
 		scheduleJpaRepository.delete(schedule);
+	}
+
+	@Override
+	public List<Schedule> findAllByUserIdAndYearAndMonth(Long userId, int year, int month) {
+		return scheduleJpaRepository.findALlByUserIdAndYearAndMonth(userId, year, month);
+    }
+
+	@Override
+	public List<Object[]> findCountByDateBetween(LocalDate start, LocalDate end) {
+		return List.of();
+	}
+
+	@Override
+	public long countByYearAndMonthAndDay(Long userId, int year, int month, int day) {
+		return scheduleJpaRepository.countByUserIdAndYearAndMonthAndDay(userId, year, month, day);
+	}
+
+	@Override
+	public List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month,
+			int day) {
+		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(userId, year, month, day);
 	}
 }

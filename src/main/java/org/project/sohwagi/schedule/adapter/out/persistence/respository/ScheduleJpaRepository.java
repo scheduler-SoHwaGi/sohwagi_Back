@@ -1,4 +1,4 @@
-package org.project.sohwagi.schedule.adapter.out.persistence.respository;
+package org.project.sohwagi.schedule.adapter.out.persistence;
 
 import java.util.List;
 import org.project.sohwagi.schedule.application.domain.model.Schedule;
@@ -8,6 +8,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ScheduleJpaRepository extends JpaRepository<Schedule, Long> {
 
-	List<Schedule> findAllByUserIdOrderByMonthAscDayAsc(Long userId);
+  List<Schedule> findAllByUserIdOrderByMonthAscDayAsc(Long userId);
 
+  List<Schedule> findALlByUserIdAndYearAndMonth(Long userId, Integer year, Integer month);
+
+  long countByUserIdAndYearAndMonthAndDay(Long userId, int year, int month, int day);
+
+  List<Schedule> findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(Long userId,
+      int year, int month, int day);
 }
