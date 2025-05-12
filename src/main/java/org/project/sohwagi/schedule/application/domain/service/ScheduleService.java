@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService
-    implements CreateScheduleUseCase, GetScheduleUseCase, DeleteScheduleUseCase {
+    implements CreateScheduleUseCase, DeleteScheduleUseCase {
 
   private final CallGptPort callGptPort;
   private final ScheduleRepository scheduleRepository;
@@ -61,33 +61,6 @@ public class ScheduleService
     Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
 
     return savedSchedule.getId();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ScheduleResponse.WeekGroupedScheduleResponse> getScheduleList(
-      GetScheduleListQuery query) {
-    List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYearAndMonth(query.userId(),
-        query.year(), query.month());
-
-    Map<YearWeekKey, List<Schedule>> grouped = schedules.stream()
-        .collect(
-            Collectors.groupingBy(s -> YearWeekKey.from(s.getYear(), s.getMonth(), s.getDay())));
-
-    return grouped.entrySet().stream()
-        .sorted(Map.Entry.comparingByKey())
-        .map(entry -> new ScheduleResponse.WeekGroupedScheduleResponse(
-            entry.getKey().toLabel(),
-            entry.getKey().toPeriodString(),
-            entry.getValue().stream()
-                .sorted(Comparator.comparing(s -> LocalDateTime.of(
-                    LocalDate.of(query.year(), query.month(), s.getDay()),
-                    LocalTime.of(convertTo24Hour(s.getAmPm(), s.getHour()), s.getMinute())
-                )))
-                .map(ScheduleResponse.ScheduleDetailResponse::new)
-                .toList()
-        ))
-        .toList();
   }
 
 
