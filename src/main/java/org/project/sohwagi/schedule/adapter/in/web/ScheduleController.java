@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 public class ScheduleController {
 
   private final CreateScheduleUseCase createScheduleUseCase;
-  private final GetScheduleUseCase getScheduleUseCase;
   private final DeleteScheduleUseCase deleteScheduleUseCase;
   private final ScheduleFacadeService scheduleFacadeService;
 
