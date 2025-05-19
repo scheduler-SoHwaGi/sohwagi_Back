@@ -1,8 +1,7 @@
 package org.project.sohwagi.schedule.application.port.in.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.project.sohwagi.schedule.application.domain.model.Schedule;
-import org.project.sohwagi.schedule.application.port.in.command.CreateScheduleByTextCommand;
+import org.project.sohwagi.application.cmd.CreateScheduleByTextCommand;
 
 public interface CreateScheduleUseCase {
 
