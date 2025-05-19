@@ -1,4 +1,4 @@
-package org.project.sohwagi.infra.config;
+package org.project.sohwagi.infra.firebase;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
