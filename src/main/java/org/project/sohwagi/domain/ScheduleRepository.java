@@ -3,6 +3,7 @@ package org.project.sohwagi.domain;
 import java.time.LocalDate;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ScheduleRepository {
 
@@ -21,4 +22,6 @@ public interface ScheduleRepository {
     long countByYearAndMonthAndDay(Long userId, int year, int month, int day);
 
     List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month, int day);
+
+    List<Schedule> findTodaySchedules(LocalDate today);
 }

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.UseCase;
+import org.project.sohwagi.domain.User;
 import org.project.sohwagi.presentation.req.ScheduleRequest;
 import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.application.cmd.ScheduleCommand.CountScheduleUseCase;
@@ -131,5 +132,9 @@ public class ScheduleService
     return schedules.stream().map(
             s -> new ScheduleDetail(s.getId(), s.getTitle(), s.getAmPm(), s.getHour(), s.getMinute()))
         .toList();
+  }
+
+  public List<Schedule> findTodaySchedules(LocalDate today) {
+    return scheduleRepository.findTodaySchedules(today) ;
   }
 }

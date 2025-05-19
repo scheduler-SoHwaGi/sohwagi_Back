@@ -3,6 +3,7 @@ package org.project.sohwagi.infra.repository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.PersistenceAdapter;
@@ -62,5 +63,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	public List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month,
 			int day) {
 		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(userId, year, month, day);
+	}
+
+	@Override
+	public List<Schedule> findTodaySchedules(LocalDate today) {
+		return scheduleJpaRepository.findAllByYearAndMonthAndDay(today.getYear(), today.getMonthValue(),
+				today.getDayOfMonth());
 	}
 }
