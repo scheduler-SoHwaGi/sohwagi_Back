@@ -27,6 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     registry.addInterceptor(loginInterceptor)
         .addPathPatterns("/**")
         .excludePathPatterns("/oauth/apple/login", "/error", "/oauth/test", "/", "/manager/**",
-            "/users/logout", "/oauth/qa");
+            "/users/logout", "/oauth/qa", "/api-docs", "/swagger-ui.html",
+            "/swagger-ui/**", "/v3/api-docs/**");
   }
 }
