@@ -29,7 +29,17 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-
+          
+      - name: Cache Gradle deps & wrapper   
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches/modules-2/files-2.1
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -45,9 +55,7 @@ jobs:
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" > src/main/resources/firebase-service-account.json
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: clean build -x test
+        run: ./gradlew clean build -x test
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
