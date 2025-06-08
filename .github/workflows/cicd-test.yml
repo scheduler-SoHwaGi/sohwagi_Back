@@ -55,9 +55,7 @@ jobs:
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" > src/main/resources/firebase-service-account.json
 
       - name: Build with Gradle
-        with:
-          arguments: ./gradlew clean build -x test
-          cache-enabled: false
+        run: ./gradlew clean build -x test
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
