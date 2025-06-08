@@ -44,6 +44,11 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78'
     implementation 'org.bouncycastle:bcpkix-jdk18on:1.76'
 
+    implementation 'com.google.firebase:firebase-admin:9.4.3'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.4'
+    implementation 'org.apache.httpcomponents.core5:httpcore5:5.3'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {

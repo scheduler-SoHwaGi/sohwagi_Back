@@ -1,18 +1,22 @@
-package org.project.sohwagi.schedule.application.port.in.query;
+package org.project.sohwagi.application.cmd;
 
 import static org.project.sohwagi.common.validation.Validation.validate;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
-public record GetScheduleListQuery(
+public record DeleteScheduleCommand(
+	@NotNull(message = "scheduleId is required")
+	Long scheduleId,
 	@NotNull(message = "userId is required")
 	Long userId
 ) {
 	@Builder
-	public GetScheduleListQuery(
+	public DeleteScheduleCommand(
+		Long scheduleId,
 		Long userId
 	) {
+		this.scheduleId = scheduleId;
 		this.userId = userId;
 		validate(this);
 	}
