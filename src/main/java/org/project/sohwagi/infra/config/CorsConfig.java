@@ -13,7 +13,7 @@ public class CorsConfig implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-        .allowedOrigins("https://sohawgi-front.vercel.app")
+        .allowedOrigins("https://sohawgi-front.vercel.app", "http://localhost:3000")
         .allowedHeaders("Authorization", "content-type", "X-ACCESS-TOKEN", "X-REFRESH-TOKEN")
         .allowCredentials(true);
   }
