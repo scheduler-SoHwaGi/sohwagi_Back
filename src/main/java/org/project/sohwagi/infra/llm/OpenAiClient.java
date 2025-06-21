@@ -1,8 +1,10 @@
 package org.project.sohwagi.infra.llm;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
+import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +22,8 @@ public class OpenAiClient implements LlmClient {
 
 
   @Override
-  public LlmResult.Extract_Schedule_Information extractScheduleInformation(String input) {
+  public ExtractedScheduleInformation extractScheduleInformation(String input)
+      throws JsonProcessingException {
     String systemMessage =
         "너는 한 문장에서 일정 관련 정보를 추출하는 역할이야. "
             + "prompt 문장을 일정으로 등록하려는데 JSON 형태로 일정 제목, 일정 날짜로 분류해줘. 해당 값이 없으면 null 표시해줘."
@@ -43,6 +46,6 @@ public class OpenAiClient implements LlmClient {
         .replace("```", "")
         .trim();
 
-    return objectMapper.convertValue(jsonString, LlmResult.Extract_Schedule_Information.class);
+    return objectMapper.readValue(jsonString, ExtractedScheduleInformation.class);
   }
 }
