@@ -119,7 +119,15 @@ public class ScheduleService
         cmd.month(), cmd.day());
 
     return schedules.stream().map(
-            s -> new ScheduleDetailInfo(s.getId(), s.getTitle(), s.getAmPm(), s.getHour(), s.getMinute()))
+            s -> new ScheduleDetailInfo(
+                s.getId(),
+                s.getTitle(),
+                s.getAmPm(),
+                s.getHour(),
+                s.getMinute(),
+                s.getChecked()
+            )
+        )
         .toList();
   }
 

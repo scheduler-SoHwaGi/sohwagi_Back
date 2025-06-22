@@ -16,13 +16,12 @@ public class ScheduleInfo {
       String title,
       String amPm,
       int hour,
-      int minute
+      int minute,
+      boolean checked
   ) {}
 
   public record ScheduleDetailsInfo(
       List<ScheduleDetailInfo> schedules
   ) {}
-
-
 
 }

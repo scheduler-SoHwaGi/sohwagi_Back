@@ -61,13 +61,16 @@ public class ScheduleResponse {
   public record V1_Get(
       Long scheduleId,
       String title,
-      String time
+      String time,
+      boolean checked
   ) {
 
     public static V1_Get from(ScheduleDetailInfo info) {
-      return new V1_Get(info.scheduleId(), info.title(),
-          info.amPm() + " " + info.hour() + "시 " + String.format("%02d",
-              info.minute()) + "분");
+      return new V1_Get(
+          info.scheduleId(),
+          info.title(),
+          info.amPm() + " " + info.hour() + "시 " + String.format("%02d", info.minute()) + "분",
+          info.checked());
     }
   }
 
