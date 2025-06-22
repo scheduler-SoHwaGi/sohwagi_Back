@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;

@@ -9,13 +9,14 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
-import org.project.sohwagi.presentation.res.ScheduleResponse;
+import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleCountsResponse;
 import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleGetListResponse;
-import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetScheduleCount;
+import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleCountResponse;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
@@ -76,7 +77,7 @@ public class ScheduleController {
   }
 
   @GetMapping("/counts")
-  public ResponseEntity<V1_GetScheduleCount> getScheduleCounts(
+  public ResponseEntity<ScheduleCountsResponse> getScheduleCounts(
       @RequestParam @DateTimeFormat(iso = ISO.DATE) @NotNull
       LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = ISO.DATE) @NotNull
@@ -87,7 +88,7 @@ public class ScheduleController {
         ScheduleCountCommand.from(userDetails.id(), startDate, endDate)
     );
 
-    return ResponseEntity.ok().body(ScheduleResponse.V1_GetScheduleCount.from(info));
+    return ResponseEntity.ok().body(ScheduleCountsResponse.from(info));
   }
 
   @GetMapping()

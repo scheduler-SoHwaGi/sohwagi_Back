@@ -1,15 +1,13 @@
 package org.project.sohwagi.application.info;
 
 import java.util.List;
-import java.util.Map;
 
 public class ScheduleInfo {
 
-  public record ScheduleCountsInfo(
-      Map<String, Integer> scheduleCounts
-  ) {
-
-  }
+  public record ScheduleCountInfo(
+      String date,
+      int count
+  ) { }
 
   public record ScheduleDetailInfo(
       Long scheduleId,
@@ -20,8 +18,7 @@ public class ScheduleInfo {
       boolean checked
   ) {}
 
-  public record ScheduleDetailsInfo(
-      List<ScheduleDetailInfo> schedules
-  ) {}
+  public record ScheduleDetailsInfo(List<ScheduleDetailInfo> schedules) {}
 
+  public record ScheduleCountsInfo(List<ScheduleCountInfo> scheduleCounts) {}
 }
