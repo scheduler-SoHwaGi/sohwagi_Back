@@ -58,7 +58,19 @@ public class Schedule {
 	@Column
 	private LocalDateTime createdAt = LocalDateTime.now();
 
-	public Schedule(String title, Long userId, int year, int month, int day, String dayOfWeek, String amPm, int hour, int minute) {
+	@Column
+	private Boolean checked;
+
+	public Schedule(
+			String title,
+			Long userId,
+			int year,
+			int month,
+			int day,
+			String dayOfWeek,
+			String amPm,
+			int hour,
+			int minute) {
 		this.title = title;
 		this.month = month;
 		this.day = day;
@@ -68,5 +80,10 @@ public class Schedule {
 		this.minute = minute;
 		this.year = year;
 		this.amPm = amPm;
+		this.checked = false;
+	}
+
+	public void checkSchedule(boolean checked) {
+		this.checked = checked;
 	}
 }
