@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class ScheduleInfo {
 
-  public record ScheduleCounts(
+  public record ScheduleCountsInfo(
       Map<String, Integer> scheduleCounts
   ) {
 
   }
 
-  public record ScheduleDetail(
+  public record ScheduleDetailInfo(
       Long scheduleId,
       String title,
       String amPm,
@@ -19,8 +19,10 @@ public class ScheduleInfo {
       int minute
   ) {}
 
-  public record ScheduleDetails(
-      List<ScheduleDetail> schedules
+  public record ScheduleDetailsInfo(
+      List<ScheduleDetailInfo> schedules
   ) {}
+
+
 
 }

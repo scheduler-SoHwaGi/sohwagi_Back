@@ -19,7 +19,7 @@ import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.domain.Schedule;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetail;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.springframework.stereotype.Service;
@@ -113,13 +113,13 @@ public class ScheduleService
         ));
   }
 
-  public List<ScheduleDetail> getSchedulesOnDate(SchedulesGetOnDate cmd) {
+  public List<ScheduleDetailInfo> getSchedulesOnDate(SchedulesGetOnDate cmd) {
     List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYearAndMonthAndDay(cmd.userId(),
         cmd.year(),
         cmd.month(), cmd.day());
 
     return schedules.stream().map(
-            s -> new ScheduleDetail(s.getId(), s.getTitle(), s.getAmPm(), s.getHour(), s.getMinute()))
+            s -> new ScheduleDetailInfo(s.getId(), s.getTitle(), s.getAmPm(), s.getHour(), s.getMinute()))
         .toList();
   }
 

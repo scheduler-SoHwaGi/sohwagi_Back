@@ -10,9 +10,10 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.application.service.ScheduleService;
-import org.project.sohwagi.application.info.ScheduleInfo;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetail;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.infra.llm.LlmClient;
 import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
 import org.springframework.stereotype.Service;
@@ -24,16 +25,16 @@ public class ScheduleFacadeService {
   private final LlmClient llmClient;
   private final ScheduleService scheduleService;
 
-  public ScheduleInfo.ScheduleCounts getScheduleCounts(ScheduleCountCommand cmd) {
+  public ScheduleCountsInfo getScheduleCounts(ScheduleCountCommand cmd) {
     Map<String, Integer> result = scheduleService.getScheduleCounts(cmd);
 
-    return new ScheduleInfo.ScheduleCounts(result);
+    return new ScheduleCountsInfo(result);
   }
 
-  public ScheduleInfo.ScheduleDetails getSchedulesOnDate(SchedulesGetOnDate cmd) {
-    List<ScheduleDetail> scheduleDetailList = scheduleService.getSchedulesOnDate(cmd);
+  public ScheduleDetailsInfo getSchedulesOnDate(SchedulesGetOnDate cmd) {
+    List<ScheduleDetailInfo> scheduleDetailInfoList = scheduleService.getSchedulesOnDate(cmd);
 
-    return new ScheduleInfo.ScheduleDetails(scheduleDetailList);
+    return new ScheduleDetailsInfo(scheduleDetailInfoList);
   }
 
   @Transactional

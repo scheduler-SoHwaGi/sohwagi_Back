@@ -9,15 +9,15 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse;
 import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetList;
 import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetScheduleCount;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
-import org.project.sohwagi.application.info.ScheduleInfo;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
-import org.project.sohwagi.schedule.application.port.in.usecase.CreateScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.project.sohwagi.domain.UserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -83,7 +83,7 @@ public class ScheduleController {
       LocalDate endDate,
       @UserInfo UserDetails userDetails) {
 
-    ScheduleInfo.ScheduleCounts info = scheduleFacadeService.getScheduleCounts(
+    ScheduleCountsInfo info = scheduleFacadeService.getScheduleCounts(
         ScheduleCountCommand.from(userDetails.id(), startDate, endDate)
     );
 
@@ -95,7 +95,7 @@ public class ScheduleController {
       @RequestParam @NotNull int year, @RequestParam @NotNull int month,
       @RequestParam @NotNull int day, @UserInfo UserDetails userDetails
   ) {
-    ScheduleInfo.ScheduleDetails info = scheduleFacadeService.getSchedulesOnDate(
+    ScheduleDetailsInfo info = scheduleFacadeService.getSchedulesOnDate(
         SchedulesGetOnDate.from(year, month, day, userDetails.id())
     );
 
