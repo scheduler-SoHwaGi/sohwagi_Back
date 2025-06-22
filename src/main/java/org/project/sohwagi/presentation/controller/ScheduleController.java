@@ -14,7 +14,7 @@ import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse;
-import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetList;
+import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleGetListResponse;
 import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetScheduleCount;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
@@ -91,7 +91,7 @@ public class ScheduleController {
   }
 
   @GetMapping()
-  public ResponseEntity<V1_GetList> getSchedulesOnDate(
+  public ResponseEntity<ScheduleGetListResponse> getSchedulesOnDate(
       @RequestParam @NotNull int year, @RequestParam @NotNull int month,
       @RequestParam @NotNull int day, @UserInfo UserDetails userDetails
   ) {
@@ -99,7 +99,7 @@ public class ScheduleController {
         SchedulesGetOnDate.from(year, month, day, userDetails.id())
     );
 
-    return ResponseEntity.ok().body(ScheduleResponse.V1_GetList.from(info));
+    return ResponseEntity.ok().body(ScheduleGetListResponse.from(info));
   }
 
   @PostMapping("/{scheduleId}/actions/toggle-checked")

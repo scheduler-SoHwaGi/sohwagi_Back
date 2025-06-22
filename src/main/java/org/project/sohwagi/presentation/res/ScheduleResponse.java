@@ -58,15 +58,15 @@ public class ScheduleResponse {
     }
   }
 
-  public record V1_Get(
+  public record ScheduleGetResponse(
       Long scheduleId,
       String title,
       String time,
       boolean checked
   ) {
 
-    public static V1_Get from(ScheduleDetailInfo info) {
-      return new V1_Get(
+    public static ScheduleGetResponse from(ScheduleDetailInfo info) {
+      return new ScheduleGetResponse(
           info.scheduleId(),
           info.title(),
           info.amPm() + " " + info.hour() + "시 " + String.format("%02d", info.minute()) + "분",
@@ -74,13 +74,13 @@ public class ScheduleResponse {
     }
   }
 
-  public record V1_GetList(
-      List<V1_Get> schedules
+  public record ScheduleGetListResponse(
+      List<ScheduleGetResponse> schedules
   ) {
 
-    public static V1_GetList from(ScheduleDetailsInfo info) {
-      return new V1_GetList(
-          info.schedules().stream().map(V1_Get::from).toList()
+    public static ScheduleGetListResponse from(ScheduleDetailsInfo info) {
+      return new ScheduleGetListResponse(
+          info.schedules().stream().map(ScheduleGetResponse::from).toList()
       );
     }
   }
