@@ -14,19 +14,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
 import org.project.sohwagi.common.UseCase;
-import org.project.sohwagi.domain.User;
 import org.project.sohwagi.presentation.req.ScheduleRequest;
 import org.project.sohwagi.domain.ScheduleRepository;
-import org.project.sohwagi.application.cmd.ScheduleCommand.CountScheduleUseCase;
-import org.project.sohwagi.application.cmd.ScheduleCommand.GetSchedulesOnDateUseCase;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetail;
 import org.project.sohwagi.application.cmd.CreateScheduleByTextCommand;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.usecase.CreateScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
-import org.project.sohwagi.schedule.application.port.out.CallGptPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,20 +35,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ScheduleService
-    implements CreateScheduleUseCase, DeleteScheduleUseCase {
+    implements DeleteScheduleUseCase {
 
-  private final CallGptPort callGptPort;
   private final ScheduleRepository scheduleRepository;
 
-  @Override
-  @Transactional
-  public Long createScheduleByText(CreateScheduleByTextCommand command)
-      throws JsonProcessingException {
+  public Long createScheduleByText(ScheduleCreateCommand command) {
     log.info("Create schedule by text 시작");
 
-    ScheduleRequest scheduleRequest = callGptPort.callGptForTextSchedule(command.text());
-
-    Schedule schedule = parseDateString(scheduleRequest, command.userId());
+    Schedule schedule = parseDateString(command);
 
     Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
 
@@ -73,13 +67,13 @@ public class ScheduleService
     }
   }
 
-  private Schedule parseDateString(ScheduleRequest request, Long userId) {
-    log.info(request.getDate());
+  private Schedule parseDateString(ScheduleCreateCommand command) {
+    log.info(command.date());
     long startTime = System.currentTimeMillis();
 
     Pattern pattern = Pattern.compile(
         "(\\d{4})년 (\\d{1,2})월 (\\d{1,2})일 (\\S+) (오전|오후) (\\d{1,2})시 (\\d{2})분");
-    Matcher matcher = pattern.matcher(request.getDate());
+    Matcher matcher = pattern.matcher(command.date());
 
     if (matcher.matches()) {
       int year = Integer.parseInt(matcher.group(1));
@@ -91,10 +85,10 @@ public class ScheduleService
       int minute = Integer.parseInt(matcher.group(7));
 
       log.info("parseDateString proceeds in {} ms", System.currentTimeMillis() - startTime);
-      return new Schedule(request.getTitle(), userId, year, month, day, dayOfWeek, amPm, hour,
+      return new Schedule(command.title(), command.userId(), year, month, day, dayOfWeek, amPm, hour,
           minute);
     } else {
-      throw new IllegalArgumentException("Invalid date format: " + request.getDate());
+      throw new IllegalArgumentException("Invalid date format: " + command.date());
     }
   }
 
@@ -106,7 +100,7 @@ public class ScheduleService
     }
   }
 
-  public Map<String, Integer> getScheduleCounts(CountScheduleUseCase cmd) {
+  public Map<String, Integer> getScheduleCounts(ScheduleCountCommand cmd) {
 
     long days = ChronoUnit.DAYS.between(cmd.start(), cmd.end()) + 1;
     return Stream.iterate(cmd.start(), date -> date.plusDays(1))
@@ -124,7 +118,7 @@ public class ScheduleService
         ));
   }
 
-  public List<ScheduleDetail> getSchedulesOnDate(GetSchedulesOnDateUseCase cmd) {
+  public List<ScheduleDetail> getSchedulesOnDate(SchedulesGetOnDate cmd) {
     List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYearAndMonthAndDay(cmd.userId(),
         cmd.year(),
         cmd.month(), cmd.day());

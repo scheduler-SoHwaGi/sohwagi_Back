@@ -5,15 +5,16 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.common.UserInfo;
+import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse;
-import org.project.sohwagi.presentation.req.ScheduleTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetList;
 import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetScheduleCount;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
-import org.project.sohwagi.application.cmd.ScheduleCommand;
 import org.project.sohwagi.application.info.ScheduleInfo;
-import org.project.sohwagi.application.cmd.CreateScheduleByTextCommand;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.usecase.CreateScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
@@ -28,22 +29,20 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ScheduleController {
 
-  private final CreateScheduleUseCase createScheduleUseCase;
   private final DeleteScheduleUseCase deleteScheduleUseCase;
   private final ScheduleFacadeService scheduleFacadeService;
 
   @PostMapping
-  public ResponseEntity<String> createSchedule(@RequestBody ScheduleTextRequest request,
-      @UserInfo UserDetails userDetails)
-      throws JsonProcessingException {
+  public ResponseEntity<String> createSchedule(
+      @RequestBody ScheduleCreateByTextRequest request,
+      @UserInfo UserDetails userDetails) throws JsonProcessingException {
 
-    CreateScheduleByTextCommand command = CreateScheduleByTextCommand
-        .builder()
-        .text(request.getText())
-        .userId(userDetails.id())
-        .build();
+    ScheduleCreateByTextCommand command = new ScheduleCreateByTextCommand(
+        request.text(),
+        userDetails.id()
+    );
 
-    Long scheduleId = createScheduleUseCase.createScheduleByText(command);
+    Long scheduleId = scheduleFacadeService.createScheduleByText(command);
 
     return ResponseEntity.created(URI.create("/api/v1/schedules/" + scheduleId)).build();
   }
@@ -76,7 +75,7 @@ public class ScheduleController {
   }
 
   @GetMapping("/counts")
-  public ResponseEntity<V1_GetScheduleCount> V1_Get_Schedule_Counts(
+  public ResponseEntity<V1_GetScheduleCount> getScheduleCounts(
       @RequestParam @DateTimeFormat(iso = ISO.DATE) @NotNull
       LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = ISO.DATE) @NotNull
@@ -84,19 +83,19 @@ public class ScheduleController {
       @UserInfo UserDetails userDetails) {
 
     ScheduleInfo.ScheduleCounts info = scheduleFacadeService.getScheduleCounts(
-        ScheduleCommand.CountScheduleUseCase.from(userDetails.id(), startDate, endDate)
+        ScheduleCountCommand.from(userDetails.id(), startDate, endDate)
     );
 
     return ResponseEntity.ok().body(ScheduleResponse.V1_GetScheduleCount.from(info));
   }
 
   @GetMapping()
-  public ResponseEntity<V1_GetList> V1_Get_Schedules_On_Date(
+  public ResponseEntity<V1_GetList> getSchedulesOnDate(
       @RequestParam @NotNull int year, @RequestParam @NotNull int month,
       @RequestParam @NotNull int day, @UserInfo UserDetails userDetails
   ) {
     ScheduleInfo.ScheduleDetails info = scheduleFacadeService.getSchedulesOnDate(
-        ScheduleCommand.GetSchedulesOnDateUseCase.from(year, month, day, userDetails.id())
+        SchedulesGetOnDate.from(year, month, day, userDetails.id())
     );
 
     return ResponseEntity.ok().body(ScheduleResponse.V1_GetList.from(info));

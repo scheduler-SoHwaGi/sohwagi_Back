@@ -4,23 +4,34 @@ import java.time.LocalDate;
 
 public class ScheduleCommand {
 
-  public record CountScheduleUseCase(
+  public record ScheduleCountCommand(
       LocalDate start,
       LocalDate end,
       Long userId) {
-    public static CountScheduleUseCase from(Long userId, LocalDate start, LocalDate end) {
-      return new CountScheduleUseCase(start, end, userId);
+    public static ScheduleCountCommand from(Long userId, LocalDate start, LocalDate end) {
+      return new ScheduleCountCommand(start, end, userId);
     }
   }
 
-  public record GetSchedulesOnDateUseCase(
+  public record SchedulesGetOnDate(
       int year,
       int month,
       int day,
       Long userId
   ) {
-    public static GetSchedulesOnDateUseCase from(int year, int month, int day, Long userId) {
-      return new GetSchedulesOnDateUseCase(year, month, day, userId);
+    public static SchedulesGetOnDate from(int year, int month, int day, Long userId) {
+      return new SchedulesGetOnDate(year, month, day, userId);
     }
   }
+
+  public record ScheduleCreateByTextCommand(
+      String text,
+      Long userId
+  ) { }
+
+  public record ScheduleCreateCommand(
+      String title,
+      String date,
+      Long userId
+  ) { }
 }
