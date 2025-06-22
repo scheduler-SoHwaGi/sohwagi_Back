@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
@@ -99,6 +100,13 @@ public class ScheduleController {
     );
 
     return ResponseEntity.ok().body(ScheduleResponse.V1_GetList.from(info));
+  }
+
+  @PostMapping("/{scheduleId}/actions/toggle-checked")
+  public ResponseEntity<Void> checkSchedule(@PathVariable Long scheduleId) {
+    scheduleFacadeService.checkSchedule(new ScheduleCheckCommand(scheduleId));
+
+    return ResponseEntity.ok().build();
   }
 
 }

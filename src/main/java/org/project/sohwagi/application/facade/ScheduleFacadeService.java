@@ -5,7 +5,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.project.sohwagi.application.cmd.ScheduleCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
@@ -48,5 +48,10 @@ public class ScheduleFacadeService {
             cmd.userId()
         )
     );
+  }
+
+  @Transactional
+  public void checkSchedule(ScheduleCheckCommand cmd) {
+    scheduleService.checkSchedule(cmd);
   }
 }

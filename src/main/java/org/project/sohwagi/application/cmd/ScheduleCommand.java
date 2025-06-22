@@ -34,4 +34,6 @@ public class ScheduleCommand {
       String date,
       Long userId
   ) { }
+
+  public record ScheduleCheckCommand(Long userId) { }
 }
