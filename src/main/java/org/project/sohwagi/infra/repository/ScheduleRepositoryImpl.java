@@ -70,4 +70,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 		return scheduleJpaRepository.findAllByYearAndMonthAndDay(today.getYear(), today.getMonthValue(),
 				today.getDayOfMonth());
 	}
+
+	@Override
+	public Schedule findScheduleById(Long scheduleId) {
+		return scheduleJpaRepository.findById(scheduleId).orElseThrow(
+				() -> new EntityNotFoundException("해당 일정은 존재하지 않습니다.")
+		);
+	}
 }

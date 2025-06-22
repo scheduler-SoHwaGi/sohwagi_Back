@@ -4,10 +4,12 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.domain.Schedule;
 
 import java.util.List;
-import org.project.sohwagi.application.info.ScheduleInfo;
 
 public class ScheduleResponse {
 
@@ -51,31 +53,34 @@ public class ScheduleResponse {
 
   public record V1_GetScheduleCount(Map<String, Integer> scheduleCounts) {
 
-    public static V1_GetScheduleCount from(ScheduleInfo.ScheduleCounts info) {
+    public static V1_GetScheduleCount from(ScheduleCountsInfo info) {
       return new V1_GetScheduleCount(info.scheduleCounts());
     }
   }
 
-  public record V1_Get(
+  public record ScheduleGetResponse(
       Long scheduleId,
       String title,
-      String time
+      String time,
+      boolean checked
   ) {
 
-    public static V1_Get from(ScheduleInfo.ScheduleDetail info) {
-      return new V1_Get(info.scheduleId(), info.title(),
-          info.amPm() + " " + info.hour() + "시 " + String.format("%02d",
-              info.minute()) + "분");
+    public static ScheduleGetResponse from(ScheduleDetailInfo info) {
+      return new ScheduleGetResponse(
+          info.scheduleId(),
+          info.title(),
+          info.amPm() + " " + info.hour() + "시 " + String.format("%02d", info.minute()) + "분",
+          info.checked());
     }
   }
 
-  public record V1_GetList(
-      List<V1_Get> schedules
+  public record ScheduleGetListResponse(
+      List<ScheduleGetResponse> schedules
   ) {
 
-    public static V1_GetList from(ScheduleInfo.ScheduleDetails info) {
-      return new V1_GetList(
-          info.schedules().stream().map(V1_Get::from).toList()
+    public static ScheduleGetListResponse from(ScheduleDetailsInfo info) {
+      return new ScheduleGetListResponse(
+          info.schedules().stream().map(ScheduleGetResponse::from).toList()
       );
     }
   }

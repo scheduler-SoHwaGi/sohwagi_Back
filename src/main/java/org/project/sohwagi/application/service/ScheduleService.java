@@ -1,7 +1,5 @@
 package org.project.sohwagi.application.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
@@ -14,18 +12,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
 import org.project.sohwagi.common.UseCase;
-import org.project.sohwagi.presentation.req.ScheduleRequest;
 import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.domain.Schedule;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetail;
-import org.project.sohwagi.application.cmd.CreateScheduleByTextCommand;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
-import org.project.sohwagi.schedule.application.port.in.usecase.CreateScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,17 +113,31 @@ public class ScheduleService
         ));
   }
 
-  public List<ScheduleDetail> getSchedulesOnDate(SchedulesGetOnDate cmd) {
+  public List<ScheduleDetailInfo> getSchedulesOnDate(SchedulesGetOnDate cmd) {
     List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYearAndMonthAndDay(cmd.userId(),
         cmd.year(),
         cmd.month(), cmd.day());
 
     return schedules.stream().map(
-            s -> new ScheduleDetail(s.getId(), s.getTitle(), s.getAmPm(), s.getHour(), s.getMinute()))
+            s -> new ScheduleDetailInfo(
+                s.getId(),
+                s.getTitle(),
+                s.getAmPm(),
+                s.getHour(),
+                s.getMinute(),
+                s.getChecked()
+            )
+        )
         .toList();
   }
 
   public List<Schedule> findTodaySchedules(LocalDate today) {
     return scheduleRepository.findTodaySchedules(today) ;
+  }
+
+  public void checkSchedule(ScheduleCheckCommand cmd) {
+    Schedule schedule = scheduleRepository.findScheduleById(cmd.userId());
+
+    schedule.checkSchedule(schedule.getChecked());
   }
 }

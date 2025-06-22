@@ -5,22 +5,23 @@ import java.util.Map;
 
 public class ScheduleInfo {
 
-  public record ScheduleCounts(
+  public record ScheduleCountsInfo(
       Map<String, Integer> scheduleCounts
   ) {
 
   }
 
-  public record ScheduleDetail(
+  public record ScheduleDetailInfo(
       Long scheduleId,
       String title,
       String amPm,
       int hour,
-      int minute
+      int minute,
+      boolean checked
   ) {}
 
-  public record ScheduleDetails(
-      List<ScheduleDetail> schedules
+  public record ScheduleDetailsInfo(
+      List<ScheduleDetailInfo> schedules
   ) {}
 
 }

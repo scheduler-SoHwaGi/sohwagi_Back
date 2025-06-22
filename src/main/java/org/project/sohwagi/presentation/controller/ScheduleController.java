@@ -5,18 +5,19 @@ import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse;
-import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetList;
+import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleGetListResponse;
 import org.project.sohwagi.presentation.res.ScheduleResponse.V1_GetScheduleCount;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
-import org.project.sohwagi.application.info.ScheduleInfo;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
-import org.project.sohwagi.schedule.application.port.in.usecase.CreateScheduleUseCase;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.project.sohwagi.domain.UserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -82,7 +83,7 @@ public class ScheduleController {
       LocalDate endDate,
       @UserInfo UserDetails userDetails) {
 
-    ScheduleInfo.ScheduleCounts info = scheduleFacadeService.getScheduleCounts(
+    ScheduleCountsInfo info = scheduleFacadeService.getScheduleCounts(
         ScheduleCountCommand.from(userDetails.id(), startDate, endDate)
     );
 
@@ -90,15 +91,22 @@ public class ScheduleController {
   }
 
   @GetMapping()
-  public ResponseEntity<V1_GetList> getSchedulesOnDate(
+  public ResponseEntity<ScheduleGetListResponse> getSchedulesOnDate(
       @RequestParam @NotNull int year, @RequestParam @NotNull int month,
       @RequestParam @NotNull int day, @UserInfo UserDetails userDetails
   ) {
-    ScheduleInfo.ScheduleDetails info = scheduleFacadeService.getSchedulesOnDate(
+    ScheduleDetailsInfo info = scheduleFacadeService.getSchedulesOnDate(
         SchedulesGetOnDate.from(year, month, day, userDetails.id())
     );
 
-    return ResponseEntity.ok().body(ScheduleResponse.V1_GetList.from(info));
+    return ResponseEntity.ok().body(ScheduleGetListResponse.from(info));
+  }
+
+  @PostMapping("/{scheduleId}/actions/toggle-checked")
+  public ResponseEntity<Void> checkSchedule(@PathVariable Long scheduleId) {
+    scheduleFacadeService.checkSchedule(new ScheduleCheckCommand(scheduleId));
+
+    return ResponseEntity.ok().build();
   }
 
 }
