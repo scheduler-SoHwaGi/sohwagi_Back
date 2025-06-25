@@ -52,7 +52,7 @@ jobs:
       - name: Create Firebase service account key
         run: |
           mkdir -p src/main/resources
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" > src/main/resources/firebase-service-account.json
+          printf '%s' "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" > src/main/resources/firebase-service-account.json
 
       - name: Validate JSON file
         run: |
