@@ -2,6 +2,7 @@ package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,21 +98,19 @@ public class ScheduleService
     }
   }
 
-  public Map<String, Integer> getScheduleCounts(ScheduleCountCommand cmd) {
+  public Map<String, List<Schedule>> getScheduleCounts(ScheduleCountCommand cmd) {
 
     long days = ChronoUnit.DAYS.between(cmd.start(), cmd.end()) + 1;
     return Stream.iterate(cmd.start(), date -> date.plusDays(1))
         .limit(days)
         .collect(Collectors.toMap(
             LocalDate::toString,
-            date -> (int) scheduleRepository.countByYearAndMonthAndDay(
+            date -> scheduleRepository.findSchedulesByUserIdAndYearAndMonthAndDay(
                 cmd.userId(),
                 date.getYear(),
                 date.getMonthValue(),
                 date.getDayOfMonth()
-            ),
-            (a, b) -> b,
-            LinkedHashMap::new
+            )
         ));
   }
 
