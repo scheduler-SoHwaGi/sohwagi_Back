@@ -4,10 +4,7 @@ import java.util.List;
 
 public class ScheduleInfo {
 
-  public record ScheduleCountInfo(
-      String date,
-      int count
-  ) { }
+  public record ScheduleCountInfo(String date, int counts, Status status) { }
 
   public record ScheduleDetailInfo(
       Long scheduleId,

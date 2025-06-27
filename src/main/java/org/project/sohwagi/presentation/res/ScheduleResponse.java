@@ -7,6 +7,7 @@ import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
+import org.project.sohwagi.application.info.Status;
 import org.project.sohwagi.domain.Schedule;
 
 import java.util.List;
@@ -51,10 +52,10 @@ public class ScheduleResponse {
     private List<ScheduleDetailResponse> schedules;
   }
 
-  public record ScheduleCountResponse(String date, int count) {
+  public record ScheduleCountResponse(String date, int counts, Status status) {
 
     public static ScheduleCountResponse from(ScheduleCountInfo info) {
-      return new ScheduleCountResponse(info.date(), info.count());
+      return new ScheduleCountResponse(info.date(), info.counts(), info.status());
     }
   }
 
