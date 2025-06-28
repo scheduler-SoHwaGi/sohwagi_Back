@@ -16,8 +16,19 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, Long> {
 
   long countByUserIdAndYearAndMonthAndDay(Long userId, int year, int month, int day);
 
-  List<Schedule> findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(Long userId,
-      int year, int month, int day);
+  List<Schedule> findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(
+      Long userId,
+      int year,
+      int month,
+      int day
+  );
 
   List<Schedule> findAllByYearAndMonthAndDay(int year, int month, int day);
+
+  List<Schedule> findAllByUserIdAndYearAndMonthAndDay(
+      Long userId,
+      Integer year,
+      Integer month,
+      int day
+  );
 }

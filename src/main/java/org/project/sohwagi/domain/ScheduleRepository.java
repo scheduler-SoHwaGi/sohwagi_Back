@@ -24,4 +24,13 @@ public interface ScheduleRepository {
     List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month, int day);
 
     List<Schedule> findTodaySchedules(LocalDate today);
+
+    Schedule findScheduleById(Long scheduleId);
+
+    List<Schedule> findSchedulesByUserIdAndYearAndMonthAndDay(
+        Long userId,
+        int year,
+        int month,
+        int day
+    );
 }

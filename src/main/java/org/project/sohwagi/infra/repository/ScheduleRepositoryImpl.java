@@ -60,14 +60,38 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	}
 
 	@Override
-	public List<Schedule> findAllByUserIdAndYearAndMonthAndDay(Long userId, int year, int month,
+	public List<Schedule> findAllByUserIdAndYearAndMonthAndDay(
+			Long userId,
+			int year,
+			int month,
 			int day) {
-		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(userId, year, month, day);
+		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDayOrderByAmPmAscHourAscMinuteAsc(
+				userId,
+				year,
+				month,
+				day
+		);
 	}
 
 	@Override
 	public List<Schedule> findTodaySchedules(LocalDate today) {
 		return scheduleJpaRepository.findAllByYearAndMonthAndDay(today.getYear(), today.getMonthValue(),
 				today.getDayOfMonth());
+	}
+
+	@Override
+	public Schedule findScheduleById(Long scheduleId) {
+		return scheduleJpaRepository.findById(scheduleId).orElseThrow(
+				() -> new EntityNotFoundException("해당 일정은 존재하지 않습니다.")
+		);
+	}
+
+	@Override
+	public List<Schedule> findSchedulesByUserIdAndYearAndMonthAndDay(
+			Long userId,
+			int year,
+			int month,
+			int day) {
+		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDay(userId, year, month, day);
 	}
 }

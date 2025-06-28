@@ -1,16 +1,9 @@
 package org.project.sohwagi.presentation.req;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class ScheduleRequest {
 
-	private String title;
-
-	private String date;
+  public record ScheduleCreateByTextRequest(String text) { }
 
 }
