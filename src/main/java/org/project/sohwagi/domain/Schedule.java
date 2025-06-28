@@ -86,4 +86,8 @@ public class Schedule {
 	public void checkSchedule(boolean checked) {
 		this.checked =!checked;
 	}
+
+	public boolean isChecked() {
+		return checked;
+	}
 }

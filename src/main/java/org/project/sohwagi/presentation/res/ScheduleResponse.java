@@ -1,12 +1,13 @@
 package org.project.sohwagi.presentation.res;
 
-import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
+import org.project.sohwagi.application.info.Status;
 import org.project.sohwagi.domain.Schedule;
 
 import java.util.List;
@@ -51,10 +52,19 @@ public class ScheduleResponse {
     private List<ScheduleDetailResponse> schedules;
   }
 
-  public record V1_GetScheduleCount(Map<String, Integer> scheduleCounts) {
+  public record ScheduleCountResponse(String date, int counts, Status status) {
 
-    public static V1_GetScheduleCount from(ScheduleCountsInfo info) {
-      return new V1_GetScheduleCount(info.scheduleCounts());
+    public static ScheduleCountResponse from(ScheduleCountInfo info) {
+      return new ScheduleCountResponse(info.date(), info.counts(), info.status());
+    }
+  }
+
+  public record ScheduleCountsResponse(List<ScheduleCountResponse> scheduleCounts) {
+
+    public static ScheduleCountsResponse from(ScheduleCountsInfo info) {
+      return new ScheduleCountsResponse(
+          info.scheduleCounts().stream().map(ScheduleCountResponse::from).toList()
+      );
     }
   }
 
