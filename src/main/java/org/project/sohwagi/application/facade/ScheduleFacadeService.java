@@ -29,7 +29,7 @@ public class ScheduleFacadeService {
   private final ScheduleService scheduleService;
 
   public ScheduleCountsInfo getScheduleCounts(ScheduleCountCommand cmd) {
-    Map<String, List<Schedule>> result = scheduleService.getScheduleCounts(cmd);
+    Map<String, List<Schedule>> result = scheduleService.getSchedulesGroupedByDate(cmd);
 
     List<ScheduleCountInfo> infos = result.entrySet().stream()
         .map(entry -> new ScheduleCountInfo(
