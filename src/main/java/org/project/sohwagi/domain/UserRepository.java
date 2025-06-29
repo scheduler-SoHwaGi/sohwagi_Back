@@ -14,7 +14,7 @@ public class UserRepository {
     this.userJpaRepository = userJpaRepository;
   }
 
-  public User loadUserByOAuthProviderAndOAuthSubject(GetOrCreateUserCommand getOrCreateUserCommand) {
+  public User getUserByOAuthProviderAndOAuthSubject(GetOrCreateUserCommand getOrCreateUserCommand) {
 
     return userJpaRepository.findByOauthProviderAndOauthSubject(
         getOrCreateUserCommand.oauthProvider(),
@@ -45,5 +45,9 @@ public class UserRepository {
 
     return userJpaRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("해당 유저는 존재하지 않습니다."));
+  }
+
+  public User save(User user) {
+    return userJpaRepository.save(user);
   }
 }

@@ -33,12 +33,20 @@ public class UserService {
   }
 
   public Long getOrCreateUser(GetOrCreateUserCommand getOrCreateUserCommand) {
-    User user = userRepository.loadUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
+    User user = userRepository.getUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
 
-    if(user.isDeleted()){
-      user.reLogin();
+    if (user.isDeleted()) {
+      User reSignUpUser = User.builder()
+          .userName(getOrCreateUserCommand.userName())
+          .email(getOrCreateUserCommand.email())
+          .oauthSubject(getOrCreateUserCommand.subject())
+          .oauthProvider(getOrCreateUserCommand.oauthProvider())
+          .appleRefreshToken(getOrCreateUserCommand.appleRefreshToken())
+          .build();
 
-      userRepository.update(user);
+      User savedReSignUpUser = userRepository.save(reSignUpUser);
+
+      return savedReSignUpUser.getId();
     }
 
     return user.getId();
@@ -51,7 +59,7 @@ public class UserService {
     return UserDetails.from(user);
   }
 
-  public GetUserInfoRes getUserInfo(UserDetails userDetails){
+  public GetUserInfoRes getUserInfo(UserDetails userDetails) {
     String name = convertName(userDetails.userName());
 
     return new GetUserInfoRes(name, userDetails.email());
