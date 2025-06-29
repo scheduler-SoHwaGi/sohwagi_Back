@@ -9,14 +9,12 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleCountsResponse;
 import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleGetListResponse;
-import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleCountResponse;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
@@ -84,7 +82,7 @@ public class ScheduleController {
       LocalDate endDate,
       @UserInfo UserDetails userDetails) {
 
-    ScheduleCountsInfo info = scheduleFacadeService.getScheduleCounts(
+    ScheduleCountsInfo info = scheduleFacadeService.generateScheduleSummaries(
         ScheduleCountCommand.from(userDetails.id(), startDate, endDate)
     );
 
