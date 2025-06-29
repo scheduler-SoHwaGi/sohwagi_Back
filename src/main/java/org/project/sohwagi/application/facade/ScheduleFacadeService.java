@@ -34,7 +34,7 @@ public class ScheduleFacadeService {
     List<ScheduleCountInfo> infos = result.entrySet().stream()
         .map(entry -> new ScheduleCountInfo(
             entry.getKey(),
-            entry.getValue().size(),
+            StatusGenerator.generateCounts(entry.getValue()),
             StatusGenerator.generateStatus(entry.getValue().size(), entry.getValue()))
         ).toList();
 
