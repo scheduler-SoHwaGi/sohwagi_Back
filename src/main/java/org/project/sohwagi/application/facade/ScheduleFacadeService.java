@@ -28,7 +28,7 @@ public class ScheduleFacadeService {
   private final LlmClient llmClient;
   private final ScheduleService scheduleService;
 
-  public ScheduleCountsInfo getScheduleCounts(ScheduleCountCommand cmd) {
+  public ScheduleCountsInfo generateScheduleSummaries(ScheduleCountCommand cmd) {
     Map<String, List<Schedule>> result = scheduleService.getSchedulesGroupedByDate(cmd);
 
     List<ScheduleCountInfo> infos = result.entrySet().stream()
