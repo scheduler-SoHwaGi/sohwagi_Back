@@ -2,8 +2,6 @@ package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -15,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
@@ -98,7 +94,7 @@ public class ScheduleService
     }
   }
 
-  public Map<String, List<Schedule>> getScheduleCounts(ScheduleCountCommand cmd) {
+  public Map<String, List<Schedule>> getSchedulesGroupedByDate(ScheduleCountCommand cmd) {
 
     long days = ChronoUnit.DAYS.between(cmd.start(), cmd.end()) + 1;
     return Stream.iterate(cmd.start(), date -> date.plusDays(1))

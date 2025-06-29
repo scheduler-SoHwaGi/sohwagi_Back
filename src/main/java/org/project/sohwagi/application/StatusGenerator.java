@@ -23,4 +23,9 @@ public class StatusGenerator {
     return null;
   }
 
+  public static int generateCounts(List<Schedule> schedules) {
+
+    return schedules.size() - schedules.stream().filter(Schedule::isChecked).toList().size();
+  }
+
 }
