@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,9 +45,19 @@ public class User {
   @Column
   private String appleRefreshToken;
 
+  @Column
+  private LocalDateTime createdAt;
+
   @Builder
-  private User(Long id, String fcmToken, String userName, String oauthProvider, String oauthSubject,
-      String email, boolean isDeleted, String appleRefreshToken) {
+  private User(
+      Long id,
+      String fcmToken,
+      String userName,
+      String oauthProvider,
+      String oauthSubject,
+      String email,
+      boolean isDeleted,
+      String appleRefreshToken) {
     this.fcmToken = fcmToken;
     this.id = id;
     this.userName = userName;
@@ -55,6 +66,7 @@ public class User {
     this.email = email;
     this.isDeleted = isDeleted;
     this.appleRefreshToken = appleRefreshToken;
+    this.createdAt = LocalDateTime.now();
   }
 
   public void updateFcmToken(String fcmToken) {
