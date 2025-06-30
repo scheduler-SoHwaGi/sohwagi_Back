@@ -1,7 +1,7 @@
 package org.project.sohwagi.schedule.application.port.out;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.project.sohwagi.schedule.adapter.in.web.request.ScheduleRequest;
+import org.project.sohwagi.presentation.req.ScheduleRequest;
 
 public interface CallGptPort {
 
