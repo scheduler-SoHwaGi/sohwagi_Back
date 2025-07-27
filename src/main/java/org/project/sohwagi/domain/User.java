@@ -69,6 +69,10 @@ public class User {
     this.createdAt = LocalDateTime.now();
   }
 
+  public static User create(String userName, String oauthProvider, String email) {
+    return User.builder().userName(userName).oauthProvider(oauthProvider).email(email).build();
+  }
+
   public void updateFcmToken(String fcmToken) {
     this.fcmToken = fcmToken;
   }

@@ -26,7 +26,6 @@ public class UserService {
     userRepository.update(user);
   }
 
-  @Transactional
   public void deleteUser(UserDetails userDetails) {
 
     userRepository.delete(userDetails);
@@ -65,6 +64,15 @@ public class UserService {
     return new GetUserInfoRes(name, userDetails.email());
   }
 
+  public User findById(Long userId) {
+    return userRepository.findById(userId);
+  }
+
+  public User saveUser(String userName, String oauthProvider, String email) {
+    User user = User.create(userName, oauthProvider, email);
+    return userRepository.save(user);
+  }
+
   private String convertName(String name) {
     if (name.contains(" ")) {
       String[] parts = name.split(" ");
@@ -76,9 +84,5 @@ public class UserService {
       }
     }
     return name;
-  }
-
-  public User findById(Long userId) {
-    return userRepository.findById(userId);
   }
 }
