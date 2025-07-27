@@ -89,7 +89,7 @@ public class AppleClient {
     }
   }
 
-  public void appleRevoke(DeleteUserCommand deleteUserCommand) {
+  public void appleRevoke(String appleRefreshToken) {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -97,7 +97,7 @@ public class AppleClient {
     HttpEntity<String> request = new HttpEntity<>(
         "client_id=" + clientId +
             "&client_secret=" + generateClientSecret() +
-            "&token=" + deleteUserCommand.userDetails().appleRefreshToken(),
+            "&token=" + appleRefreshToken,
         headers
     );
 

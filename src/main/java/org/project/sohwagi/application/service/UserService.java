@@ -26,30 +26,9 @@ public class UserService {
     userRepository.update(user);
   }
 
-  @Transactional
   public void deleteUser(UserDetails userDetails) {
 
     userRepository.delete(userDetails);
-  }
-
-  public Long getOrCreateUser(GetOrCreateUserCommand getOrCreateUserCommand) {
-    User user = userRepository.getUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
-
-    if (user.isDeleted()) {
-      User reSignUpUser = User.builder()
-          .userName(getOrCreateUserCommand.userName())
-          .email(getOrCreateUserCommand.email())
-          .oauthSubject(getOrCreateUserCommand.subject())
-          .oauthProvider(getOrCreateUserCommand.oauthProvider())
-          .appleRefreshToken(getOrCreateUserCommand.appleRefreshToken())
-          .build();
-
-      User savedReSignUpUser = userRepository.save(reSignUpUser);
-
-      return savedReSignUpUser.getId();
-    }
-
-    return user.getId();
   }
 
   public UserDetails loadUserById(Long id) {
@@ -65,6 +44,15 @@ public class UserService {
     return new GetUserInfoRes(name, userDetails.email());
   }
 
+  public User findById(Long userId) {
+    return userRepository.findById(userId);
+  }
+
+  public User saveUser(String userName, String oauthProvider, String email) {
+    User user = User.create(userName, oauthProvider, email);
+    return userRepository.save(user);
+  }
+
   private String convertName(String name) {
     if (name.contains(" ")) {
       String[] parts = name.split(" ");
@@ -76,9 +64,5 @@ public class UserService {
       }
     }
     return name;
-  }
-
-  public User findById(Long userId) {
-    return userRepository.findById(userId);
   }
 }
