@@ -14,22 +14,6 @@ public class UserRepository {
     this.userJpaRepository = userJpaRepository;
   }
 
-  public User getUserByOAuthProviderAndOAuthSubject(GetOrCreateUserCommand getOrCreateUserCommand) {
-
-    return userJpaRepository.findByOauthProviderAndOauthSubject(
-        getOrCreateUserCommand.oauthProvider(),
-        getOrCreateUserCommand.subject()
-    ).orElseGet(() -> userJpaRepository.save(
-        User.builder()
-            .userName(getOrCreateUserCommand.userName())
-            .email(getOrCreateUserCommand.email())
-            .oauthSubject(getOrCreateUserCommand.subject())
-            .oauthProvider(getOrCreateUserCommand.oauthProvider())
-            .appleRefreshToken(getOrCreateUserCommand.appleRefreshToken())
-            .build()
-    ));
-  }
-
   public void delete(UserDetails userDetails) {
     User user = userJpaRepository.findById(userDetails.id())
         .orElseThrow(() -> new EntityNotFoundException("해당 유저는 존재하지 않습니다."));

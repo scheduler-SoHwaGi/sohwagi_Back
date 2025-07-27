@@ -31,26 +31,6 @@ public class UserService {
     userRepository.delete(userDetails);
   }
 
-  public Long getOrCreateUser(GetOrCreateUserCommand getOrCreateUserCommand) {
-    User user = userRepository.getUserByOAuthProviderAndOAuthSubject(getOrCreateUserCommand);
-
-    if (user.isDeleted()) {
-      User reSignUpUser = User.builder()
-          .userName(getOrCreateUserCommand.userName())
-          .email(getOrCreateUserCommand.email())
-          .oauthSubject(getOrCreateUserCommand.subject())
-          .oauthProvider(getOrCreateUserCommand.oauthProvider())
-          .appleRefreshToken(getOrCreateUserCommand.appleRefreshToken())
-          .build();
-
-      User savedReSignUpUser = userRepository.save(reSignUpUser);
-
-      return savedReSignUpUser.getId();
-    }
-
-    return user.getId();
-  }
-
   public UserDetails loadUserById(Long id) {
 
     User user = userRepository.findById(id);

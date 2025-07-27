@@ -34,16 +34,10 @@ public class User {
   private String oauthProvider;
 
   @Column
-  private String oauthSubject;
-
-  @Column
   private String email;
 
   @Column(name = "is_deleted", nullable = false)
   private boolean isDeleted;
-
-  @Column
-  private String appleRefreshToken;
 
   @Column
   private LocalDateTime createdAt;
@@ -54,18 +48,14 @@ public class User {
       String fcmToken,
       String userName,
       String oauthProvider,
-      String oauthSubject,
       String email,
-      boolean isDeleted,
-      String appleRefreshToken) {
+      boolean isDeleted) {
     this.fcmToken = fcmToken;
     this.id = id;
     this.userName = userName;
     this.oauthProvider = oauthProvider;
-    this.oauthSubject = oauthSubject;
     this.email = email;
     this.isDeleted = isDeleted;
-    this.appleRefreshToken = appleRefreshToken;
     this.createdAt = LocalDateTime.now();
   }
 
