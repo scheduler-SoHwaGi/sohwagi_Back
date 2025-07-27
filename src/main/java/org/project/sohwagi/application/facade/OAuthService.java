@@ -47,40 +47,11 @@ public class OAuthService {
 
   @Transactional
   public LoginRes appleLogin(AppleLoginCommand command) {
-    //Apple 서버로부터 사용자 정보 조회
-    AppleOAuthInfoRes appleOAuthInfoRes = appleClient.getAppleOAuthInfo(command);
-
-    //subject로 AppleCredential이 DB에 있는지 확인
-    Optional<AppleCredential> appleCredentialOpt = appleCredentialService.getAppleCredential(
-        appleOAuthInfoRes.subject());
-
-    Long userId;
-
-    if(appleCredentialOpt.isPresent()) {
-      //기존 유저 로그인
-      userId = appleCredentialOpt.get().getUserId();
-    } else {
-      //신규 유저 회원가입
-      User newUser = userService.saveUser(
-          command.userName(), "APPLE", appleOAuthInfoRes.email());
-      userId = newUser.getId();
-
-      //최초 발급된 AppleCredential 저장
-      appleCredentialService.saveAppleCredential(
-          appleOAuthInfoRes.subject(), appleOAuthInfoRes.refreshToken(), userId);
-    }
-
-    //소화기 서비스의 Access/Refresh Token 발급
-    String accessToken = jwtUtil.createAccessToken(userId);
-    String refreshToken = jwtUtil.createRefreshToken(userId);
-
-    RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
-    String token = tokenService.saveToken(refreshTokenCommand);
-
-    return LoginRes.builder()
-        .accessToken(accessToken)
-        .refreshToken(token)
-        .build();
+    AppleOAuthInfoRes appleOAuthInfoRes = fetchAppleOAuthInfo(command);
+    Long userId = resolveUserId(appleOAuthInfoRes, command.userName());
+    String accessToken = generateAccessToken(userId);
+    String refreshToken = generateAndSaveRefreshToken(userId);
+    return buildLoginResponse(accessToken, refreshToken);
   }
 
   @Transactional
@@ -137,4 +108,43 @@ public class OAuthService {
         .refreshToken(token)
         .build();
   }
+
+  private AppleOAuthInfoRes fetchAppleOAuthInfo(AppleLoginCommand appleLoginCommand) {
+    return appleClient.getAppleOAuthInfo(appleLoginCommand);
+  }
+
+  private Long resolveUserId(AppleOAuthInfoRes appleOAuthInfoRes, String userName) {
+    return findExistingUserId(appleOAuthInfoRes.subject())
+        .orElseGet(() -> createNewUser(appleOAuthInfoRes, userName));
+  }
+
+  private LoginRes buildLoginResponse(String accessToken, String refreshToken) {
+    return LoginRes.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
+  }
+
+  private Optional<Long> findExistingUserId(String subject) {
+    return appleCredentialService.findAppleCredential(subject).map(AppleCredential::getUserId);
+  }
+
+  private Long createNewUser(AppleOAuthInfoRes oAuthInfo, String userName) {
+    User newUser = userService.saveUser(userName, "APPLE", oAuthInfo.email());
+    appleCredentialService.saveAppleCredential(
+        oAuthInfo.subject(), oAuthInfo.refreshToken(), newUser.getId());
+    return newUser.getId();
+  }
+
+  private String generateAccessToken(Long userId) {
+    return jwtUtil.createAccessToken(userId);
+  }
+
+  private String generateAndSaveRefreshToken(Long userId) {
+    String refreshToken = jwtUtil.createRefreshToken(userId);
+
+    RefreshTokenCommand command = new RefreshTokenCommand(refreshToken);
+    return tokenService.saveToken(command);
+  }
+
 }
