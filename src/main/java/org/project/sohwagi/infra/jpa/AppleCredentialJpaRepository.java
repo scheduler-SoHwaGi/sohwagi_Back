@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AppleCredentialJpaRepository extends JpaRepository<AppleCredential, Long> {
 
   Optional<AppleCredential> findByOauthSubject(String oauthSubject);
+
+  Optional<AppleCredential> findByUserId(Long userId);
 }

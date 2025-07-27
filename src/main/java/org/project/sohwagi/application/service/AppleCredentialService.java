@@ -1,5 +1,6 @@
 package org.project.sohwagi.application.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import org.project.sohwagi.domain.AppleCredential;
 import org.project.sohwagi.domain.AppleCredentialRepository;
@@ -22,5 +23,15 @@ public class AppleCredentialService {
 
   public Optional<AppleCredential> findAppleCredential(String oauthSubject) {
     return appleCredentialRepository.findByOauthSubject(oauthSubject);
+  }
+
+  public void deleteAppleCredential(AppleCredential appleCredential) {
+    appleCredentialRepository.delete(appleCredential);
+  }
+
+  public AppleCredential getAppleCredentialByUserId(Long userId) {
+    return appleCredentialRepository
+        .findByUserId(userId)
+        .orElseThrow(() -> new EntityNotFoundException("Apple credential not found"));
   }
 }

@@ -24,4 +24,14 @@ public class AppleCredentialRepositoryImpl implements AppleCredentialRepository 
   public Optional<AppleCredential> findByOauthSubject(String oauthSubject) {
     return appleCredentialJpaRepository.findByOauthSubject(oauthSubject);
   }
+
+  @Override
+  public void delete(AppleCredential appleCredential) {
+    appleCredentialJpaRepository.delete(appleCredential);
+  }
+
+  @Override
+  public Optional<AppleCredential> findByUserId(Long userId) {
+    return appleCredentialJpaRepository.findByUserId(userId);
+  }
 }
