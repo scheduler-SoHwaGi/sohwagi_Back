@@ -56,7 +56,10 @@ public class OAuthService {
 
   @Transactional
   public void deleteAppleUser(DeleteUserCommand deleteUserCommand) {
-    appleClient.appleRevoke(deleteUserCommand);
+    AppleCredential appleCredential = appleCredentialService.getAppleCredentialByUserId(
+        deleteUserCommand.userDetails().id());
+    appleClient.appleRevoke(appleCredential.getAppleRefreshToken());
+    appleCredentialService.deleteAppleCredential(appleCredential);
 
     RefreshTokenCommand refreshTokenCommand = RefreshTokenCommand.builder().refreshToken(
         deleteUserCommand.refreshToken()).build();
@@ -65,9 +68,7 @@ public class OAuthService {
 
     scheduleService.deleteScheduleByUserRevoke(deleteUserCommand.userDetails().id());
 
-    userService.deleteUser(
-        deleteUserCommand.userDetails()
-    );
+    userService.deleteUser(deleteUserCommand.userDetails());
   }
 
   public List<String> testLogin(String name) {
