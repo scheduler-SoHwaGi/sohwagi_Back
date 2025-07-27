@@ -1,5 +1,6 @@
 package org.project.sohwagi.infra.repository;
 
+import java.util.Optional;
 import org.project.sohwagi.domain.AppleCredential;
 import org.project.sohwagi.domain.AppleCredentialRepository;
 import org.project.sohwagi.infra.jpa.AppleCredentialJpaRepository;
@@ -17,5 +18,10 @@ public class AppleCredentialRepositoryImpl implements AppleCredentialRepository 
   @Override
   public void save(AppleCredential appleCredential) {
     appleCredentialJpaRepository.save(appleCredential);
+  }
+
+  @Override
+  public Optional<AppleCredential> findByOauthSubject(String oauthSubject) {
+    return appleCredentialJpaRepository.findByOauthSubject(oauthSubject);
   }
 }
