@@ -8,6 +8,7 @@ import org.project.sohwagi.application.service.ScheduleService;
 import org.project.sohwagi.application.service.TokenService;
 import org.project.sohwagi.domain.AppleCredential;
 import org.project.sohwagi.domain.User;
+import org.project.sohwagi.domain.UserDetails;
 import org.project.sohwagi.infra.apple.AppleClient;
 import org.project.sohwagi.infra.apple.AppleOAuthInfoRes;
 import org.project.sohwagi.presentation.res.LoginRes;
@@ -56,19 +57,8 @@ public class OAuthService {
 
   @Transactional
   public void deleteAppleUser(DeleteUserCommand deleteUserCommand) {
-    AppleCredential appleCredential = appleCredentialService.getAppleCredentialByUserId(
-        deleteUserCommand.userDetails().id());
-    appleClient.appleRevoke(appleCredential.getAppleRefreshToken());
-    appleCredentialService.deleteAppleCredential(appleCredential);
-
-    RefreshTokenCommand refreshTokenCommand = RefreshTokenCommand.builder().refreshToken(
-        deleteUserCommand.refreshToken()).build();
-
-    tokenService.expireToken(refreshTokenCommand);
-
-    scheduleService.deleteScheduleByUserRevoke(deleteUserCommand.userDetails().id());
-
-    userService.deleteUser(deleteUserCommand.userDetails());
+    revokeAppleAccess(deleteUserCommand.userDetails());
+    cleanupUserData(deleteUserCommand.userDetails(), deleteUserCommand.refreshToken());
   }
 
   public List<String> testLogin(String name) {
@@ -148,4 +138,21 @@ public class OAuthService {
     return tokenService.saveToken(command);
   }
 
+  private void revokeAppleAccess(UserDetails userDetails) {
+    AppleCredential appleCredential = appleCredentialService.getAppleCredentialByUserId(
+        userDetails.id());
+    appleClient.appleRevoke(appleCredential.getAppleRefreshToken());
+    appleCredentialService.deleteAppleCredential(appleCredential);
+  }
+
+  private void cleanupUserData(UserDetails userDetails, String refreshToken) {
+    RefreshTokenCommand tokenCommand = RefreshTokenCommand.builder()
+        .refreshToken(refreshToken)
+        .build();
+    tokenService.expireToken(tokenCommand);
+
+    Long userId = userDetails.id();
+    scheduleService.deleteScheduleByUserRevoke(userId);
+    userService.deleteUser(userDetails);
+  }
 }
