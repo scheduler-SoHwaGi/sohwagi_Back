@@ -63,40 +63,28 @@ public class OAuthService {
 
   public List<String> testLogin(String name) {
     List<String> res = new ArrayList<>();
+    User user = userService.saveUser(name, "test@gmail.com", "TEST");
 
-    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(name,
-        null, "test", "1234", null);
-
-    Long userId = userService.getOrCreateUser(getOrCreateUserCommand);
-
-    String accessToken = jwtUtil.createAccessToken(userId);
-    String refreshToken = jwtUtil.createRefreshToken(userId);
-
-    RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
-    String token = tokenService.saveToken(refreshTokenCommand);
+    String accessToken = generateAccessToken(user.getId());
+    String refreshToken = generateAndSaveRefreshToken(user.getId());
 
     res.add(accessToken);
-    res.add(token);
+    res.add(refreshToken);
 
     return res;
   }
 
   @Transactional
   public LoginRes qaLogin() {
-    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand("test", null, "test",
-        null, null);
+    User user = userService.saveUser(
+        "TestUser", "test@gmail.com", "TEST");;
 
-    Long userId = userService.getOrCreateUser(getOrCreateUserCommand);
-
-    String accessToken = jwtUtil.createAccessToken(userId);
-    String refreshToken = jwtUtil.createRefreshToken(userId);
-
-    RefreshTokenCommand refreshTokenCommand = new RefreshTokenCommand(refreshToken);
-    String token = tokenService.saveToken(refreshTokenCommand);
+    String accessToken = generateAccessToken(user.getId());
+    String refreshToken = generateAndSaveRefreshToken(user.getId());
 
     return LoginRes.builder()
         .accessToken(accessToken)
-        .refreshToken(token)
+        .refreshToken(refreshToken)
         .build();
   }
 
