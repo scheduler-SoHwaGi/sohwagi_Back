@@ -29,4 +29,14 @@ public class AppleCredential {
   @Column
   private Long userId;
 
+  private AppleCredential (String oauthSubject, String appleRefreshToken, Long userId) {
+    this.oauthSubject = oauthSubject;
+    this.appleRefreshToken = appleRefreshToken;
+    this.userId = userId;
+  }
+
+  public static AppleCredential create(String oauthSubject, String appleRefreshToken, Long userId) {
+    return new AppleCredential(oauthSubject, appleRefreshToken, userId);
+  }
+
 }
