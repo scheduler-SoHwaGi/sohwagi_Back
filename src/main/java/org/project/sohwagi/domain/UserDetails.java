@@ -5,10 +5,8 @@ public record UserDetails(
     String fcmToken,
     String userName,
     String oauthProvider,
-    String oauthSubject,
     String email,
-    boolean isDeleted,
-    String appleRefreshToken) {
+    boolean isDeleted) {
 
   public User toEntity() {
     return User.builder()
@@ -16,10 +14,8 @@ public record UserDetails(
         .fcmToken(fcmToken)
         .userName(userName)
         .oauthProvider(oauthProvider)
-        .oauthSubject(oauthSubject)
         .email(email)
         .isDeleted(isDeleted)
-        .appleRefreshToken(appleRefreshToken)
         .build();
   }
 
@@ -29,10 +25,8 @@ public record UserDetails(
         user.getFcmToken(),
         user.getUserName(),
         user.getOauthProvider(),
-        user.getOauthSubject(),
         user.getEmail(),
-        user.isDeleted(),
-        user.getAppleRefreshToken()
+        user.isDeleted()
     );
   }
 }
