@@ -20,13 +20,13 @@ public class AppleCredential {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
+  @Column(unique = true)
   private String oauthSubject;
 
   @Column
   private String appleRefreshToken;
 
-  @Column
+  @Column(unique = true)
   private Long userId;
 
   private AppleCredential (String oauthSubject, String appleRefreshToken, Long userId) {
