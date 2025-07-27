@@ -62,14 +62,4 @@ public class UserController {
     return ResponseEntity.ok(getUserInfoRes);
   }
 
-  @GetMapping("/test")
-  public ResponseEntity<String> test(@UserInfo UserDetails userDetails) {
-
-    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(
-        userDetails.userName(), userDetails.email(), userDetails.oauthProvider(), userDetails.oauthSubject(),
-        userDetails.appleRefreshToken());
-    userService.getOrCreateUser(getOrCreateUserCommand);
-
-    return  ResponseEntity.ok().build();
-  }
 }
