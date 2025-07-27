@@ -2,8 +2,12 @@ package org.project.sohwagi.application.facade;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import org.project.sohwagi.application.service.AppleCredentialService;
 import org.project.sohwagi.application.service.ScheduleService;
 import org.project.sohwagi.application.service.TokenService;
+import org.project.sohwagi.domain.AppleCredential;
+import org.project.sohwagi.domain.User;
 import org.project.sohwagi.infra.apple.AppleClient;
 import org.project.sohwagi.infra.apple.AppleOAuthInfoRes;
 import org.project.sohwagi.presentation.res.LoginRes;
@@ -24,31 +28,49 @@ public class OAuthService {
   private final TokenService tokenService;
   private final JwtUtil jwtUtil;
   private final ScheduleService scheduleService;
+  private final AppleCredentialService appleCredentialService;
 
   public OAuthService(
       AppleClient appleClient,
       JwtUtil jwtUtil,
       UserService userService,
       TokenService tokenService,
-      ScheduleService scheduleService
-  ) {
+      ScheduleService scheduleService,
+      AppleCredentialService appleCredentialService) {
     this.appleClient = appleClient;
     this.jwtUtil = jwtUtil;
     this.userService = userService;
     this.tokenService = tokenService;
     this.scheduleService = scheduleService;
+    this.appleCredentialService = appleCredentialService;
   }
 
   @Transactional
   public LoginRes appleLogin(AppleLoginCommand command) {
+    //Apple 서버로부터 사용자 정보 조회
     AppleOAuthInfoRes appleOAuthInfoRes = appleClient.getAppleOAuthInfo(command);
 
-    GetOrCreateUserCommand getOrCreateUserCommand = new GetOrCreateUserCommand(command.userName(),
-        appleOAuthInfoRes.email(), "apple", appleOAuthInfoRes.subject(),
-        appleOAuthInfoRes.refreshToken());
+    //subject로 AppleCredential이 DB에 있는지 확인
+    Optional<AppleCredential> appleCredentialOpt = appleCredentialService.getAppleCredential(
+        appleOAuthInfoRes.subject());
 
-    Long userId = userService.getOrCreateUser(getOrCreateUserCommand);
+    Long userId;
 
+    if(appleCredentialOpt.isPresent()) {
+      //기존 유저 로그인
+      userId = appleCredentialOpt.get().getUserId();
+    } else {
+      //신규 유저 회원가입
+      User newUser = userService.saveUser(
+          command.userName(), "APPLE", appleOAuthInfoRes.email());
+      userId = newUser.getId();
+
+      //최초 발급된 AppleCredential 저장
+      appleCredentialService.saveAppleCredential(
+          appleOAuthInfoRes.subject(), appleOAuthInfoRes.refreshToken(), userId);
+    }
+
+    //소화기 서비스의 Access/Refresh Token 발급
     String accessToken = jwtUtil.createAccessToken(userId);
     String refreshToken = jwtUtil.createRefreshToken(userId);
 
