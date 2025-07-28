@@ -37,8 +37,6 @@ public class ScheduleService
 
   public Long createScheduleByText(ScheduleCreateCommand command) {
     log.info("Create schedule by text 시작");
-    isScheduleTitleExists(command.title());
-
     Schedule schedule = parseDateString(command);
 
     Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
@@ -139,11 +137,5 @@ public class ScheduleService
     Schedule schedule = scheduleRepository.findScheduleById(cmd.userId());
 
     schedule.checkSchedule(schedule.getChecked());
-  }
-
-  private void isScheduleTitleExists(String title) {
-    if (title == null) {
-      throw new CustomException(ErrorCode.INVALID_SCHEDULE_TEXT_INPUT_VALUE);
-    }
   }
 }

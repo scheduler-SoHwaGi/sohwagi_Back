@@ -16,6 +16,8 @@ import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
 import org.project.sohwagi.application.service.ScheduleService;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
+import org.project.sohwagi.common.exception.CustomException;
+import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.infra.llm.LlmClient;
 import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
@@ -51,6 +53,7 @@ public class ScheduleFacadeService {
   public Long createScheduleByText(ScheduleCreateByTextCommand cmd) throws JsonProcessingException {
     ExtractedScheduleInformation scheduleInformation = llmClient.extractScheduleInformation(
         cmd.text());
+    isScheduleTitleExists(scheduleInformation.title());
 
     return scheduleService.createScheduleByText(
         new ScheduleCreateCommand(
@@ -64,5 +67,11 @@ public class ScheduleFacadeService {
   @Transactional
   public void checkSchedule(ScheduleCheckCommand cmd) {
     scheduleService.checkSchedule(cmd);
+  }
+
+  private void isScheduleTitleExists(String title) {
+    if (title == null) {
+      throw new CustomException(ErrorCode.INVALID_SCHEDULE_TEXT_INPUT_VALUE);
+    }
   }
 }
