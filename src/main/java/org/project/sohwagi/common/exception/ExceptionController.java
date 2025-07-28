@@ -70,6 +70,12 @@ public class ExceptionController {
         .body(Map.of("error", String.format("'%s' 파라미터는 필수입니다.", name)));
   }
 
+  @ExceptionHandler(CustomException.class)
+  protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+    ErrorResponse errorResponse = ErrorResponse.from(e.getErrorCode());
+    return new ResponseEntity<>(errorResponse, e.getErrorCode().getStatus());
+  }
+
   private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {
     return ResponseEntity.status(status.value())
         .body(ExceptionDto.builder()
