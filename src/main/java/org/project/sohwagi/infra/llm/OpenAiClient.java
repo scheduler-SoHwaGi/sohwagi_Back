@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
+import org.project.sohwagi.common.exception.CustomException;
+import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -22,8 +25,7 @@ public class OpenAiClient implements LlmClient {
 
 
   @Override
-  public ExtractedScheduleInformation extractScheduleInformation(String input)
-      throws JsonProcessingException {
+  public ExtractedScheduleInformation extractScheduleInformation(String input) {
     String systemMessage =
         "너는 한 문장에서 일정 관련 정보를 추출하는 역할이야. "
             + "prompt 문장을 일정으로 등록하려는데 JSON 형태로 일정 제목, 일정 날짜로 분류해줘. 해당 값이 없으면 null 표시해줘."
@@ -32,20 +34,26 @@ public class OpenAiClient implements LlmClient {
             + LocalDateTime.now()
             + "이야. title, date 는 String 타입이고 date 예시: 2025년 4월 7일 월요일 오전 9시 00분";
 
-    String rawJsonString = chatClient
-        .prompt()
-        .system(systemMessage)
-        .user(input)
-        .call()
-        .content();
+    try {
+      String rawJsonString = chatClient
+          .prompt()
+          .system(systemMessage)
+          .user(input)
+          .call()
+          .content();
 
-    log.info("Result : {}", rawJsonString);
+      log.info("Result : {}", rawJsonString);
 
-    String jsonString = rawJsonString
-        .replace("```json", "")
-        .replace("```", "")
-        .trim();
+      String jsonString = rawJsonString
+          .replace("```json", "")
+          .replace("```", "")
+          .trim();
 
-    return objectMapper.readValue(jsonString, ExtractedScheduleInformation.class);
+      return objectMapper.readValue(jsonString, ExtractedScheduleInformation.class);
+    } catch (NonTransientAiException e) {
+      throw new CustomException(ErrorCode.INTERNAL_LLM_SERVER_ERROR);
+    } catch (JsonProcessingException e) {
+      throw new CustomException(ErrorCode.LLM_RESULT_PARSING_ERROR);
+    }
   }
 }

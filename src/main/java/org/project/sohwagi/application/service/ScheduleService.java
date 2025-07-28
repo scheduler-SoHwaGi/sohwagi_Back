@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
 import org.project.sohwagi.common.UseCase;
+import org.project.sohwagi.common.exception.CustomException;
+import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
@@ -35,6 +37,7 @@ public class ScheduleService
 
   public Long createScheduleByText(ScheduleCreateCommand command) {
     log.info("Create schedule by text 시작");
+    isScheduleTitleExists(command.title());
 
     Schedule schedule = parseDateString(command);
 
@@ -136,5 +139,11 @@ public class ScheduleService
     Schedule schedule = scheduleRepository.findScheduleById(cmd.userId());
 
     schedule.checkSchedule(schedule.getChecked());
+  }
+
+  private void isScheduleTitleExists(String title) {
+    if (title == null) {
+      throw new CustomException(ErrorCode.INVALID_SCHEDULE_TEXT_INPUT_VALUE);
+    }
   }
 }
