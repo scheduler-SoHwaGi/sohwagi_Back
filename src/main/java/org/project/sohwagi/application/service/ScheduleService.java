@@ -35,12 +35,21 @@ public class ScheduleService
 
   private final ScheduleRepository scheduleRepository;
 
+  @Transactional
   public Long createScheduleByText(ScheduleCreateCommand command) {
     log.info("Create schedule by text 시작");
-    Schedule schedule = parseDateString(command);
-
-    Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
-
+    Schedule newSchedule = new Schedule(
+        command.title(),
+        command.userId(),
+        command.year(),
+        command.month(),
+        command.day(),
+        command.dayOfWeek(),
+        command.ampm(),
+        command.hour(),
+        command.minute()
+    );
+    Schedule savedSchedule = scheduleRepository.saveSchedule(newSchedule);
     return savedSchedule.getId();
   }
 
@@ -59,39 +68,6 @@ public class ScheduleService
 
     for (Schedule schedule : schedules) {
       scheduleRepository.deleteSchedule(schedule);
-    }
-  }
-
-  private Schedule parseDateString(ScheduleCreateCommand command) {
-    log.info(command.date());
-    long startTime = System.currentTimeMillis();
-
-    Pattern pattern = Pattern.compile(
-        "(\\d{4})년 (\\d{1,2})월 (\\d{1,2})일 (\\S+) (오전|오후) (\\d{1,2})시 (\\d{2})분");
-    Matcher matcher = pattern.matcher(command.date());
-
-    if (matcher.matches()) {
-      int year = Integer.parseInt(matcher.group(1));
-      int month = Integer.parseInt(matcher.group(2));
-      int day = Integer.parseInt(matcher.group(3));
-      String dayOfWeek = matcher.group(4);
-      String amPm = matcher.group(5);
-      int hour = Integer.parseInt(matcher.group(6));
-      int minute = Integer.parseInt(matcher.group(7));
-
-      log.info("parseDateString proceeds in {} ms", System.currentTimeMillis() - startTime);
-      return new Schedule(command.title(), command.userId(), year, month, day, dayOfWeek, amPm, hour,
-          minute);
-    } else {
-      throw new IllegalArgumentException("Invalid date format: " + command.date());
-    }
-  }
-
-  private int convertTo24Hour(String amPm, int hour) {
-    if ("오전".equals(amPm)) {
-      return hour == 12 ? 0 : hour;
-    } else {
-      return hour == 12 ? 12 : hour + 12;
     }
   }
 

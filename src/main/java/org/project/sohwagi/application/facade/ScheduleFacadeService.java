@@ -20,7 +20,7 @@ import org.project.sohwagi.common.exception.CustomException;
 import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.infra.llm.LlmClient;
-import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
+import org.project.sohwagi.infra.llm.LlmResult;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,18 +50,12 @@ public class ScheduleFacadeService {
   }
 
   @Transactional
-  public Long createScheduleByText(ScheduleCreateByTextCommand cmd) throws JsonProcessingException {
-    ExtractedScheduleInformation scheduleInformation = llmClient.extractScheduleInformation(
-        cmd.text());
+  public Long createScheduleByText(ScheduleCreateByTextCommand cmd) {
+    LlmResult scheduleInformation = llmClient.extractScheduleInformation(cmd.text());
     isScheduleTitleExists(scheduleInformation.title());
-
-    return scheduleService.createScheduleByText(
-        new ScheduleCreateCommand(
-            scheduleInformation.title(),
-            scheduleInformation.date(),
-            cmd.userId()
-        )
-    );
+    ScheduleCreateCommand scheduleCreateCommand = ScheduleCreateCommand.from(
+        scheduleInformation, cmd.userId());
+    return scheduleService.createScheduleByText(scheduleCreateCommand);
   }
 
   @Transactional
