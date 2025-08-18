@@ -47,10 +47,10 @@ public class Schedule {
 	private String amPm;
 
 	@Column
-	private int hour;
+	private Integer hour;
 
 	@Column
-	private int minute;
+	private Integer minute;
 
 	@Column
 	private int year;
@@ -73,8 +73,8 @@ public class Schedule {
 			int day,
 			String dayOfWeek,
 			String amPm,
-			int hour,
-			int minute,
+			Integer hour,
+			Integer minute,
 			ScheduleType type) {
 		this.title = title;
 		this.month = month;
