@@ -62,6 +62,7 @@ public class Schedule {
 	private Boolean checked;
 
 	@Column
+	@Enumerated(EnumType.STRING)
 	private ScheduleType type;
 
 	public Schedule(
