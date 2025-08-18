@@ -10,11 +10,11 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateByTextCommand;
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailOnDateInfo;
 import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.presentation.req.ScheduleRequest.ScheduleCreateByTextRequest;
 import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleCountsResponse;
-import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleGetListResponse;
+import org.project.sohwagi.presentation.res.ScheduleResponse.ScheduleDetailOnDateResponse;
 import org.project.sohwagi.application.facade.ScheduleFacadeService;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
@@ -90,15 +90,17 @@ public class ScheduleController {
   }
 
   @GetMapping()
-  public ResponseEntity<ScheduleGetListResponse> getSchedulesOnDate(
-      @RequestParam @NotNull int year, @RequestParam @NotNull int month,
-      @RequestParam @NotNull int day, @UserInfo UserDetails userDetails
+  public ResponseEntity<ScheduleDetailOnDateResponse> getSchedulesOnDate(
+      @RequestParam @NotNull int year,
+      @RequestParam @NotNull int month,
+      @RequestParam @NotNull int day,
+      @UserInfo UserDetails userDetails
   ) {
-    ScheduleDetailsInfo info = scheduleFacadeService.getSchedulesOnDate(
+    ScheduleDetailOnDateInfo info = scheduleFacadeService.getSchedulesOnDate(
         SchedulesGetOnDate.from(year, month, day, userDetails.id())
     );
 
-    return ResponseEntity.ok().body(ScheduleGetListResponse.from(info));
+    return ResponseEntity.ok().body(ScheduleDetailOnDateResponse.from(info));
   }
 
   @PostMapping("/{scheduleId}/actions/toggle-checked")

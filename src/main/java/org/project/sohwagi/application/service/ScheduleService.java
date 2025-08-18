@@ -88,22 +88,12 @@ public class ScheduleService
         ));
   }
 
-  public List<ScheduleDetailInfo> getSchedulesOnDate(SchedulesGetOnDate cmd) {
-    List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYearAndMonthAndDay(cmd.userId(),
+  public List<Schedule> getSchedulesOnDate(SchedulesGetOnDate cmd) {
+    return scheduleRepository.findAllByUserIdAndYearAndMonthAndDay(
+        cmd.userId(),
         cmd.year(),
-        cmd.month(), cmd.day());
-
-    return schedules.stream().map(
-            s -> new ScheduleDetailInfo(
-                s.getId(),
-                s.getTitle(),
-                s.getAmPm(),
-                s.getHour(),
-                s.getMinute(),
-                s.getChecked()
-            )
-        )
-        .toList();
+        cmd.month(),
+        cmd.day());
   }
 
   public List<Schedule> findTodaySchedules(LocalDate today) {

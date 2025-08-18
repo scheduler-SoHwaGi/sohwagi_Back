@@ -6,16 +6,23 @@ public class ScheduleInfo {
 
   public record ScheduleCountInfo(String date, int counts, Status status) { }
 
-  public record ScheduleDetailInfo(
+  public record ScheduleCountsInfo(List<ScheduleCountInfo> scheduleCounts) {}
+
+  public record TodoTypeInfo(
       Long scheduleId,
       String title,
-      String amPm,
-      int hour,
-      int minute,
       boolean checked
-  ) {}
+  ) { }
 
-  public record ScheduleDetailsInfo(List<ScheduleDetailInfo> schedules) {}
+  public record ScheduleTypeInfo(
+      Long scheduleId,
+      String title,
+      String time,
+      boolean checked
+  ) { }
 
-  public record ScheduleCountsInfo(List<ScheduleCountInfo> scheduleCounts) {}
+  public record ScheduleDetailOnDateInfo(
+      List<TodoTypeInfo> todoTypeInfoList,
+      List<ScheduleTypeInfo> scheduleTypeInfoList
+  ) { }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.application.StatusGenerator;
 import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
@@ -13,12 +14,14 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand
 import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailOnDateInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleTypeInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.TodoTypeInfo;
 import org.project.sohwagi.application.service.ScheduleService;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.common.exception.CustomException;
 import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.domain.Schedule;
+import org.project.sohwagi.domain.ScheduleType;
 import org.project.sohwagi.infra.llm.LlmClient;
 import org.project.sohwagi.infra.llm.LlmResult;
 import org.springframework.stereotype.Service;
@@ -43,10 +46,26 @@ public class ScheduleFacadeService {
     return new ScheduleCountsInfo(infos);
   }
 
-  public ScheduleDetailsInfo getSchedulesOnDate(SchedulesGetOnDate cmd) {
-    List<ScheduleDetailInfo> scheduleDetailInfoList = scheduleService.getSchedulesOnDate(cmd);
-
-    return new ScheduleDetailsInfo(scheduleDetailInfoList);
+  public ScheduleDetailOnDateInfo getSchedulesOnDate(SchedulesGetOnDate cmd) {
+    List<Schedule> schedules = scheduleService.getSchedulesOnDate(cmd);
+    Map<Boolean, List<Schedule>> partitionedSchedules = schedules.stream()
+        .collect(Collectors.partitioningBy(s -> s.getType() == ScheduleType.SCHEDULE));
+    List<ScheduleTypeInfo> scheduleTypeInfoList = partitionedSchedules.get(true).stream()
+        .map(schedule -> new ScheduleTypeInfo(
+            schedule.getId(),
+            schedule.getTitle(),
+            schedule.getAmPm() + " " + schedule.getHour() + "시 " + String.format("%02d", schedule.getMinute()) + "분",
+            schedule.getChecked()
+        ))
+        .toList();
+    List<TodoTypeInfo> todoTypeInfoList = partitionedSchedules.get(false).stream()
+        .map(schedule -> new TodoTypeInfo(
+            schedule.getId(),
+            schedule.getTitle(),
+            schedule.getChecked()
+        ))
+        .toList();
+    return new ScheduleDetailOnDateInfo(todoTypeInfoList, scheduleTypeInfoList);
   }
 
   @Transactional
