@@ -21,24 +21,28 @@ import org.springframework.stereotype.Component;
 public class OpenAiClient implements LlmClient {
 
   private final ChatClient chatClient;
-  private final PromptTemplate promptTemplate;
+  private final Resource promptResource;
 
   public OpenAiClient(
       ChatClient.Builder chatClientBuilder,
       @Value("classpath:/prompts/add-schedule-prompt.txt") Resource promptResource) {
     this.chatClient = chatClientBuilder.build();
-    this.promptTemplate = new PromptTemplate(promptResource);
+    this.promptResource = promptResource;
   }
 
 
   @Override
   public LlmResult extractScheduleInformation(String input) {
     try {
-      Prompt prompt = promptTemplate.create(
-          Map.of("now", LocalDateTime.now(ZoneId.of("Asia/Seoul"))));
+      Map<String, Object> model = Map.of(
+          "now", LocalDateTime.now(ZoneId.of("Asia/Seoul")),
+          "input", input
+      );
       return chatClient
-          .prompt(prompt)
-          .user(input)
+          .prompt()
+          .user(userSpec -> userSpec
+              .text(promptResource)
+              .params(model))
           .call()
           .entity(LlmResult.class);
     } catch (NonTransientAiException e) {
