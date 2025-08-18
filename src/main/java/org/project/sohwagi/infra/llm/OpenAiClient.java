@@ -21,15 +21,12 @@ import org.springframework.stereotype.Component;
 public class OpenAiClient implements LlmClient {
 
   private final ChatClient chatClient;
-  private final ObjectMapper objectMapper;
   private final PromptTemplate promptTemplate;
 
   public OpenAiClient(
       ChatClient.Builder chatClientBuilder,
-      ObjectMapper objectMapper,
       @Value("classpath:/prompts/add-schedule-prompt.txt") Resource promptResource) {
     this.chatClient = chatClientBuilder.build();
-    this.objectMapper = objectMapper;
     this.promptTemplate = new PromptTemplate(promptResource);
   }
 
@@ -39,24 +36,13 @@ public class OpenAiClient implements LlmClient {
     try {
       Prompt prompt = promptTemplate.create(
           Map.of("now", LocalDateTime.now(ZoneId.of("Asia/Seoul"))));
-      String rawJsonString = chatClient
+      return chatClient
           .prompt(prompt)
           .user(input)
           .call()
-          .content();
-
-      log.info("Result : {}", rawJsonString);
-
-      String jsonString = rawJsonString
-          .replace("```json", "")
-          .replace("```", "")
-          .trim();
-
-      return objectMapper.readValue(jsonString, LlmResult.class);
+          .entity(LlmResult.class);
     } catch (NonTransientAiException e) {
       throw new CustomException(ErrorCode.INTERNAL_LLM_SERVER_ERROR);
-    } catch (JsonProcessingException e) {
-      throw new CustomException(ErrorCode.LLM_RESULT_PARSING_ERROR);
     }
   }
 }
