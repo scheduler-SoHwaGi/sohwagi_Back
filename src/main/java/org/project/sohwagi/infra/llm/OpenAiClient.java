@@ -3,12 +3,18 @@ package org.project.sohwagi.infra.llm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.exception.CustomException;
 import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.retry.NonTransientAiException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,27 +23,25 @@ public class OpenAiClient implements LlmClient {
 
   private final ChatClient chatClient;
   private final ObjectMapper objectMapper;
+  private final PromptTemplate promptTemplate;
 
-  public OpenAiClient(ChatClient.Builder chatClientBuilder, ObjectMapper objectMapper) {
+  public OpenAiClient(
+      ChatClient.Builder chatClientBuilder,
+      ObjectMapper objectMapper,
+      @Value("classpath:/prompts/add-schedule-prompt.txt") Resource promptResource) {
     this.chatClient = chatClientBuilder.build();
     this.objectMapper = objectMapper;
+    this.promptTemplate = new PromptTemplate(promptResource);
   }
 
 
   @Override
   public ExtractedScheduleInformation extractScheduleInformation(String input) {
-    String systemMessage =
-        "너는 한 문장에서 일정 관련 정보를 추출하는 역할이야. "
-            + "prompt 문장을 일정으로 등록하려는데 JSON 형태로 일정 제목, 일정 날짜로 분류해줘. 해당 값이 없으면 null 표시해줘."
-            + "일정 날짜는 꼭 월, 일, 요일, 시각 나타내야하는데 값이 없으면 계산해서 알려줘."
-            + "아래 양식 꼭 지켜줘. 현재 날짜는 "
-            + LocalDateTime.now()
-            + "이야. title, date 는 String 타입이고 date 예시: 2025년 4월 7일 월요일 오전 9시 00분";
-
     try {
+      Prompt prompt = promptTemplate.create(
+          Map.of("now", LocalDateTime.now(ZoneId.of("Asia/Seoul"))));
       String rawJsonString = chatClient
-          .prompt()
-          .system(systemMessage)
+          .prompt(prompt)
           .user(input)
           .call()
           .content();
