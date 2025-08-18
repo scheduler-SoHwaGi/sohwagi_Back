@@ -8,7 +8,6 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.exception.CustomException;
 import org.project.sohwagi.common.exception.ErrorCode;
-import org.project.sohwagi.infra.llm.LlmResult.ExtractedScheduleInformation;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -36,7 +35,7 @@ public class OpenAiClient implements LlmClient {
 
 
   @Override
-  public ExtractedScheduleInformation extractScheduleInformation(String input) {
+  public LlmResult extractScheduleInformation(String input) {
     try {
       Prompt prompt = promptTemplate.create(
           Map.of("now", LocalDateTime.now(ZoneId.of("Asia/Seoul"))));
@@ -53,7 +52,7 @@ public class OpenAiClient implements LlmClient {
           .replace("```", "")
           .trim();
 
-      return objectMapper.readValue(jsonString, ExtractedScheduleInformation.class);
+      return objectMapper.readValue(jsonString, LlmResult.class);
     } catch (NonTransientAiException e) {
       throw new CustomException(ErrorCode.INTERNAL_LLM_SERVER_ERROR);
     } catch (JsonProcessingException e) {
