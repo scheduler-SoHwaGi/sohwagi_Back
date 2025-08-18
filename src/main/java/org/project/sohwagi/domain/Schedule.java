@@ -61,6 +61,9 @@ public class Schedule {
 	@Column
 	private Boolean checked;
 
+	@Column
+	private ScheduleType type;
+
 	public Schedule(
 			String title,
 			Long userId,
@@ -70,7 +73,8 @@ public class Schedule {
 			String dayOfWeek,
 			String amPm,
 			int hour,
-			int minute) {
+			int minute,
+			ScheduleType type) {
 		this.title = title;
 		this.month = month;
 		this.day = day;
@@ -81,6 +85,7 @@ public class Schedule {
 		this.year = year;
 		this.amPm = amPm;
 		this.checked = false;
+		this.type = type;
 	}
 
 	public void checkSchedule(boolean checked) {

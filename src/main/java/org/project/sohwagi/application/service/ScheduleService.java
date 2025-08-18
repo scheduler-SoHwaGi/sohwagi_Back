@@ -47,7 +47,8 @@ public class ScheduleService
         command.dayOfWeek(),
         command.ampm(),
         command.hour(),
-        command.minute()
+        command.minute(),
+        command.type()
     );
     Schedule savedSchedule = scheduleRepository.saveSchedule(newSchedule);
     return savedSchedule.getId();
