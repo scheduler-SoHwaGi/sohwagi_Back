@@ -1,12 +1,13 @@
 package org.project.sohwagi.infra.llm;
 
-public class LlmResult {
-
-  public record ExtractedScheduleInformation(
-      String title,
-      String date
-  ) {
-
-  }
-
-}
+public record LlmResult(
+    String title,
+    Integer year,
+    Integer month,
+    Integer day,
+    String dayOfWeek,
+    Integer hour,
+    Integer minute,
+    String ampm,
+    String type
+) { }
