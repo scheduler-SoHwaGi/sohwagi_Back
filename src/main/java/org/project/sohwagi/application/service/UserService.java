@@ -1,13 +1,12 @@
 package org.project.sohwagi.application.service;
 
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.application.cmd.SaveFcmTokenCommand;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.domain.User;
 import org.project.sohwagi.domain.UserDetails;
 import org.project.sohwagi.domain.UserRepository;
 import org.project.sohwagi.presentation.res.GetUserInfoRes;
-import org.project.sohwagi.application.cmd.SaveFcmTokenCommand;
-import org.project.sohwagi.application.cmd.GetOrCreateUserCommand;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
