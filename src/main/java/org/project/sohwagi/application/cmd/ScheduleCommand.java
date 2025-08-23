@@ -1,6 +1,8 @@
 package org.project.sohwagi.application.cmd;
 
 import java.time.LocalDate;
+import org.project.sohwagi.domain.ScheduleType;
+import org.project.sohwagi.infra.llm.LlmResult;
 
 public class ScheduleCommand {
 
@@ -31,9 +33,31 @@ public class ScheduleCommand {
 
   public record ScheduleCreateCommand(
       String title,
-      String date,
+      Integer year,
+      Integer month,
+      Integer day,
+      String dayOfWeek,
+      Integer hour,
+      Integer minute,
+      String ampm,
+      ScheduleType type,
       Long userId
-  ) { }
+  ) {
+    public static ScheduleCreateCommand from(LlmResult llmResult, Long userId) {
+      return new ScheduleCreateCommand(
+          llmResult.title(),
+          llmResult.year(),
+          llmResult.month(),
+          llmResult.day(),
+          llmResult.dayOfWeek(),
+          llmResult.hour(),
+          llmResult.minute(),
+          llmResult.ampm(),
+          ScheduleType.valueOf(llmResult.type()),
+          userId
+      );
+    }
+  }
 
   public record ScheduleCheckCommand(Long userId) { }
 }

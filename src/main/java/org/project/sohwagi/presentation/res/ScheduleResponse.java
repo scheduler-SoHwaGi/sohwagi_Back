@@ -1,56 +1,15 @@
 package org.project.sohwagi.presentation.res;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailsInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailOnDateInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.ScheduleTypeInfo;
+import org.project.sohwagi.application.info.ScheduleInfo.TodoTypeInfo;
 import org.project.sohwagi.application.info.Status;
-import org.project.sohwagi.domain.Schedule;
 
 import java.util.List;
 
 public class ScheduleResponse {
-
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Getter
-  public static class ScheduleDetailResponse {
-
-    private Long scheduleId;
-
-    private String title;
-
-    private int month;
-
-    private int day;
-
-    private String dayOfWeek;
-
-    private String time;
-
-    public ScheduleDetailResponse(Schedule schedule) {
-      this.scheduleId = schedule.getId();
-      this.title = schedule.getTitle();
-      this.month = schedule.getMonth();
-      this.day = schedule.getDay();
-      this.dayOfWeek = schedule.getDayOfWeek();
-      this.time = schedule.getAmPm() + " " + schedule.getHour() + "시 " + String.format("%02d",
-          schedule.getMinute()) + "분";
-    }
-  }
-
-  @Getter
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class WeekGroupedScheduleResponse {
-
-    private String week;
-    private String periodOfWeek;
-    private List<ScheduleDetailResponse> schedules;
-  }
 
   public record ScheduleCountResponse(String date, int counts, Status status) {
 
@@ -68,30 +27,13 @@ public class ScheduleResponse {
     }
   }
 
-  public record ScheduleGetResponse(
-      Long scheduleId,
-      String title,
-      String time,
-      boolean checked
+  public record ScheduleDetailOnDateResponse(
+      List<TodoTypeInfo> todo,
+      List<ScheduleTypeInfo> schedules
   ) {
 
-    public static ScheduleGetResponse from(ScheduleDetailInfo info) {
-      return new ScheduleGetResponse(
-          info.scheduleId(),
-          info.title(),
-          info.amPm() + " " + info.hour() + "시 " + String.format("%02d", info.minute()) + "분",
-          info.checked());
-    }
-  }
-
-  public record ScheduleGetListResponse(
-      List<ScheduleGetResponse> schedules
-  ) {
-
-    public static ScheduleGetListResponse from(ScheduleDetailsInfo info) {
-      return new ScheduleGetListResponse(
-          info.schedules().stream().map(ScheduleGetResponse::from).toList()
-      );
+    public static ScheduleDetailOnDateResponse from(ScheduleDetailOnDateInfo info) {
+      return new ScheduleDetailOnDateResponse(info.todoTypeInfoList(),info.scheduleTypeInfoList());
     }
   }
 
