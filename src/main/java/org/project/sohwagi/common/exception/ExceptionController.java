@@ -2,12 +2,9 @@ package org.project.sohwagi.common.exception;
 
 import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletResponse;
 import java.nio.file.AccessDeniedException;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -18,75 +15,54 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionController {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ExceptionDto> handleMethodArgumentNotValidException(
+  public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException e) {
-    return createResponse(HttpStatus.BAD_REQUEST,
-        e.getBindingResult().getFieldError().getDefaultMessage());
+    String errorMessage = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+    return ErrorResponse.toResponseEntity(ErrorCode.INVALID_INPUT_VALUE, errorMessage);
   }
 
-  @ExceptionHandler({
-      NoSuchElementException.class,
-      EntityNotFoundException.class
-  })
-  public ResponseEntity<ExceptionDto> handleBadRequestException(Exception e) {
-    return createResponse(HttpStatus.NOT_FOUND, e.getMessage());
+  @ExceptionHandler({NoSuchElementException.class, EntityNotFoundException.class})
+  public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) {
+    return ErrorResponse.toResponseEntity(ErrorCode.ENTITY_NOT_FOUND, e.getMessage());
   }
 
   @ExceptionHandler(DuplicateKeyException.class)
-  public ResponseEntity<ExceptionDto> handleDuplicateKeyException(DuplicateKeyException e) {
-    return createResponse(HttpStatus.CONFLICT, e.getMessage());
+  public ResponseEntity<ErrorResponse> handleDuplicateKeyException(DuplicateKeyException e) {
+    return ErrorResponse.toResponseEntity(ErrorCode.DUPLICATE_RESOURCE, e.getMessage());
   }
 
-  @ExceptionHandler({
-      JwtException.class,
-      AccessDeniedException.class
-  })
-  public ResponseEntity<ExceptionDto> handleJwtException(Exception e) {
-    return createResponse(HttpStatus.FORBIDDEN, e.getMessage());
+  @ExceptionHandler({JwtException.class, AccessDeniedException.class})
+  public ResponseEntity<ErrorResponse> handleJwtException(Exception e) {
+    return ErrorResponse.toResponseEntity(ErrorCode.ACCESS_DENIED, e.getMessage());
   }
 
   @ExceptionHandler(OAuthRequestException.class)
-  public ResponseEntity<ExceptionDto> handleOAuthException(OAuthRequestException e) {
-    return createResponse(e.getStatus(), e.getMessage());
+  public ResponseEntity<ErrorResponse> handleOAuthException(OAuthRequestException e) {
+    return ErrorResponse.toResponseEntityForOAuth(
+        e.getStatus(), ErrorCode.OAUTH_REQUEST_FAILED.getCode(), e.getMessage());
   }
 
   @ExceptionHandler(RefreshTokenException.class)
-  public ResponseEntity<ExceptionDto> handleRefreshTokenException(Exception e) {
-    return createResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+  public ResponseEntity<ErrorResponse> handleRefreshTokenException(Exception e) {
+    return ErrorResponse.toResponseEntity(ErrorCode.INVALID_REFRESH_TOKEN, e.getMessage());
   }
 
-  @ExceptionHandler(
-      AccessTokenException.class
-  )
-  public ResponseEntity<ExceptionDto> handleAccessTokenException(AccessTokenException e) {
-    return createAccessTokenResponse(HttpStatus.FORBIDDEN, e.getMessage(), e.getNewAccessToken());
+  @ExceptionHandler(AccessTokenException.class)
+  public ResponseEntity<ErrorResponse> handleAccessTokenException(AccessTokenException e) {
+    return ErrorResponse.toResponseEntityForToken(
+        ErrorCode.INVALID_ACCESS_TOKEN, e.getMessage(), e.getNewAccessToken());
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)
-  public ResponseEntity<Map<String,String>> handleMissingParam(MissingServletRequestParameterException ex) {
-    String name = ex.getParameterName();
-    return ResponseEntity
-        .badRequest()
-        .body(Map.of("error", String.format("'%s' 파라미터는 필수입니다.", name)));
+  public ResponseEntity<ErrorResponse> handleMissingParam(
+      MissingServletRequestParameterException e) {
+    String message = String.format("'%s' 파라미터는 필수입니다.", e.getParameterName());
+    return ErrorResponse.toResponseEntity(ErrorCode.MISSING_REQUEST_PARAMETER, message);
   }
 
-  private ResponseEntity<ExceptionDto> createResponse(HttpStatus status, String message) {
-    return ResponseEntity.status(status.value())
-        .body(ExceptionDto.builder()
-            .statusCode(status.value())
-            .state(status)
-            .message(message)
-            .build());
-  }
-
-  private ResponseEntity<ExceptionDto> createAccessTokenResponse(HttpStatus status, String message, String newAccessToken){
-    return ResponseEntity.status(status.value())
-        .body(ExceptionDto.builder()
-            .statusCode(status.value())
-            .state(status)
-            .message(message)
-            .newAccessToken(newAccessToken)
-            .build());
+  @ExceptionHandler(CustomException.class)
+  protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+    return ErrorResponse.toResponseEntity(e.getErrorCode());
   }
 }
 

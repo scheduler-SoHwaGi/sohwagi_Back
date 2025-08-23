@@ -1,9 +1,14 @@
 package org.project.sohwagi.domain;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,10 +52,10 @@ public class Schedule {
 	private String amPm;
 
 	@Column
-	private int hour;
+	private Integer hour;
 
 	@Column
-	private int minute;
+	private Integer minute;
 
 	@Column
 	private int year;
@@ -61,6 +66,10 @@ public class Schedule {
 	@Column
 	private Boolean checked;
 
+	@Column
+	@Enumerated(EnumType.STRING)
+	private ScheduleType type;
+
 	public Schedule(
 			String title,
 			Long userId,
@@ -69,8 +78,9 @@ public class Schedule {
 			int day,
 			String dayOfWeek,
 			String amPm,
-			int hour,
-			int minute) {
+			Integer hour,
+			Integer minute,
+			ScheduleType type) {
 		this.title = title;
 		this.month = month;
 		this.day = day;
@@ -81,6 +91,7 @@ public class Schedule {
 		this.year = year;
 		this.amPm = amPm;
 		this.checked = false;
+		this.type = type;
 	}
 
 	public void checkSchedule(boolean checked) {

@@ -1,8 +1,6 @@
 package org.project.sohwagi.infra.jpa;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import org.project.sohwagi.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
