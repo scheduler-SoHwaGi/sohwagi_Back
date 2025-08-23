@@ -1,13 +1,13 @@
 package org.project.sohwagi.presentation.controller;
 
 import java.util.List;
-import org.project.sohwagi.application.facade.OAuthService;
-import org.project.sohwagi.common.UserInfo;
-import org.project.sohwagi.infra.apple.AppleLoginRequest;
-import org.project.sohwagi.presentation.res.LoginRes;
-import org.project.sohwagi.domain.UserDetails;
 import org.project.sohwagi.application.cmd.AppleLoginCommand;
 import org.project.sohwagi.application.cmd.DeleteUserCommand;
+import org.project.sohwagi.application.facade.OAuthService;
+import org.project.sohwagi.common.UserInfo;
+import org.project.sohwagi.domain.UserDetails;
+import org.project.sohwagi.infra.apple.AppleLoginRequest;
+import org.project.sohwagi.presentation.res.LoginRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,9 +1,8 @@
 package org.project.sohwagi.common.validation;
 
-import static jakarta.validation.Validation.buildDefaultValidatorFactory;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import static jakarta.validation.Validation.buildDefaultValidatorFactory;
 import jakarta.validation.Validator;
 import java.util.Set;
 

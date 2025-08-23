@@ -1,7 +1,6 @@
 package org.project.sohwagi.domain;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.project.sohwagi.application.cmd.GetOrCreateUserCommand;
 import org.project.sohwagi.infra.jpa.UserJpaRepository;
 import org.springframework.stereotype.Repository;
 

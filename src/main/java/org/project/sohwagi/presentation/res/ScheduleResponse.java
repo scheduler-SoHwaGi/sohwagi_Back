@@ -1,13 +1,12 @@
 package org.project.sohwagi.presentation.res;
 
+import java.util.List;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleCountsInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailOnDateInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleTypeInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.TodoTypeInfo;
 import org.project.sohwagi.application.info.Status;
-
-import java.util.List;
 
 public class ScheduleResponse {
 

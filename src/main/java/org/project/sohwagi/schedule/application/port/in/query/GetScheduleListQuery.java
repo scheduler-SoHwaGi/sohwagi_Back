@@ -1,9 +1,8 @@
 package org.project.sohwagi.schedule.application.port.in.query;
 
-import static org.project.sohwagi.common.validation.Validation.validate;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import static org.project.sohwagi.common.validation.Validation.validate;
 
 public record GetScheduleListQuery(
 	@NotNull(message = "userId is required")
