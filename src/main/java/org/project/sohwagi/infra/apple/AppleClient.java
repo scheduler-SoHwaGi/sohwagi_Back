@@ -1,7 +1,5 @@
 package org.project.sohwagi.infra.apple;
 
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.JwsHeader;
@@ -18,15 +16,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.project.sohwagi.common.exception.OAuthRequestException;
 import org.project.sohwagi.application.cmd.AppleLoginCommand;
-import org.project.sohwagi.application.cmd.DeleteUserCommand;
+import org.project.sohwagi.common.exception.OAuthRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

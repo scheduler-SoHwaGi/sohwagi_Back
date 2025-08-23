@@ -1,7 +1,5 @@
 package org.project.sohwagi.infra.llm;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
@@ -9,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.exception.CustomException;
 import org.project.sohwagi.common.exception.ErrorCode;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.retry.NonTransientAiException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;

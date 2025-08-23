@@ -4,24 +4,18 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
-import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
-import org.project.sohwagi.common.UseCase;
-import org.project.sohwagi.common.exception.CustomException;
-import org.project.sohwagi.common.exception.ErrorCode;
-import org.project.sohwagi.domain.ScheduleRepository;
-import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
-import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
-import org.project.sohwagi.domain.Schedule;
-import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailInfo;
 import org.project.sohwagi.application.cmd.DeleteScheduleCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCheckCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCountCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.ScheduleCreateCommand;
+import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
+import org.project.sohwagi.common.UseCase;
+import org.project.sohwagi.domain.Schedule;
+import org.project.sohwagi.domain.ScheduleRepository;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +91,7 @@ public class ScheduleService
   }
 
   public List<Schedule> findTodaySchedules(LocalDate today) {
-    return scheduleRepository.findTodaySchedules(today) ;
+    return scheduleRepository.findTodaySchedules(today);
   }
 
   public void checkSchedule(ScheduleCheckCommand cmd) {

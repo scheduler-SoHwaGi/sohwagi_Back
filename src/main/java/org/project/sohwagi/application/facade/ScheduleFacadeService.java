@@ -1,6 +1,5 @@
 package org.project.sohwagi.application.facade;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;

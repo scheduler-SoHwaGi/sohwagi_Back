@@ -1,8 +1,7 @@
 package org.project.sohwagi.infra.apple;
 
-import static org.project.sohwagi.common.validation.Validation.validate;
-
 import jakarta.validation.constraints.NotNull;
+import static org.project.sohwagi.common.validation.Validation.validate;
 
 
 public record AppleLoginRequest(

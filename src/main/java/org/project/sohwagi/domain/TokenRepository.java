@@ -1,9 +1,9 @@
 package org.project.sohwagi.domain;
 
 import lombok.RequiredArgsConstructor;
+import org.project.sohwagi.application.cmd.RefreshTokenCommand;
 import org.project.sohwagi.common.PersistenceAdapter;
 import org.project.sohwagi.common.exception.RefreshTokenException;
-import org.project.sohwagi.application.cmd.RefreshTokenCommand;
 import org.project.sohwagi.infra.jpa.TokenJpaRepository;
 
 @PersistenceAdapter
