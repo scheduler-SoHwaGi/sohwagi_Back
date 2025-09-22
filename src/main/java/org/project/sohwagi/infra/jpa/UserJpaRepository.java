@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.project.sohwagi.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,5 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
       @Param("startYmd") int startYmd,
       @Param("endYmd") int endYmd);
 
+  List<User> findAllByIdIn(Set<Long> ids);
 }

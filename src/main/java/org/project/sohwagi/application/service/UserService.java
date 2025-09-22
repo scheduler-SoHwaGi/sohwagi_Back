@@ -2,6 +2,7 @@ package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.application.cmd.SaveFcmTokenCommand;
 import org.project.sohwagi.common.UseCase;
@@ -61,6 +62,10 @@ public class UserService {
         + sevenDaysAgo.getDayOfMonth();
     int endYmd = today.getYear() * 10000 + today.getMonthValue() * 100 + today.getDayOfMonth();
     return userRepository.findActiveUsersWithoutSchedulesBetweenYmd(startYmd, endYmd);
+  }
+
+  public List<User> findAllUserByIdIn(Set<Long> ids) {
+    return userRepository.findAllUserByIdIn(ids);
   }
 
   private String convertName(String name) {

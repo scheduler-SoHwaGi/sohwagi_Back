@@ -39,15 +39,17 @@ public class ScheduleNotificationService {
 
     Map<Long, List<Schedule>> scheduleMap = todaySchedules.stream()
         .collect(Collectors.groupingBy(Schedule::getUserId));
+    Set<Long> userIds = scheduleMap.keySet();
+    Map<Long, User> userMap = userService.findAllUserByIdIn(userIds).stream()
+        .collect(Collectors.toMap(User::getId, user -> user));
 
     for (Map.Entry<Long, List<Schedule>> entry : scheduleMap.entrySet()) {
       Long userId = entry.getKey();
-      List<Schedule> schedules = entry.getValue();
-      User user = userService.findById(userId);
+      User user = userMap.get(userId);
       if(user.getFcmToken() == null || user.getFcmToken().isEmpty()) {
         continue;
       }
-
+      List<Schedule> schedules = entry.getValue();
       String title = String.format("오늘 일정 %d개다 햄+_+", schedules.size());
       String body = String.format(
           "오늘 %s %02d:%02d에 %s이(가) 있어요!",
