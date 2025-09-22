@@ -59,4 +59,16 @@ public class ScheduleNotificationService {
       firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
     }
   }
+
+  public void sendScheduleRegistrationNotifications() throws FirebaseMessagingException {
+    LocalDate today = LocalDate.now();
+    LocalDate sevenDaysAgo = today.minusDays(6);
+    List<User> targets = userService.findUsersWithoutSchedulesInLastWeek(today, sevenDaysAgo);
+    for (User target : targets) {
+      String title = "지금 기억나는 일정 빠르게 등록하라 햄+_+";
+      String body = "메모하듯이 한 문장으로 빠르게 입력해보세요!";
+
+      firebaseMessagingClient.sendMessage(target.getFcmToken(), title, body);
+    }
+  }
 }

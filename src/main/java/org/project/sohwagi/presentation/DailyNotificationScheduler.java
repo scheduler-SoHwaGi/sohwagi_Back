@@ -19,4 +19,8 @@ public class DailyNotificationScheduler {
     scheduleNotificationService.sendDailyScheduleNotifications();
   }
 
+  @Scheduled(cron = "0 47 12 * * WED", zone = "Asia/Seoul")
+  public void notifyScheduleRegistrationPrompt() throws FirebaseMessagingException {
+    scheduleNotificationService.sendScheduleRegistrationNotifications();
+  }
 }

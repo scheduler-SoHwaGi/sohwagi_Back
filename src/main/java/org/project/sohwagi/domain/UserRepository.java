@@ -1,6 +1,7 @@
 package org.project.sohwagi.domain;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import org.project.sohwagi.infra.jpa.UserJpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -32,5 +33,9 @@ public class UserRepository {
 
   public User save(User user) {
     return userJpaRepository.save(user);
+  }
+
+  public List<User> findActiveUsersWithoutSchedulesBetweenYmd(int startYmd, int endYmd) {
+    return userJpaRepository.findActiveUsersWithoutSchedulesBetweenYmd(startYmd, endYmd);
   }
 }

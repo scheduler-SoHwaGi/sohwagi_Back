@@ -1,5 +1,7 @@
 package org.project.sohwagi.application.service;
 
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.application.cmd.SaveFcmTokenCommand;
 import org.project.sohwagi.common.UseCase;
@@ -7,6 +9,7 @@ import org.project.sohwagi.domain.User;
 import org.project.sohwagi.domain.UserDetails;
 import org.project.sohwagi.domain.UserRepository;
 import org.project.sohwagi.presentation.res.GetUserInfoRes;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,14 @@ public class UserService {
   public User saveUser(String userName, String oauthProvider, String email) {
     User user = User.create(userName, oauthProvider, email);
     return userRepository.save(user);
+  }
+
+  public List<User> findUsersWithoutSchedulesInLastWeek(LocalDate today, LocalDate sevenDaysAgo) {
+    int startYmd = sevenDaysAgo.getYear() * 10000
+        + sevenDaysAgo.getMonthValue() * 100
+        + sevenDaysAgo.getDayOfMonth();
+    int endYmd = today.getYear() * 10000 + today.getMonthValue() * 100 + today.getDayOfMonth();
+    return userRepository.findActiveUsersWithoutSchedulesBetweenYmd(startYmd, endYmd);
   }
 
   private String convertName(String name) {
