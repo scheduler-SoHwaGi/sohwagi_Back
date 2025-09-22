@@ -14,9 +14,9 @@ public class DailyNotificationScheduler {
     this.scheduleNotificationService = scheduleNotificationService;
   }
 
-  @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
+  @Scheduled(cron = "0 31 22 * * *", zone = "Asia/Seoul")
   public void notifyTodaySchedules() throws FirebaseMessagingException {
-    scheduleNotificationService.notifyUsersOfTodaySchedules();
+    scheduleNotificationService.sendDailyScheduleNotifications();
   }
 
 }
