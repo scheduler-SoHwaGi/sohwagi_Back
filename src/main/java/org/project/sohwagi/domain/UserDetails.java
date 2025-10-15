@@ -6,7 +6,8 @@ public record UserDetails(
     String userName,
     String oauthProvider,
     String email,
-    boolean isDeleted) {
+    boolean isDeleted,
+    boolean hasSchedule) {
 
   public User toEntity() {
     return User.builder()
@@ -16,6 +17,7 @@ public record UserDetails(
         .oauthProvider(oauthProvider)
         .email(email)
         .isDeleted(isDeleted)
+        .hasSchedule(hasSchedule)
         .build();
   }
 
@@ -26,7 +28,8 @@ public record UserDetails(
         user.getUserName(),
         user.getOauthProvider(),
         user.getEmail(),
-        user.isDeleted()
+        user.isDeleted(),
+        user.isHasSchedule()
     );
   }
 }

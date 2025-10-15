@@ -37,10 +37,13 @@ public class User {
   private String email;
 
   @Column(name = "is_deleted", nullable = false)
-  private boolean isDeleted;
+  private boolean isDeleted = false;
 
   @Column
   private LocalDateTime createdAt;
+
+  @Column(name = "has_schedule", nullable = false)
+  private boolean hasSchedule = false;
 
   @Builder
   private User(
@@ -49,7 +52,8 @@ public class User {
       String userName,
       String oauthProvider,
       String email,
-      boolean isDeleted) {
+      boolean isDeleted,
+      boolean hasSchedule) {
     this.fcmToken = fcmToken;
     this.id = id;
     this.userName = userName;
@@ -57,6 +61,7 @@ public class User {
     this.email = email;
     this.isDeleted = isDeleted;
     this.createdAt = LocalDateTime.now();
+    this.hasSchedule = hasSchedule;
   }
 
   public static User create(String userName, String oauthProvider, String email) {
@@ -69,6 +74,12 @@ public class User {
 
   public void reLogin() {
     this.isDeleted = false;
+  }
+
+  public void markHasScheduleTrue() {
+    if (!this.hasSchedule) {
+      this.hasSchedule = true;
+    }
   }
 
 }

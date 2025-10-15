@@ -2,6 +2,7 @@ package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.project.sohwagi.application.cmd.SaveFcmTokenCommand;
@@ -66,6 +67,11 @@ public class UserService {
 
   public List<User> findAllUserByIdIn(Set<Long> ids) {
     return userRepository.findAllUserByIdIn(ids);
+  }
+
+  public User getTestUser(String userName) {
+    return userRepository.findTestUser(userName).orElseGet(
+        () -> saveUser(userName, "TEST_PROVIDER", userName + "@test.com"));
   }
 
   private String convertName(String name) {

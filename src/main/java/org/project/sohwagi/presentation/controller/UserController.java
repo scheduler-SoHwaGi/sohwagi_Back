@@ -10,6 +10,7 @@ import org.project.sohwagi.common.UserInfo;
 import org.project.sohwagi.domain.UserDetails;
 import org.project.sohwagi.presentation.req.PostFcmTokenReq;
 import org.project.sohwagi.presentation.res.GetUserInfoRes;
+import org.project.sohwagi.presentation.res.OnboardingCheckResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -59,6 +60,12 @@ public class UserController {
     GetUserInfoRes getUserInfoRes = userService.getUserInfo(userDetails);
 
     return ResponseEntity.ok(getUserInfoRes);
+  }
+
+  @GetMapping("/me/onboarding")
+  public ResponseEntity<OnboardingCheckResponse> checkOnboarding(
+      @UserInfo UserDetails userDetails) {
+    return ResponseEntity.ok(new OnboardingCheckResponse(userDetails.hasSchedule()));
   }
 
 }

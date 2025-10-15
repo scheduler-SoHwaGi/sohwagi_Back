@@ -75,8 +75,7 @@ public class OAuthService {
 
   @Transactional
   public LoginRes qaLogin() {
-    User user = userService.saveUser(
-        "TestUser", "test@gmail.com", "TEST");;
+    User user = userService.getTestUser("TestUser");
 
     String accessToken = generateAccessToken(user.getId());
     String refreshToken = generateAndSaveRefreshToken(user.getId());
