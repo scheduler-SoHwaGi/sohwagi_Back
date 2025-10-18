@@ -2,6 +2,8 @@ package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,19 +69,28 @@ public class ScheduleService
   }
 
   public Map<String, List<Schedule>> getSchedulesGroupedByDate(ScheduleCountCommand cmd) {
-
+    int fromYmd = cmd.start().getYear() * 10000
+      + cmd.start().getMonthValue() * 100
+      + cmd.start().getDayOfMonth();
+    int toYmd = cmd.end().getYear() * 10000
+      + cmd.end().getMonthValue() * 100
+      + cmd.end().getDayOfMonth();
+    List<Schedule> schedules = scheduleRepository.findAllByUserIdAndYmdBetween(
+      cmd.userId(),
+      fromYmd,
+      toYmd
+    );
+    Map<String, List<Schedule>> grouped = schedules.stream()
+      .collect(Collectors.groupingBy(s -> s.getDate().toString()));
     long days = ChronoUnit.DAYS.between(cmd.start(), cmd.end()) + 1;
-    return Stream.iterate(cmd.start(), date -> date.plusDays(1))
-        .limit(days)
-        .collect(Collectors.toMap(
-            LocalDate::toString,
-            date -> scheduleRepository.findSchedulesByUserIdAndYearAndMonthAndDay(
-                cmd.userId(),
-                date.getYear(),
-                date.getMonthValue(),
-                date.getDayOfMonth()
-            )
-        ));
+    return Stream.iterate(cmd.start(), d -> d.plusDays(1))
+      .limit(days)
+      .collect(Collectors.toMap(
+        LocalDate::toString,
+        d -> grouped.getOrDefault(d.toString(), Collections.emptyList()),
+        (a, b) -> a,
+        LinkedHashMap::new
+      ));
   }
 
   public List<Schedule> getSchedulesOnDate(SchedulesGetOnDate cmd) {
