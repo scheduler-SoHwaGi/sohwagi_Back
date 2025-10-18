@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class OpenAiClient implements LlmClient {
+public class LLMClientImpl implements LlmClient {
 
   private final ChatClient chatClient;
   private final Resource promptResource;
 
-  public OpenAiClient(
+  public LLMClientImpl(
       ChatClient.Builder chatClientBuilder,
       @Value("classpath:/prompts/add-schedule-prompt.txt") Resource promptResource) {
     this.chatClient = chatClientBuilder.build();
