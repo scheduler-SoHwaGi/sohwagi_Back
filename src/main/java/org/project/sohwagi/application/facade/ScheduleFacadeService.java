@@ -73,7 +73,6 @@ public class ScheduleFacadeService {
   @Transactional
   public Long createScheduleByText(ScheduleCreateByTextCommand cmd) {
     LlmResult scheduleInformation = llmClient.extractScheduleInformation(cmd.text());
-    isScheduleTitleExists(scheduleInformation.title());
     ScheduleCreateCommand scheduleCreateCommand = ScheduleCreateCommand.from(
         scheduleInformation, cmd.userId());
     Long savedScheduleId = scheduleService.createScheduleByText(scheduleCreateCommand);
@@ -87,9 +86,4 @@ public class ScheduleFacadeService {
     scheduleService.checkSchedule(cmd);
   }
 
-  private void isScheduleTitleExists(String title) {
-    if (title == null) {
-      throw new CustomException(ErrorCode.INVALID_SCHEDULE_TEXT_INPUT_VALUE);
-    }
-  }
 }
