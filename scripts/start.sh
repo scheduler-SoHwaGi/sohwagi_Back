@@ -11,7 +11,7 @@ DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 TIME_NOW=$(date +%c)
 
 FIREBASE_KEY_PATH="$PROJECT_ROOT/firebase-service-account.json"
-VERTEX_KEY_PATH="$PROJECT_ROOT/vertex-service-account.json"
+VERTEX_KEY_PATH="$PROJECT_ROOT/vertexai-service-account.json"
 
 if [ ! -f "$FIREBASE_KEY_PATH" ]; then
   echo "$TIME_NOW > ❌ Firebase key not found at $FIREBASE_KEY_PATH" >> $DEPLOY_LOG
