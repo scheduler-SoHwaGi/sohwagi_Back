@@ -96,6 +96,10 @@ public class Schedule {
   public boolean isChecked() {
     return checked;
   }
+  
+  public LocalDate getDate() {
+		return LocalDate.of(this.year, this.month, this.day);
+	}
 
   private void validateTitle(String title) {
     if (title == null) {

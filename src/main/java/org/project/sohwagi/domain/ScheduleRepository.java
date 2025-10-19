@@ -31,4 +31,7 @@ public interface ScheduleRepository {
         int month,
         int day
     );
+
+    List<Schedule> findAllByUserIdAndYmdBetween(Long userId, int fromYmd, int toYmd);
+
 }
