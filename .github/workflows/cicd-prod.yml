@@ -56,7 +56,12 @@ jobs:
 
       - name: Validate JSON file
         run: |
-          cat src/main/resources/firebase-service-account.json | jq empty
+          if [ ! -s src/main/resources/firebase-service-account.json ]; then
+            echo "❌ firebase-service-account.json is missing or empty"
+            exit 1
+          fi
+          jq empty src/main/resources/firebase-service-account.json
+          echo "✅ Firebase service account key validated"
 
       - name: Validate Flyway Migrations
         run: ./gradlew flywayValidate
