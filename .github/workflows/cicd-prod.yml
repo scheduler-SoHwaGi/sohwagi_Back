@@ -49,20 +49,6 @@ jobs:
           touch ./src/main/resources/application.properties
           echo "${{ secrets.APPLICATION_PROD_PROPERTIES }}" > ./src/main/resources/application.properties
 
-      - name: Create Firebase service account key from base64
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 -d > src/main/resources/firebase-service-account.json
-
-      - name: Validate JSON file
-        run: |
-          if [ ! -s src/main/resources/firebase-service-account.json ]; then
-            echo "❌ firebase-service-account.json is missing or empty"
-            exit 1
-          fi
-          jq empty src/main/resources/firebase-service-account.json
-          echo "✅ Firebase service account key validated"
-
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
