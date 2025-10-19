@@ -29,8 +29,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          
-      - name: Cache Gradle deps & wrapper   
+
+      - name: Cache Gradle deps & wrapper
         uses: actions/cache@v3
         with:
           path: |
@@ -39,7 +39,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -56,8 +56,16 @@ jobs:
 
       - name: Validate JSON file
         run: |
-          cat src/main/resources/firebase-service-account.json | jq empty
-          
+          if [ ! -s src/main/resources/firebase-service-account.json ]; then
+            echo "❌ firebase-service-account.json is missing or empty"
+            exit 1
+          fi
+          jq empty src/main/resources/firebase-service-account.json
+          echo "✅ Firebase service account key validated"
+
+      - name: Validate Flyway Migrations
+        run: ./gradlew flywayValidate
+
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 

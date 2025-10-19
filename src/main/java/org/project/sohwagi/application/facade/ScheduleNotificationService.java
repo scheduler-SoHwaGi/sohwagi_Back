@@ -4,7 +4,9 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.application.service.ScheduleService;
 import org.project.sohwagi.application.service.UserService;
 import org.project.sohwagi.domain.Schedule;
@@ -12,6 +14,7 @@ import org.project.sohwagi.domain.User;
 import org.project.sohwagi.infra.firebase.FirebaseMessagingClient;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ScheduleNotificationService {
 
@@ -26,25 +29,48 @@ public class ScheduleNotificationService {
     this.userService = userService;
   }
 
-  public void notifyUsersOfTodaySchedules() throws FirebaseMessagingException {
+  public void sendDailyScheduleNotifications() throws FirebaseMessagingException {
     LocalDate today = LocalDate.now();
 
     List<Schedule> todaySchedules = scheduleService.findTodaySchedules(today);
+    if (todaySchedules.isEmpty()) {
+      return;
+    }
 
     Map<Long, List<Schedule>> scheduleMap = todaySchedules.stream()
         .collect(Collectors.groupingBy(Schedule::getUserId));
+    Set<Long> userIds = scheduleMap.keySet();
+    Map<Long, User> userMap = userService.findAllUserByIdIn(userIds).stream()
+        .collect(Collectors.toMap(User::getId, user -> user));
 
     for (Map.Entry<Long, List<Schedule>> entry : scheduleMap.entrySet()) {
       Long userId = entry.getKey();
+      User user = userMap.get(userId);
+      if(user.getFcmToken() == null || user.getFcmToken().isEmpty()) {
+        continue;
+      }
       List<Schedule> schedules = entry.getValue();
-      User user = userService.findById(userId);
-
-      String title = "오늘의 일정";
-      String body = schedules.stream()
-          .map(Schedule::getTitle)
-          .collect(Collectors.joining(", "));
+      String title = String.format("오늘 일정 %d개다 햄+_+", schedules.size());
+      String body = String.format(
+          "오늘 %s %02d:%02d에 %s이(가) 있어요!",
+          schedules.get(0).getAmPm(),
+          schedules.get(0).getHour(),
+          schedules.get(0).getMinute(),
+          schedules.get(0).getTitle());
 
       firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
+    }
+  }
+
+  public void sendScheduleRegistrationNotifications() throws FirebaseMessagingException {
+    LocalDate today = LocalDate.now();
+    LocalDate sevenDaysAgo = today.minusDays(6);
+    List<User> targets = userService.findUsersWithoutSchedulesInLastWeek(today, sevenDaysAgo);
+    for (User target : targets) {
+      String title = "지금 기억나는 일정 빠르게 등록하라 햄+_+";
+      String body = "메모하듯이 한 문장으로 빠르게 입력해보세요!";
+
+      firebaseMessagingClient.sendMessage(target.getFcmToken(), title, body);
     }
   }
 }

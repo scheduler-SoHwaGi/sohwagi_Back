@@ -93,4 +93,10 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 			int day) {
 		return scheduleJpaRepository.findAllByUserIdAndYearAndMonthAndDay(userId, year, month, day);
 	}
+
+	@Override
+	public List<Schedule> findAllByUserIdAndYmdBetween(
+		Long userId, int fromYmd, int toYmd) {
+		return scheduleJpaRepository.findAllByUserIdAndYmdBetween(userId, fromYmd, toYmd);
+	}
 }
