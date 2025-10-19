@@ -2,6 +2,7 @@ package org.project.sohwagi.infra.llm;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.exception.CustomException;
@@ -30,9 +31,11 @@ public class LLMClientImpl implements LlmClient {
   @Override
   public LlmResult extractScheduleInformation(String input) {
     try {
+      String nowText = DateTimeFormatter.ofPattern("yyyy년 M월 d일 a h시 m분")
+        .format(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
       Map<String, Object> model = Map.of(
-          "now", LocalDateTime.now(ZoneId.of("Asia/Seoul")),
-          "input", input
+        "now", nowText,
+        "input", input
       );
       return chatClient
           .prompt()
