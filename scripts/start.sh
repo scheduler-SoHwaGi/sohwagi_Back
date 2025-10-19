@@ -10,8 +10,25 @@ DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
 TIME_NOW=$(date +%c)
 
+FIREBASE_KEY_PATH="$PROJECT_ROOT/firebase-service-account.json"
+VERTEX_KEY_PATH="$PROJECT_ROOT/vertex-service-account.json"
+
+if [ ! -f "$FIREBASE_KEY_PATH" ]; then
+  echo "$TIME_NOW > ❌ Firebase key not found at $FIREBASE_KEY_PATH" >> $DEPLOY_LOG
+  exit 1
+fi
+if [ ! -f "$VERTEX_KEY_PATH" ]; then
+  echo "$TIME_NOW > ❌ Vertex AI key not found at $VERTEX_KEY_PATH" >> $DEPLOY_LOG
+  exit 1
+fi
+
+export FirebaseKey="$FIREBASE_KEY_PATH"
+export GOOGLE_APPLICATION_CREDENTIALS="$VERTEX_KEY_PATH"
+
+echo "$TIME_NOW > ✅ FirebaseKey set to $FirebaseKey" >> $DEPLOY_LOG
+echo "$TIME_NOW > ✅ GOOGLE_APPLICATION_CREDENTIALS set to $GOOGLE_APPLICATION_CREDENTIALS" >> $DEPLOY_LOG
+
 # jar 파일 실행
-echo "$TIME_NOW > $JAR_FILE 실행 시작" >> $DEPLOY_LOG
 nohup java -Xlog:gc*:file=$GC_LOG_PATH:time,uptimemillis:filecount=10,filesize=10m -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
 
 CURRENT_PID=$(pgrep -f $JAR_FILE)

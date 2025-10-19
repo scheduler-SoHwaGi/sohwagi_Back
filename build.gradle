@@ -71,11 +71,6 @@ bootJar {
     archiveClassifier.set('')
 }
 
-tasks.processResources {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from("src/main/resources/firebase-service-account.json")
-}
-
 dependencyManagement {
     imports {
         mavenBom "org.springframework.ai:spring-ai-bom:$springAiVersion"
