@@ -29,8 +29,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          
-      - name: Cache Gradle deps & wrapper   
+
+      - name: Cache Gradle deps & wrapper
         uses: actions/cache@v3
         with:
           path: |
@@ -39,7 +39,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -49,15 +49,6 @@ jobs:
           touch ./src/main/resources/application.properties
           echo "${{ secrets.APPLICATION_PROD_PROPERTIES }}" > ./src/main/resources/application.properties
 
-      - name: Create Firebase service account key from base64
-        run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}" | base64 -d > src/main/resources/firebase-service-account.json
-
-      - name: Validate JSON file
-        run: |
-          cat src/main/resources/firebase-service-account.json | jq empty
-          
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 

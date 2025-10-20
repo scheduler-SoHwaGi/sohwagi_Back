@@ -17,10 +17,12 @@ import org.project.sohwagi.application.info.ScheduleInfo.ScheduleDetailOnDateInf
 import org.project.sohwagi.application.info.ScheduleInfo.ScheduleTypeInfo;
 import org.project.sohwagi.application.info.ScheduleInfo.TodoTypeInfo;
 import org.project.sohwagi.application.service.ScheduleService;
+import org.project.sohwagi.application.service.UserService;
 import org.project.sohwagi.common.exception.CustomException;
 import org.project.sohwagi.common.exception.ErrorCode;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.domain.ScheduleType;
+import org.project.sohwagi.domain.User;
 import org.project.sohwagi.infra.llm.LlmClient;
 import org.project.sohwagi.infra.llm.LlmResult;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ScheduleFacadeService {
 
   private final LlmClient llmClient;
   private final ScheduleService scheduleService;
+  private final UserService userService;
 
   public ScheduleCountsInfo generateScheduleSummaries(ScheduleCountCommand cmd) {
     Map<String, List<Schedule>> result = scheduleService.getSchedulesGroupedByDate(cmd);
@@ -70,10 +73,12 @@ public class ScheduleFacadeService {
   @Transactional
   public Long createScheduleByText(ScheduleCreateByTextCommand cmd) {
     LlmResult scheduleInformation = llmClient.extractScheduleInformation(cmd.text());
-    isScheduleTitleExists(scheduleInformation.title());
     ScheduleCreateCommand scheduleCreateCommand = ScheduleCreateCommand.from(
         scheduleInformation, cmd.userId());
-    return scheduleService.createScheduleByText(scheduleCreateCommand);
+    Long savedScheduleId = scheduleService.createScheduleByText(scheduleCreateCommand);
+    User user = userService.findById(cmd.userId());
+    user.markHasScheduleTrue();
+    return savedScheduleId;
   }
 
   @Transactional
@@ -81,9 +86,4 @@ public class ScheduleFacadeService {
     scheduleService.checkSchedule(cmd);
   }
 
-  private void isScheduleTitleExists(String title) {
-    if (title == null) {
-      throw new CustomException(ErrorCode.INVALID_SCHEDULE_TEXT_INPUT_VALUE);
-    }
-  }
 }
