@@ -12,16 +12,19 @@ import org.springframework.stereotype.Service;
 public class FirebaseMessagingClient {
 
   @Async("notificationExecutor")
-  public void sendMessage(String fcmToken, String title, String body)
-      throws FirebaseMessagingException {
+  public void sendMessage(String fcmToken, String title, String body) {
     Message message = Message.builder()
         .putData("title", title)
         .putData("body", body)
         .setToken(fcmToken)
         .build();
 
-    String response = FirebaseMessaging.getInstance().send(message);
-    log.info(response);
+    try {
+      String response = FirebaseMessaging.getInstance().send(message);
+      log.info(response);
+    } catch (FirebaseMessagingException e) {
+      log.error(e.getMessage());
+    }
   }
 
 }
