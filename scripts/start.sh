@@ -29,7 +29,7 @@ echo "$TIME_NOW > ✅ FirebaseKey set to $FirebaseKey" >> $DEPLOY_LOG
 echo "$TIME_NOW > ✅ GOOGLE_APPLICATION_CREDENTIALS set to $GOOGLE_APPLICATION_CREDENTIALS" >> $DEPLOY_LOG
 
 # jar 파일 실행
-nohup java -Xlog:gc*:file=$GC_LOG_PATH:time,uptimemillis:filecount=10,filesize=10m -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
+nohup java -Xlog:gc*:file=$GC_LOG_PATH:time,uptimemillis:filecount=10,filesize=10m -Duser.timezone=Asia/Seoul -jar $JAR_FILE > $APP_LOG 2> $ERROR_LOG &
 
 CURRENT_PID=$(pgrep -f $JAR_FILE)
 echo "$TIME_NOW > 실행된 프로세스 PID: $CURRENT_PID" >> $DEPLOY_LOG
