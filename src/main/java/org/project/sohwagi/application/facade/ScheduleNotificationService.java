@@ -12,6 +12,7 @@ import org.project.sohwagi.application.service.UserService;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.domain.User;
 import org.project.sohwagi.infra.firebase.FirebaseMessagingClient;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class ScheduleNotificationService {
     this.userService = userService;
   }
 
-  public void sendDailyScheduleNotifications() throws FirebaseMessagingException {
+  public void sendDailyScheduleNotifications() {
     LocalDate today = LocalDate.now();
 
     List<Schedule> todaySchedules = scheduleService.findTodaySchedules(today);
@@ -62,7 +63,7 @@ public class ScheduleNotificationService {
     }
   }
 
-  public void sendScheduleRegistrationNotifications() throws FirebaseMessagingException {
+  public void sendScheduleRegistrationNotifications() {
     LocalDate today = LocalDate.now();
     LocalDate sevenDaysAgo = today.minusDays(6);
     List<User> targets = userService.findUsersWithoutSchedulesInLastWeek(today, sevenDaysAgo);
@@ -71,6 +72,19 @@ public class ScheduleNotificationService {
       String body = "메모하듯이 한 문장으로 빠르게 입력해보세요!";
 
       firebaseMessagingClient.sendMessage(target.getFcmToken(), title, body);
+    }
+  }
+
+  public void sendDailyScheduleRegistrationNotifications() {
+    List<User> users = userService.findAllUsers();
+    for (User user : users) {
+      if(user.getFcmToken() == null || user.getFcmToken().isEmpty()) {
+        continue;
+      }
+      String name = user.getUserName().split(" ")[0];
+      String title = name + "햄! 지금 생각난 일정 한 줄로 남겨두자 햄!";
+      String body = "지금 떠오른 그 일정을 한 줄로 남겨보세요!";
+      firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
     }
   }
 }

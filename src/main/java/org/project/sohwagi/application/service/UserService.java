@@ -74,6 +74,10 @@ public class UserService {
         () -> saveUser(userName, "TEST_PROVIDER", userName + "@test.com"));
   }
 
+  public List<User> findAllUsers() {
+    return userRepository.findAllUsers();
+  }
+
   private String convertName(String name) {
     if (name.contains(" ")) {
       String[] parts = name.split(" ");
