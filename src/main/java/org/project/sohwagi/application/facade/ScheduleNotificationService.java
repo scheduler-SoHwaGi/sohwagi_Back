@@ -76,7 +76,7 @@ public class ScheduleNotificationService {
   }
 
   public void sendDailyScheduleRegistrationNotifications() {
-    List<User> users = userService.findAllUsers();
+    List<User> users = userService.findDistinctUsersByFcmToken();
     for (User user : users) {
       if(user.getFcmToken() == null || user.getFcmToken().isEmpty()) {
         continue;
