@@ -97,8 +97,8 @@ public class ScheduleNotificationService {
         continue;
       }
       String name = user.getFcmToken().split(" ")[0];
-      String title = name + "햄!";
-      String body = "15분 뒤에 진행해야할 일정이 있어요!";
+      String title = name + "햄! 잠깐만, 이 일정 잊지 않았지?";
+      String body = "15분 후에 일정이 있어! 미리 준비하면 딱 좋아햄!";
       firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
     }
   }
