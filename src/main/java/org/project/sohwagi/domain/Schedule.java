@@ -70,6 +70,9 @@ public class Schedule {
   @Enumerated(EnumType.STRING)
   private ScheduleType type;
 
+  @Column
+  private LocalDateTime notifiedAt;
+
   public Schedule(
     String title,
     Long userId,
@@ -87,6 +90,7 @@ public class Schedule {
     this.userId = userId;
     this.checked = false;
     this.type = type;
+    notifiedAt(year, month, day, amPm, hour, minute);
   }
 
   public void checkSchedule(boolean checked) {
@@ -114,7 +118,13 @@ public class Schedule {
    * - 날짜 O → 그대로 사용
    */
   private void applyDateRules(
-    Integer year, Integer month, Integer day, String amPm, Integer hour, Integer minute, String dayOfWeek) {
+    Integer year,
+    Integer month,
+    Integer day,
+    String amPm,
+    Integer hour,
+    Integer minute,
+    String dayOfWeek) {
     LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
     boolean dateMissing = (year == null || month == null || day == null);
     boolean timeMissing = (hour == null && minute == null);
@@ -140,6 +150,34 @@ public class Schedule {
       this.minute = minute;
       this.amPm = amPm;
       this.dayOfWeek = dayOfWeek;
+    }
+  }
+
+  private void notifiedAt(
+    Integer year, Integer month, Integer day, String amPm, Integer hour, Integer minute) {
+    if (year == null || month == null || day == null
+      || amPm == null || hour == null || minute == null) {
+      return;
+    }
+    int hour24 = convertTo24Hour(amPm, hour);
+    LocalDateTime scheduledTime = LocalDateTime.of(
+      year,
+      month,
+      day,
+      hour24,
+      minute
+    );
+    this.notifiedAt = scheduledTime.minusMinutes(15);
+  }
+
+  private int convertTo24Hour(String amPm, int hour12) {
+    String normalized = amPm.trim().toUpperCase();
+    if ("오전".equals(normalized)) {
+      return (hour12 == 12) ? 0 : hour12;
+    } else if ("오후".equals(normalized)) {
+      return (hour12 == 12) ? 12 : hour12 + 12;
+    } else {
+      return hour12;
     }
   }
 }
