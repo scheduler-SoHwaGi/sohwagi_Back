@@ -117,4 +117,10 @@ public class ScheduleService
     return scheduleRepository.findSchedulesByScheduleTypeAndNotifiedAt(
       ScheduleType.SCHEDULE, now);
   }
+
+  @Transactional
+  public void markScheduleAsNotified(Long scheduleId) {
+    Schedule schedule = scheduleRepository.findScheduleById(scheduleId);
+    schedule.markAsNotified();
+  }
 }

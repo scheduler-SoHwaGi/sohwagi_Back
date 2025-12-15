@@ -100,6 +100,7 @@ public class ScheduleNotificationService {
       String title = name + "햄! 잠깐만, 이 일정 잊지 않았지?";
       String body = "15분 후에 일정이 있어! 미리 준비하면 딱 좋아햄!";
       firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
+      scheduleService.markScheduleAsNotified(schedule.getId());
     }
   }
 }
