@@ -2,6 +2,7 @@ package org.project.sohwagi.application.facade;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,6 +85,20 @@ public class ScheduleNotificationService {
       String name = user.getUserName().split(" ")[0];
       String title = name + "햄! 지금 생각난 일정 한 줄로 남겨두자 햄!";
       String body = "지금 떠오른 그 일정을 한 줄로 남겨보세요!";
+      firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
+    }
+  }
+
+  public void sendSchedule15mBeforeNotifications() {
+    List<Schedule> schedules = scheduleService.findSchedulesToNotify(LocalDateTime.now());
+    for (Schedule schedule : schedules) {
+      User user = userService.findById(schedule.getUserId());
+      if(user.getFcmToken() == null || user.getFcmToken().isEmpty()) {
+        continue;
+      }
+      String name = user.getFcmToken().split(" ")[0];
+      String title = name + "햄!";
+      String body = "15분 뒤에 진행해야할 일정이 있어요!";
       firebaseMessagingClient.sendMessage(user.getFcmToken(), title, body);
     }
   }
