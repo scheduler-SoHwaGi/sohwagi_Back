@@ -46,5 +46,13 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, Long> {
     @Param("toYmd") int toYmd
   );
 
-  List<Schedule> findAllByTypeAndNotifiedAt(ScheduleType type, LocalDateTime now);
+  @Query(value = """
+        SELECT s
+        FROM Schedule s
+        WHERE s.type = :type
+          AND s.notified = false
+          AND s.notifiedAt >= :from
+          AND s.notifiedAt < :to
+  """)
+  List<Schedule> findAllByTypeAndNotifiedAt(ScheduleType type, LocalDateTime from, LocalDateTime to);
 }

@@ -113,9 +113,11 @@ public class ScheduleService
     schedule.checkSchedule(schedule.getChecked());
   }
 
-  public List<Schedule> findSchedulesToNotify(LocalDateTime now) {
+  public List<Schedule> findSchedulesToNotify() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime nowMinus1m = now.minusMinutes(1);
     return scheduleRepository.findSchedulesByScheduleTypeAndNotifiedAt(
-      ScheduleType.SCHEDULE, now);
+      ScheduleType.SCHEDULE, nowMinus1m, now);
   }
 
   @Transactional

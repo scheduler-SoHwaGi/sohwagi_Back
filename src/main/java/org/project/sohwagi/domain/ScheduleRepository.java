@@ -35,5 +35,6 @@ public interface ScheduleRepository {
 
     List<Schedule> findAllByUserIdAndYmdBetween(Long userId, int fromYmd, int toYmd);
 
-    List<Schedule> findSchedulesByScheduleTypeAndNotifiedAt(ScheduleType type, LocalDateTime now);
+    List<Schedule> findSchedulesByScheduleTypeAndNotifiedAt(
+      ScheduleType type, LocalDateTime from, LocalDateTime to);
 }

@@ -90,7 +90,7 @@ public class ScheduleNotificationService {
   }
 
   public void sendSchedule15mBeforeNotifications() {
-    List<Schedule> schedules = scheduleService.findSchedulesToNotify(LocalDateTime.now());
+    List<Schedule> schedules = scheduleService.findSchedulesToNotify();
     for (Schedule schedule : schedules) {
       User user = userService.findById(schedule.getUserId());
       if(user.getFcmToken() == null || user.getFcmToken().isEmpty()) {
