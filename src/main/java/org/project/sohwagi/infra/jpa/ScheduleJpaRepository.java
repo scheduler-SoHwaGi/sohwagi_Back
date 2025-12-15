@@ -1,7 +1,9 @@
 package org.project.sohwagi.infra.jpa;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.project.sohwagi.domain.Schedule;
+import org.project.sohwagi.domain.ScheduleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,4 +45,6 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, Long> {
     @Param("fromYmd") int fromYmd,
     @Param("toYmd") int toYmd
   );
+
+  List<Schedule> findAllByTypeAndNotifiedAt(ScheduleType type, LocalDateTime now);
 }

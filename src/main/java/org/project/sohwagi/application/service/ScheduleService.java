@@ -1,6 +1,7 @@
 package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -18,6 +19,7 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.domain.ScheduleRepository;
+import org.project.sohwagi.domain.ScheduleType;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,5 +111,10 @@ public class ScheduleService
     Schedule schedule = scheduleRepository.findScheduleById(cmd.userId());
 
     schedule.checkSchedule(schedule.getChecked());
+  }
+
+  public List<Schedule> findSchedulesToNotify(LocalDateTime now) {
+    return scheduleRepository.findSchedulesByScheduleTypeAndNotifiedAt(
+      ScheduleType.SCHEDULE, now);
   }
 }
