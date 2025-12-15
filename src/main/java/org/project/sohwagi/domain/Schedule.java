@@ -73,6 +73,9 @@ public class Schedule {
   @Column
   private LocalDateTime notifiedAt;
 
+  @Column
+  private boolean notified = false;
+
   public Schedule(
     String title,
     Long userId,
@@ -104,6 +107,10 @@ public class Schedule {
   public LocalDate getDate() {
 		return LocalDate.of(this.year, this.month, this.day);
 	}
+
+  public void markAsNotified() {
+    this.notified = true;
+  }
 
   private void validateTitle(String title) {
     if (title == null) {
