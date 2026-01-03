@@ -76,8 +76,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
 	@Override
 	public List<Schedule> findTodaySchedules(LocalDate today) {
-		return scheduleJpaRepository.findAllByYearAndMonthAndDay(today.getYear(), today.getMonthValue(),
-				today.getDayOfMonth());
+		return scheduleJpaRepository.findAllByYearAndMonthAndDayAndType(
+			today.getYear(), today.getMonthValue(), today.getDayOfMonth(), ScheduleType.SCHEDULE);
 	}
 
 	@Override
