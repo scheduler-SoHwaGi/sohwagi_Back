@@ -19,7 +19,6 @@ import org.project.sohwagi.application.cmd.ScheduleCommand.SchedulesGetOnDate;
 import org.project.sohwagi.common.UseCase;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.domain.ScheduleRepository;
-import org.project.sohwagi.domain.ScheduleType;
 import org.project.sohwagi.schedule.application.port.in.usecase.DeleteScheduleUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,8 +115,7 @@ public class ScheduleService
   public List<Schedule> findSchedulesToNotify() {
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime nowMinus1m = now.minusMinutes(1);
-    return scheduleRepository.findSchedulesByScheduleTypeAndNotifiedAt(
-      ScheduleType.SCHEDULE, nowMinus1m, now);
+    return scheduleRepository.findSchedulesNotifiedAt(nowMinus1m, now);
   }
 
   @Transactional

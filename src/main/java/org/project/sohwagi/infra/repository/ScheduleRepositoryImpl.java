@@ -103,8 +103,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	}
 
 	@Override
-	public List<Schedule> findSchedulesByScheduleTypeAndNotifiedAt(
-		ScheduleType type, LocalDateTime from, LocalDateTime to) {
-		return scheduleJpaRepository.findAllByTypeAndNotifiedAt(type, from, to);
+	public List<Schedule> findSchedulesNotifiedAt(
+		LocalDateTime from, LocalDateTime to) {
+		return scheduleJpaRepository.findAllByTypeAndNotifiedAt(ScheduleType.SCHEDULE, from, to);
 	}
 }
