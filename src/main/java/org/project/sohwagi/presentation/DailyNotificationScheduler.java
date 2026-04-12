@@ -33,4 +33,9 @@ public class DailyNotificationScheduler {
     log.info("📅 [DailyNotificationScheduler] start");
     scheduleNotificationService.sendDailyScheduleRegistrationNotifications();
   }
+
+  @Scheduled(fixedRate = 60000)
+  public void notifySchedule15mBefore() {
+    scheduleNotificationService.sendSchedule15mBeforeNotifications();
+  }
 }

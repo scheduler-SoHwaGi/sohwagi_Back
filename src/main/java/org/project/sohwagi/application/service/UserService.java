@@ -74,8 +74,8 @@ public class UserService {
         () -> saveUser(userName, "TEST_PROVIDER", userName + "@test.com"));
   }
 
-  public List<User> findAllUsers() {
-    return userRepository.findAllUsers();
+  public List<User> findDistinctUsersByFcmToken() {
+    return userRepository.findDistinctUsersByFcmToken();
   }
 
   private String convertName(String name) {
