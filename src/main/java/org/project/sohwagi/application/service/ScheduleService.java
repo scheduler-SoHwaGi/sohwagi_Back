@@ -2,6 +2,7 @@ package org.project.sohwagi.application.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -113,7 +114,7 @@ public class ScheduleService
   }
 
   public List<Schedule> findSchedulesToNotify() {
-    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     LocalDateTime nowMinus1m = now.minusMinutes(1);
     return scheduleRepository.findSchedulesNotifiedAt(nowMinus1m, now);
   }
