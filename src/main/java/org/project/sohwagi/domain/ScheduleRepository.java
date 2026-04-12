@@ -1,6 +1,7 @@
 package org.project.sohwagi.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ScheduleRepository {
@@ -34,4 +35,5 @@ public interface ScheduleRepository {
 
     List<Schedule> findAllByUserIdAndYmdBetween(Long userId, int fromYmd, int toYmd);
 
+    List<Schedule> findSchedulesNotifiedAt(LocalDateTime from, LocalDateTime to);
 }

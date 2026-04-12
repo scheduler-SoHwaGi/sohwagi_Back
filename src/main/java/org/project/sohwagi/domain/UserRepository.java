@@ -50,7 +50,7 @@ public class UserRepository {
     return userJpaRepository.findByUserName(userName);
   }
 
-  public List<User> findAllUsers() {
-    return userJpaRepository.findAll();
+  public List<User> findDistinctUsersByFcmToken() {
+    return userJpaRepository.findDistinctUsersByFcmToken();
   }
 }

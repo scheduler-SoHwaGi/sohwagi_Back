@@ -2,12 +2,14 @@ package org.project.sohwagi.infra.repository;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.sohwagi.common.PersistenceAdapter;
 import org.project.sohwagi.domain.Schedule;
 import org.project.sohwagi.domain.ScheduleRepository;
+import org.project.sohwagi.domain.ScheduleType;
 import org.project.sohwagi.infra.jpa.ScheduleJpaRepository;
 
 @Slf4j
@@ -74,8 +76,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
 	@Override
 	public List<Schedule> findTodaySchedules(LocalDate today) {
-		return scheduleJpaRepository.findAllByYearAndMonthAndDay(today.getYear(), today.getMonthValue(),
-				today.getDayOfMonth());
+		return scheduleJpaRepository.findAllByYearAndMonthAndDayAndType(
+			today.getYear(), today.getMonthValue(), today.getDayOfMonth(), ScheduleType.SCHEDULE);
 	}
 
 	@Override
@@ -98,5 +100,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 	public List<Schedule> findAllByUserIdAndYmdBetween(
 		Long userId, int fromYmd, int toYmd) {
 		return scheduleJpaRepository.findAllByUserIdAndYmdBetween(userId, fromYmd, toYmd);
+	}
+
+	@Override
+	public List<Schedule> findSchedulesNotifiedAt(
+		LocalDateTime from, LocalDateTime to) {
+		return scheduleJpaRepository.findAllByTypeAndNotifiedAt(ScheduleType.SCHEDULE, from, to);
 	}
 }

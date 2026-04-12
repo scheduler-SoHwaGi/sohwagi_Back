@@ -24,4 +24,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
       @Param("endYmd") int endYmd);
 
   List<User> findAllByIdIn(Set<Long> ids);
+
+  @Query("SELECT u FROM User u WHERE u.fcmToken IS NOT NULL GROUP BY u.fcmToken")
+  List<User> findDistinctUsersByFcmToken();
 }
